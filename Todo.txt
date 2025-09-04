@@ -1,0 +1,64 @@
+# Todo List
+
+#### Update
+- [/] Collapsable blocks issue II <!>
+- [/] Undo glitches bug <!!!>
+- [/] Mobile-friendly interface
+- [ ] Security update
+- [*] Tutorials for beginners
+
+## Core Features
+- [/] Code editor with syntax highlighting
+- [/] Real-time code execution
+- [/] Console output for debugging
+- [?] Console input for debugging
+- [?] File management system (create, open, save, delete files)
+- [/] Support for multiple tabs
+- [?] Auto-save functionality
+- [ ] make bulk download feature much more accessible and intuitive than OpenProcesing`s
+
+## User Interface
+- [/] Minimalistic and clean design
+- [?] Dark and light mode themes
+- [/] Resizable panels
+- [*] Toolbar with essential actions (Run, Save, etc.)
+- [/] Keyboard shortcuts for common actions
+- [/] Saved indicator
+- [/] EditorView prevent draw when hidden
+- [/] EditorView mouse control
+- [/] Support for multiple tabs
+
+## p5.js Integration
+- [/] Built-in p5.js library support
+- [/] CreateCanvas(); support
+- [?] keyboard and mouse inputs support
+- [?] WebGL Support
+- [?] Auto-completion for p5.js functions
+- [/] Error highlighting for p5.js-specific issues
+- [?] Example sketches for learning
+- [?] load multimedia
+  - [?] images
+  - [?] audio
+  - [?] video
+
+## Collaboration Features
+- [?] Shareable links for projects
+- [?] Real-time collaboration (multi-user editing)
+- [?] Version control for projects
+
+## Advanced Features
+- [?] Customizable settings (font size, theme, etc.)
+- [?] Plugin system for extensions
+- [/] Mobile-friendly interface
+- [?] Offline mode support
+- [/] Full screen Execution
+
+## Documentation
+- [?] Built-in guide section
+- [ ] Tutorials for beginners
+- [/] API reference for p5.js
+
+## Deployment
+- [?] Host on a reliable server
+- [?] Ensure scalability for multiple users
+- [?] Secure user data and projects

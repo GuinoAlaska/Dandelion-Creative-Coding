@@ -1,0 +1,831 @@
+let HotReload = false;
+
+let CodePaused = false;
+
+/*const editor = CodeMirror.fromTextArea(document.getElementById('code-input'), {
+    mode: 'javascript',
+    theme: 'dracula',
+    lineNumbers: true,
+    lineWrapping: true,
+    foldGutter: true,
+    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+    tabSize: 2,
+    indentUnit: 2,
+    autofocus: true,
+});*/
+
+let userSketch = {
+    setup: null,
+    draw: null,
+};
+
+function mapErrorToEditor(err, userCodeLineOffset = 1) {
+    const rawStack = err.stack || '';
+    const userLines = rawStack
+        .split('\n')
+        .filter(line => line.includes('usercode.js'))
+        .map(line => {
+        const match = line.match(/usercode\.js:(\d+):(\d+)/);
+        if (!match) return null;
+            const [, lineNum, colNum] = match.map(Number);
+            return {
+                original: line,
+                line: lineNum - userCodeLineOffset -1,
+                column: colNum > 1 ? colNum -(lineNum == 1 ? 20:0) : null,
+            };
+        })
+        .filter(Boolean);
+
+    return userLines;
+}
+
+function getWordBounds(lineText, column) {
+    const start = lineText.slice(0, column).search(/\b\w+$/);
+    const endMatch = lineText.slice(column).match(/^\w+\b/);
+    const end = endMatch ? column + endMatch[0].length : column + 1;
+
+    return { start, end };
+}
+
+let userGlobalScope = {};
+
+let topP5Instance;
+let bottomP5Instance;
+
+let commandsQueue = [];
+let lastEditorErrorMark = null;
+
+let customCanvas = null;
+function createCanvasHandler(p, container){
+    const original = p.createCanvas;
+    p.createCanvas = function(...args) {
+        original.apply(this, args).parent(container);
+        customCanvas = { width: args[0], height: args[1] };
+    };
+}
+
+let safeToExecute=true;
+let allowedToExecute=false;
+
+function reloadAll(code){
+    customCanvas = null
+    //check for code safety:
+    safeToExecute = acornScanner(code);
+    if(safeToExecute || allowedToExecute){
+        reloadTopSketch(code);
+        const EditorViewIsHidden = document.getElementById("output-bottom").classList.contains("hidden");
+        if (!EditorViewIsHidden) {
+            reloadBottomSketch();
+        }
+    }else{
+        /*const overlay=document.getElementById('alert-overlay');
+        overlay.classList.remove('hidden');
+        setTimeout(() => {
+            overlay.classList.add('visible');
+        }, 10);*/
+    }
+}
+
+function dropError(label,err){
+    const mapped = mapErrorToEditor(err);
+    const first = mapped[0] || { line: "?", column: "?" };
+
+    let errorFileIndex=0;
+    if(typeof first.line === 'number'){
+        for(let file of files){
+            if(first.line>file.editor.getValue().split('\n').length){
+                errorFileIndex++;
+                first.line-=file.editor.getValue().split('\n').length;
+            }else{
+                break;
+            }
+        }
+    }else{
+        errorFileIndex=0;
+    }
+
+    if (first.column && first.column !== 1) {
+        console.error(`${label} ${err.toString()}\n at ${files[errorFileIndex].name} on line ${first.line}, column ${first.column}`);
+        if (typeof first.line === 'number' && typeof first.column === 'number') {
+            const lineText = files[errorFileIndex].editor.getLine(first.line - 1);
+            const { start, end } = getWordBounds(lineText, first.column - 1);
+            const from = { line: first.line - 1, ch: start };
+            const to = { line: first.line - 1, ch: end };
+
+            if (lastEditorErrorMark) lastEditorErrorMark.clear();
+
+            lastEditorErrorMark = files[errorFileIndex].editor.markText(from, to, {
+                className: "cm-error-highlight"
+            });
+        }
+    } else {
+        console.error(`${label} ${err.toString()}\n at ${files[errorFileIndex].name} on line ${first.line}`);
+        if (typeof first.line === 'number' && typeof first.column === 'number') {
+            const from = { line: first.line - 1, ch: 0 };s
+            const to = { line: first.line - 1, ch: files[errorFileIndex].editor.getLine(first.line - 1).length };
+
+            if (lastEditorErrorMark) lastEditorErrorMark.clear();
+
+            lastEditorErrorMark = files[errorFileIndex].editor.markText(from, to, {
+                className: 'cm-error-highlight'
+            });
+        }
+    }
+
+    document.querySelectorAll('#tabs-list .tab')[errorFileIndex].style.setProperty('--tab-active-border-color', '#F05')
+}
+
+const originalConsole = {
+    log: console.log,
+    error: console.error,
+    warn: console.warn
+};
+
+const consoleOutput = document.getElementById('console-output');
+
+function appendToConsole(type, args) {
+    const msg = [...args].map(a => {
+        try {
+            return typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a);
+        } catch (e) {
+            return '[unserializable]';
+        }
+    }).join(' ');
+
+    const line = document.createElement('div');
+    line.textContent = msg;
+
+    if (type === 'error') {
+        line.style.color = '#f55';
+    } else if (type === 'warn') {
+        line.style.color = '#ff5';
+    } else {
+        line.style.color = '#0f0';
+    }
+
+    consoleOutput.appendChild(line);
+
+    // 💡 Ensure auto-scroll happens AFTER DOM update
+    setTimeout(() => {
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }, 0);
+}
+
+function clearConsole(){
+    consoleOutput.innerHTML = '';
+}
+
+// Override native console
+console.log = (...args) => {
+    appendToConsole('log', args);
+    originalConsole.log(...args);
+};
+
+console.warn = (...args) => {
+    appendToConsole('warn', args);
+    originalConsole.warn(...args);
+};
+
+console.error = (...args) => {
+    appendToConsole('error', args);
+    originalConsole.error(...args);
+};
+
+console.clear = () => {
+    clearConsole();
+}
+
+function removeComments(code) {
+    return code
+        .replace(/\/\/(?!#).*$/gm, '')
+        .replace(/\/\*[\s\S]*?\*\//g, '');
+}
+
+function extractStrings(code) {
+    const stringRegex = /(['"`])(?:\\[\s\S]|(?!\1)[^\\])*\1/g;
+    const matches = [...code.matchAll(stringRegex)].map(m => m[0]);
+    return matches;
+}
+
+function removeRegexes(code) {
+    const regexRegex = /\/(?![/*])(?:\\.|[^\/\\\r\n])+\/[gimsuy]*/g;
+    return code.replace(regexRegex, '"___SAFE_REGEX___"');
+}
+
+function detectScopeEscape(code) {
+    let depth = 0;
+    let inString = false;
+    let stringChar = '';
+    let escaped = false;
+
+    for (let i = 0; i < code.length; i++) {
+        const char = code[i];
+
+        if (inString) {
+            if (escaped) {
+                escaped = false;
+                continue;
+            }
+            if (char === '\\') {
+                escaped = true;
+                continue;
+            }
+            if (char === stringChar) {
+                inString = false;
+                stringChar = '';
+            }
+            continue;
+        }
+
+        if (char === '"' || char === "'" || char === "`") {
+            inString = true;
+            stringChar = char;
+            continue;
+        }
+
+        if (char === '{') {
+            depth++;
+        } else if (char === '}') {
+            depth--;
+            if (depth < 0) return true; // ¡Escape detectado!
+        }
+    }
+
+    return false;
+}
+
+let safe=false;
+
+function acornWalker(ast){
+    function walk(node, visitor) {
+        if (!node || typeof node.type !== "string") return;
+        if (visitor[node.type]) visitor[node.type](node);
+
+        for (let key in node) {
+            if (Array.isArray(node[key])) {
+                node[key].forEach(child => walk(child, visitor));
+            } else if (node[key] && typeof node[key] === "object" && node[key].type) {
+                walk(node[key], visitor);
+            }
+        }
+    }
+
+    let safeness = true;
+    walk(ast, {
+        // Block dangerous global identifiers and patterns
+        Identifier: node => {
+            const blocked = [
+                "eval", "Function", "setTimeout", "setInterval", "document", "location", "fetch",
+                "XMLHttpRequest", "window", "element", "getElementById", "getElementsByClassName",
+                "getElementsByTagName", "querySelector", "querySelectorAll", "appendChild",
+                "removeChild", "createElement", "innerHTML", "textContent", "setAttribute",
+                "removeAttribute", "style", "with"
+            ];
+            if (blocked.includes(node.name)) {
+                console.warn(`Use of '${node.name}' is blocked for security reasons.`);
+                safeness = false;
+            }
+        },
+        // Block import declarations
+        ImportDeclaration: node => {
+            console.warn("Use of 'import' is blocked for security reasons.");
+            safeness = false;
+        },
+        // Block dynamic import()
+        ImportExpression: node => {
+            console.warn("Use of dynamic 'import()' is blocked for security reasons.");
+            safeness = false;
+        },
+        // Block script.*src pattern in literals
+        Literal: node => {
+            if (typeof node.value === "string" && /script.*src/i.test(node.value)) {
+                console.warn("Use of 'script.*src' is blocked for security reasons.");
+                safeness = false;
+            }
+        },
+        // Block .innerHTML property access
+        MemberExpression: node => {
+            if (
+                node.property &&
+                ((node.property.type === "Identifier" && node.property.name === "innerHTML") ||
+                 (node.property.type === "Literal" && node.property.value === "innerHTML"))
+            ) {
+                console.warn("Use of '.innerHTML' is blocked for security reasons.");
+                safeness = false;
+            }
+        },
+        // Block 'with' statements
+        WithStatement: node => {
+            console.warn("Use of 'with' is blocked for security reasons.");
+            safeness = false;
+        },
+        // Block computed MemberExpression with string property
+        MemberExpression: node => {
+            if (node.computed && node.property && node.property.type === "Literal" && typeof node.property.value !== "number") {
+                console.warn("Computed property access is blocked for security reasons.");
+                safeness = false;
+            }
+            if (node.computed && node.property && node.property.type !== "Literal") {
+                console.warn("Computed property access is blocked for security reasons.");
+                safeness = false;
+            }
+            // Existing .innerHTML block
+            if (
+            node.property &&
+            ((node.property.type === "Identifier" && node.property.name === "innerHTML") ||
+                (node.property.type === "Literal" && node.property.value === "innerHTML"))
+            ) {
+            console.warn("Use of '.innerHTML' is blocked for security reasons.");
+            safeness = false;
+            }
+        }
+    });
+    return safeness;
+}
+
+function reloadTopSketch(userCode) {
+    console.clear();
+
+    // Kill existing sketch
+    if (topP5Instance) topP5Instance.remove();
+
+    // Create a new sketch function dynamically
+    topSketch = (p) => {
+        let setupFn = () => {};
+        let drawFn = () => {};
+
+        //all other non comun functions:
+        //{
+            let preloadFn = () => {};
+
+            let mousePressedFn = () => {};
+            let mouseReleasedFn = () => {};
+            let mouseClickedFn = () => {};
+            let mouseMovedFn = () => {};
+            let mouseDraggedFn = () => {};
+            let mouseWheelFn = (event) => {};
+
+            let keyPressedFn = () => {};
+            let keyReleasedFn = () => {};
+            let keyTypedFn = () => {};
+
+            let touchStartedFn = () => {};
+            let touchMovedFn = () => {};
+            let touchEndedFn = () => {};
+
+            let windowResizedFn = () => {};
+            let deviceMovedFn = () => {};
+            let deviceTurnedFn = () => {};
+            let deviceShakenFn = () => {};
+
+            let gamepadConnectedFn = (gamepad) => {};
+            let gamepadDisconnectedFn = (gamepad) => {};
+        //}
+
+        let mirrorDisabled = false;
+        let isRecordingUserCode = false;
+        function mirrorFunction(p, fnName) {
+            const originalFn = p[fnName];
+            p[fnName] = function(...args) {
+                if (mirrorDisabled) {
+                    return originalFn.apply(this, args);
+                }
+
+                mirrorDisabled = true;
+                const result = originalFn.apply(this, args);
+                mirrorDisabled = false;
+            
+                if (isRecordingUserCode) {
+                    commandsQueue.push({ fnName, args });
+                }
+
+                return result;
+            };
+        }
+
+        if (lastEditorErrorMark) {
+            lastEditorErrorMark.clear();
+            lastEditorErrorMark = null;
+        }
+
+        try {
+            const wrappedCode = `
+                with (p) {
+                    ${userCode}
+                    if (typeof setup === 'function') setupFn = setup;
+                    if (typeof draw === 'function') drawFn = draw;
+
+                    if (typeof preload === 'function') preloadFn = preload;
+                    if (typeof remove === 'function') removeFn = remove;
+
+                    if (typeof mousePressed === 'function') mousePressedFn = mousePressed;
+                    if (typeof mouseReleased === 'function') mouseReleasedFn = mouseReleased;
+                    if (typeof mouseClicked === 'function') mouseClickedFn = mouseClicked;
+                    if (typeof mouseMoved === 'function') mouseMovedFn = mouseMoved;
+                    if (typeof mouseDragged === 'function') mouseDraggedFn = mouseDragged;
+                    if (typeof mouseWheel === 'function') mouseWheelFn = mouseWheel;
+
+                    if (typeof keyPressed === 'function') keyPressedFn = keyPressed;
+                    if (typeof keyReleased === 'function') keyReleasedFn = keyReleased;
+                    if (typeof keyTyped === 'function') keyTypedFn = keyTyped;
+
+                    if (typeof touchStarted === 'function') touchStartedFn = touchStarted;
+                    if (typeof touchMoved === 'function') touchMovedFn = touchMoved;
+                    if (typeof touchEnded === 'function') touchEndedFn = touchEnded;
+
+                    if (typeof windowResized === 'function') windowResizedFn = windowResized;
+                    if (typeof deviceMoved === 'function') deviceMovedFn = deviceMoved;
+                    if (typeof deviceTurned === 'function') deviceTurnedFn = deviceTurned;
+                    if (typeof deviceShaken === 'function') deviceShakenFn = deviceShaken;
+
+                    if (typeof gamepadConnected === 'function') gamepadConnectedFn = gamepadConnected;
+                    if (typeof gamepadDisconnected === 'function') gamepadDisconnectedFn = gamepadDisconnected;
+                }
+                //# sourceURL=usercode.js
+            `;
+            eval(wrappedCode);
+        } catch (err) {
+            dropError(`Compiler runtime error:`,err);
+            p.noLoop();
+        }
+
+        p.setup = () => {
+            const container = document.getElementById('output-top');
+            p.createCanvas(container.offsetWidth, container.offsetHeight).parent(container);
+            
+            const p5Fns = [
+                // Primitive Drawing
+                'point', 'line', 'rect', 'ellipse', 'circle', 'arc',
+                'triangle', 'quad', 'beginShape', 'vertex', 'bezierVertex', 'curveVertex', 'endShape',
+                'image', 'text',
+            
+                // Style Configuration
+                'fill', 'noFill', 'stroke', 'noStroke', 'strokeWeight', 'strokeCap', 'strokeJoin',
+                'colorMode', 'imageMode', 'rectMode', 'ellipseMode', 'angleMode',
+                'tint', 'noTint', 'blendMode',
+                'textFont', 'textSize', 'textAlign', 'textStyle', 'textLeading',
+            
+                // Transformations
+                'translate', 'rotate', 'scale', 'shearX', 'shearY',
+                'applyMatrix', 'resetMatrix', 'push', 'pop',
+            
+                // Canvas Region / State Control
+                'beginClip', 'endClip',
+            
+                // Pixel Manipulation
+                'loadPixels', 'updatePixels', 'get', 'set', 'filter', 'blend',
+            
+                // Direct Canvas Context Access
+                'drawingContext'
+            ];
+
+            p5Fns.forEach(fnName => mirrorFunction(p, fnName));
+
+            createCanvasHandler(p, container);
+
+            try {
+                setupFn();
+            } catch (err) {
+                dropError(`Sketch setup error:`,err);
+                p.noLoop();
+            }
+        };
+
+        p.windowResized = () => {
+            const container = document.getElementById('output-top');
+            if(!customCanvas){
+                p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+            }
+        };
+
+        p.draw = () => {
+            const container = document.getElementById('output-top');
+            try {
+                p.push();
+                commandsQueue = [];
+                isRecordingUserCode = true;
+                drawFn();
+                isRecordingUserCode = false;
+                p.pop();
+            } catch (err) {
+                dropError(`Sketch runtime error:`,err);
+                p.noLoop();
+            }
+        };
+
+        const hooks = [
+            'preload',
+            'mousePressed', 'mouseReleased', 'mouseClicked', 'mouseMoved', 'mouseDragged', 'mouseWheel',
+            'keyPressed', 'keyReleased', 'keyTyped',
+            'touchStarted', 'touchMoved', 'touchEnded',
+            'windowResized', 'deviceMoved', 'deviceTurned', 'deviceShaken',
+            'gamepadConnected', 'gamepadDisconnected'
+        ];
+
+        const fnMap = {
+            preloadFn,
+            mousePressedFn,
+            mouseReleasedFn,
+            mouseClickedFn,
+            mouseMovedFn,
+            mouseDraggedFn,
+            mouseWheelFn,
+            keyPressedFn,
+            keyReleasedFn,
+            keyTypedFn,
+            touchStartedFn,
+            touchMovedFn,
+            touchEndedFn,
+            windowResizedFn,
+            deviceMovedFn,
+            deviceTurnedFn,
+            deviceShakenFn,
+            gamepadConnectedFn,
+            gamepadDisconnectedFn
+        };
+
+        for (const name of hooks) {
+            if(name==="windowResized"){
+                if(customCanvas){
+                    p[name] = (...args) => {
+                        try {
+                            const fn = fnMap[`${name}Fn`];
+                            if (typeof fn === 'function') fn(...args);
+                        } catch (err) {
+                            dropError(`Sketch runtime error:`, err);
+                            p.noLoop();
+                        }
+                    };
+                }
+            }else{
+                p[name] = (...args) => {
+                    try {
+                        const fn = fnMap[`${name}Fn`];
+                        if (typeof fn === 'function') fn(...args);
+                    } catch (err) {
+                        dropError(`Sketch runtime error:`, err);
+                        p.noLoop();
+                    }
+                };
+            }
+        }
+
+
+        p.evaluateFromConsole = (code) => {
+            try {
+                with (p) {
+                    return { type: "log", log: eval(code) };
+                }
+            } catch (err) {
+                return { type: "error", error: err.toString() };
+            }
+        };
+
+    };
+
+    // Boot it up
+    topP5Instance = new p5(topSketch);
+}
+
+function reloadBottomSketch() {
+    // Kill existing sketch
+    if (bottomP5Instance) bottomP5Instance.remove();
+
+    // Create a new sketch function dynamically
+    bottomSketch = (p) => {
+        let CameraContainer;
+
+        p.setup = () => {
+            const container = document.getElementById('output-bottom');
+            CameraContainer = document.getElementById('output-top');
+            p.createCanvas(container.offsetWidth, container.offsetHeight).parent(container);
+
+            p.createCanvas=()=>{};
+
+            // Track focus state based on canvas focus
+            const canvas = p.canvas;
+            canvas.addEventListener('mouseenter', () => editorFocused = false);
+            canvas.addEventListener('mouseleave', () => editorFocused = true);
+        };
+
+        p.windowResized = () => {
+            const container = document.getElementById('output-bottom');
+            p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+        };
+
+        p.draw = () => {
+            const container = document.getElementById('output-bottom');
+            editorCamera.x=p.lerp(editorCamera.x,editorCamera.tx,0.1);
+            editorCamera.y=p.lerp(editorCamera.y,editorCamera.ty,0.1);
+            editorCamera.z=p.lerp(editorCamera.z,editorCamera.tz,0.1);
+
+            p.background(25);
+
+            // === Guide Overlay ===
+            p.push();
+            p.translate(p.width / 2, p.height / 2);
+            p.scale(editorCamera.z);
+            p.translate(editorCamera.x, editorCamera.y);
+
+            // Draw axes
+            p.stroke(255, 0, 0, 100);
+            p.strokeWeight(1 / editorCamera.z);
+            p.line((-p.width/2)/editorCamera.z-editorCamera.x, 0, (p.width/2)/editorCamera.z-editorCamera.x, 0); // X axis
+            p.stroke(0, 255, 0, 100);
+            p.line(0, (-p.height/2)/editorCamera.z-editorCamera.y, 0, (p.height/2)/editorCamera.z-editorCamera.y); // Y axis
+
+            // Draw origin crosshair
+            p.stroke(255, 255, 255, 200);
+            p.strokeWeight(2 / editorCamera.z);
+            p.line(-10, 0, 10, 0);
+            p.line(0, -10, 0, 10);
+
+            // Optional grid
+            if (editorCamera.z > 0.03) {
+                p.stroke(255, 255, 255, 10);
+
+                let left = (-p.width / 2) / editorCamera.z - editorCamera.x;
+                let right = (p.width / 2) / editorCamera.z - editorCamera.x;
+                let top = (-p.height / 2) / editorCamera.z - editorCamera.y;
+                let bottom = (p.height / 2) / editorCamera.z - editorCamera.y;
+
+                let startX = Math.floor(left / 100) * 100;
+                let endX = Math.ceil(right / 100) * 100;
+                let startY = Math.floor(top / 100) * 100;
+                let endY = Math.ceil(bottom / 100) * 100;
+
+                for (let x = startX; x <= endX; x += 100) {
+                    p.line(x, top, x, bottom);
+                }
+                for (let y = startY; y <= endY; y += 100) {
+                    p.line(left, y, right, y);
+                }
+            }
+            p.pop();
+
+            p.push();
+            p.translate(p.width / 2, p.height / 2);
+            p.scale(editorCamera.z);
+            p.translate(editorCamera.x, editorCamera.y);
+            p.translate(-p.width / 2, -p.height / 2);
+            p.push();
+
+            if(customCanvas){
+                p.translate((container.offsetWidth - customCanvas.width)/2, (container.offsetHeight - customCanvas.height)/2);
+            }else{
+                p.translate(0, (container.offsetHeight - CameraContainer.offsetHeight)/2);
+            };
+            commandsQueue.forEach(cmd => {
+                p[cmd.fnName](...cmd.args);
+            });
+
+            p.pop();
+            p.pop();
+
+            p.push();
+            p.translate(p.width / 2, p.height / 2);
+            p.scale(editorCamera.z);
+            p.translate(editorCamera.x, editorCamera.y);
+            p.stroke(200,200,200,150);
+            p.strokeWeight(5);
+            p.fill(200,200,200,100);
+            p.circle(0,0,50);
+            p.noFill();
+            p.rectMode(p.CENTER);
+            if(customCanvas){
+                p.rect(0,0,customCanvas.width, customCanvas.height);
+            }else{
+                p.rect(0,0,CameraContainer.offsetWidth, CameraContainer.offsetHeight);
+            };
+            p.pop();
+
+            /*
+            p.push();
+            function drawButtonRef(){
+                if(p.mouseX<200&&p.mouseY<50){
+                    //p.noStroke();
+                    //p.fill(150,150,150,100);
+                    //p.rect(5,10,20,20,5);
+                    //p.fill(200,200,200,100);
+                    //p.rect(5,5,20,20,5);
+                }else{
+                    p.noStroke();
+                    p.fill(150);
+                    p.rect(5,10,20,20,5);
+                    p.fill(200);
+                    p.rect(5,5,20,20,5);
+                }
+            }
+            drawButtonRef();
+            p.translate(22,0);
+            drawButtonRef();
+            p.translate(22,0);
+            drawButtonRef();
+            p.translate(22,0);
+            drawButtonRef();
+            
+            p.translate(-60,23);
+            drawButtonRef();
+            p.translate(22,0);
+            drawButtonRef();
+            p.translate(22,0);
+            drawButtonRef();
+            p.translate(22,0);
+            drawButtonRef();
+            p.pop();
+            //*/
+
+            if(!editorFocused){
+                if(p.keyIsDown(87)){
+                    editorCamera.ty+=10/editorCamera.z;
+                }
+                if(p.keyIsDown(83)){
+                    editorCamera.ty-=10/editorCamera.z;
+                }
+                if(p.keyIsDown(65)){
+                    editorCamera.tx+=10/editorCamera.z;
+                }
+                if(p.keyIsDown(68)){
+                    editorCamera.tx-=10/editorCamera.z;
+                }
+                if(p.keyIsDown(82)){
+                    editorCamera.tz*=1.1;
+                }
+                if(p.keyIsDown(70)){
+                    editorCamera.tz/=1.1;
+                }
+                if(p.keyIsDown(32)){
+                    editorCamera.tx=0;
+                    editorCamera.ty=0;
+                    editorCamera.tz=1;
+                }
+            }
+        };
+
+        let isDragging = false;
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+
+        p.mousePressed = () => {
+            if (p.mouseButton === p.LEFT && p.mouseX >= 0 && p.mouseY >= 0 && p.mouseX <= p.width && p.mouseY <= p.height) {
+                isDragging = true;
+                lastMouseX = p.mouseX;
+                lastMouseY = p.mouseY;
+            }
+        };
+
+        p.mouseReleased = () => {
+            isDragging = false;
+        };
+
+        p.mouseDragged = () => {
+            if (isDragging) {
+                const dx = p.mouseX - lastMouseX;
+                const dy = p.mouseY - lastMouseY;
+
+                const adjustedX = dx / editorCamera.z;
+                const adjustedY = dy / editorCamera.z;
+
+                editorCamera.tx += adjustedX;
+                editorCamera.ty += adjustedY;
+                editorCamera.x += adjustedX;
+                editorCamera.y += adjustedY;
+
+                lastMouseX = p.mouseX;
+                lastMouseY = p.mouseY;
+            }
+        };
+
+        p.mouseWheel = (event) => {
+            if(!editorFocused){
+                //const zoomFactor = 1.1;
+                //const scale = (event.delta > 0) ? 1 / zoomFactor : zoomFactor;
+
+                const zoomStep = 0.05;
+                const scale = Math.pow(1 + zoomStep, -event.delta / 100);
+
+                const cx = p.width / 2;
+                const cy = p.height / 2;
+
+                // Translate mouse to canvas-centered coords
+                const mx = p.mouseX - cx;
+                const my = p.mouseY - cy;
+
+                // Apply inverse rotation
+
+                const rotatedX = mx / editorCamera.z;
+                const rotatedY = my / editorCamera.z;
+
+                // Update zoom target
+                editorCamera.tz *= scale;
+
+                // Adjust tx/ty to zoom toward mouse
+                editorCamera.tx -= rotatedX * (1 - 1 / scale);
+                editorCamera.ty -= rotatedY * (1 - 1 / scale);
+            }
+        };
+    };
+
+    // Boot it up
+    bottomP5Instance = new p5(bottomSketch);
+}

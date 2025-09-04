@@ -1,0 +1,55 @@
+Dandelion-1 (14/05/2025): keyboard and mouse inputs
+    Version: 2025-A5_beta
+    Description:
+        Using key and mouse inputs on the editor, while having input-related code, moves the things on the sketch while editing.
+    Priority: low
+    Status: suspended (23/05/2025)
+    Notes: P5´s nature for inputs aren't made for be rewritten in a manageable way, maybe in the future we can solve this issue.
+
+Dandelion-2 (02/06/2025): Collapsible blocks issue
+    Version: 2025-A5_beta
+    Description:
+        When changing tabs, The blocks i have collapsed are expanded again.
+    Priority: medium
+    Status: solved (04/05/2025)
+    Notes: Folding blocks when you change back on tabs is now implemented.
+
+Dandelion-3 (04/06/2025): Drawing Context not working
+    Version: 2025-A6_beta
+    Description:
+        I tried to use drawingContext on my project and it contains some errors, when i try it on editor.p5js the errors arn´t there.
+    Priority: hight
+    Status: suspended (04/06/2025)
+    Notes: Dandelion support for inner variables is not fully implemented and it might have errors, however you can still use drawingContext if you write: "p._renderer.drawingContext" instead. maybe in the future we can solve this to be more accessible.
+
+Dandelion-4 (06/06/2025): keyReleased not working
+    Version: 2025-A6_beta
+    Description:
+        I was making a game in which keyReleased is needed for a mechanic, but after i builded the function it isn´t called as expected.
+    Priority: hight
+    Status: Solved (06/06/2025)
+    Notes: Dandelion handles Setup and Draw functions properly, we just had to extend the same logic for the rest of the functions. Now its working.
+
+Dandelion-4 (10/06/2025): Collapsible blocks glitch
+    Version: 2025-A9_Release
+    Description:
+        Some blocks return to an opened state when i change back into tabs.
+    Priority: medium
+    Status: Solved (11/06/2025)
+    Notes: It wasn't hard at all.
+
+Dandelion-5 (11/06/2025): Undo glitches
+    Version: 2025-A9_release
+    Description:
+        On multiple tabs, when undo, it overshoots the file and rewrites the file im in with the content of another file i opened previously.
+    Priority: hight
+    Status: Solved (21/06/2025)
+    Notes: 2025-A11 will do.
+
+Dandelion-6 (24/06/2025): <Security level>
+    Version: 2025-A9_release
+    Description:
+        this["document"].body["innerHTML"] = "pwned!"
+    Priority: Extremelly Hight
+    Status: Suspended (24/06/2025)
+    Notes: More focused on UX for now, but im not releasing 2025-A11 before i solve this.
