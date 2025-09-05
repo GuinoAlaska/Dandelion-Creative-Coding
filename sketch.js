@@ -6,7 +6,8 @@
 
     ┌──────────────── - - <<<<<<<< Copyright Notice: >>>>>>>> - - ────────────────┐
     │       The following elements are protected:
-    > - The exact content of the following files: `index.html`, `styles.css`, `sketch.js`, `codeReader.js`, `UX.js`, `icons.png`, `tab-icons.png`, and any other files located in the same project directory.  
+    > - The names and slogan: `Dandelion Creative Coding`, `Dandelion CC`, `"If you can dream it, you can create it."`, on all translations.
+    > - The exact content of the following files: `index.html`, `styles.css`, `sketch.js`, `codeReader.js`, `UX.js`, `scanner.js`, `icons.png`, `tab-icons.png`, and any other files located in the same project directory.  
     > - Any reproduction or derivative work that includes more than 15% of this project's original code or visual assets.  
     > - The implementation and system logic behind the secondary sketch panel used for p5.js development (e.g., `bottomSketch`, `bottomP5Instance`). Variable names are not protected; however, the underlying interaction logic and rendering flow are.
     │
@@ -24,6 +25,11 @@
     > - The environment is intentionally open to allow users to experiment freely, including the ability to break or disrupt the frontend interface. Use at your own risk.
     └────────────────────────────────────────────────────────────────────────────>\\\\\
 
+    ┌──────────────── - - <<<<<<<< Contributors:  >>>>>>>> - - ────────────────┐
+    > Sir Andrew Aguecheek (Discord):
+    │ - Helped on finding security issues with: `this["document"].body["innerHTML"] = "pwned!";`
+    └────────────────────────────────────────────────────────────────────────────>\\\\\
+
     Estimated Development Cost: ~$350,000 USD
 */
 
@@ -36,8 +42,12 @@ let editorCamera={
     tz:1,
 }
 
-if (topP5Instance) topP5Instance.remove();
-if (bottomP5Instance) bottomP5Instance.remove();
+if (topP5Instance) {
+    topP5Instance.remove();
+}
+if (bottomP5Instance) {
+    bottomP5Instance.remove();
+}
 
 let editorFocused = true;
 

@@ -4,7 +4,7 @@
 - [/] Collapsable blocks issue II <!>
 - [/] Undo glitches bug <!!!>
 - [/] Mobile-friendly interface
-- [ ] Security update
+- [/] Security update
 - [*] Tutorials for beginners
 
 ## Core Features
@@ -55,7 +55,7 @@
 
 ## Documentation
 - [?] Built-in guide section
-- [ ] Tutorials for beginners
+- [*] Tutorials for beginners
 - [/] API reference for p5.js
 
 ## Deployment

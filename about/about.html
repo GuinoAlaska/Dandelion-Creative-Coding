@@ -53,7 +53,7 @@
             <li>Editor View to inspect all rendering elements, including off-canvas ones</li>
             <li>Export your sketches as standalone web packages (via JSZip)</li>
             <li><span style="color: #FFD600; font-weight: bold;">New:</span> Mobile compatible UI</li>
-            <li><span style="color: #FFD600; font-weight: bold;">New:</span> amm...</li>
+            <li><span style="color: #FFD600; font-weight: bold;">New:</span> Safety Scanner</li>
         </ul>
         <br>
         <h2>Technologies Used</h2>
@@ -62,6 +62,7 @@
             <li><strong>CodeMirror</strong> – for live code editing with syntax highlighting</li>
             <li><strong>JSZip</strong> – to package and export projects as ZIP files</li>
             <li><strong>Prettier (via UNPKG)</strong> – for clean and consistent code formatting</li>
+            <li><strong>Acorn</strong> – used on the safety scanner</li>
         </ul>
         <br>
         <h2>About the Developer</h2>
@@ -76,7 +77,7 @@
         <h2>Privacy & Licensing</h2>
         <p><strong>Dandelion respects your privacy.</strong> It runs entirely in your browser with no backend services or data tracking. All code stays local and nothing is stored remotely.</p>
         <br>
-        <p><strong>⚠️ Security Notice:</strong> Dandelion uses basic heuristic rules to detect potentially unsafe JavaScript code. While it can block many common threats, it is not a secure sandbox and may miss advanced or obfuscated attacks. Do not use Dandelion to run untrusted code in production environments without additional sandboxing or isolation.</p>
+        <p><strong>⚠️ Security Notice:</strong> Dandelion uses a complex safety scanner to detect potentially unsafe JavaScript code before execution. While it blocks many common risks, it is not immune to all threats. Code runs in the same environment as the editor, and a successful bypass could affect the IDE itself. Do not use Dandelion to run untrusted or production-level code.</p>
     </div>
     <footer>
         <br>
