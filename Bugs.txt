@@ -51,5 +51,5 @@ Dandelion-6 (24/06/2025): <Security level>
     Description:
         this["document"].body["innerHTML"] = "pwned!"
     Priority: Extremelly Hight
-    Status: Suspended (24/06/2025)
-    Notes: More focused on UX for now, but im not releasing 2025-A11 before i solve this.
+    Status: Solved (03/09/2025)
+    Notes: with a lot of effort, this problem is solved via a full Safety Scanner implementation, it still migth have errors, but for now, its the best we can have.

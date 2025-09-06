@@ -628,7 +628,6 @@ function reloadBottomSketch() {
                     p.rotateY(yaw);
                     p.rotateX(-pitch);
                     p.rectMode(p.CENTER);
-                    //*
                     // Calculate min and max render distance planes
                     const minDist = sketchCam.cameraNear;
                     const maxDist = sketchCam.cameraFar;
@@ -638,6 +637,7 @@ function reloadBottomSketch() {
                         Math.pow(sketchCam.centerZ - sketchCam.eyeZ, 2)
                     );
 
+                    /*
                     // Draw min render distance rect
                     p.stroke(255, 255, 255, 150);
                     p.strokeWeight(2);
@@ -680,10 +680,10 @@ function reloadBottomSketch() {
                         const h = isPerspective? (2 * Math.tan(fov / 2) * dist) : topP5Instance._renderer.height;
                         const w = isPerspective? (h * aspect) : topP5Instance._renderer.width;
                         return [
-                            [ -w / 2,  h / 2, -dist ], // top-left
-                            [  w / 2,  h / 2, -dist ], // top-right
-                            [  w / 2, -h / 2, -dist ], // bottom-right
-                            [ -w / 2, -h / 2, -dist ]  // bottom-left
+                            [ -w / 2,  h / 2, -dist + camDist ], // top-left
+                            [  w / 2,  h / 2, -dist + camDist ], // top-right
+                            [  w / 2, -h / 2, -dist + camDist ], // bottom-right
+                            [ -w / 2, -h / 2, -dist + camDist ]  // bottom-left
                         ];
                     }
 
@@ -691,12 +691,25 @@ function reloadBottomSketch() {
                     const farCorners = getFrustumCorners(far);
 
                     // Draw frustum lines
-                    p.stroke(255, 255, 255, 200);
+                    p.stroke(255, 255, 255,100);
                     p.strokeWeight(2);
                     p.push();
-                    p.translate(0, 0, 0); // Camera origin
+                    p.translate(0, 0, 800); // Camera origin
 
                     for (let i = 0; i < 4; i++) {
+                        // Draw near plane
+                        p.beginShape();
+                        for (let j = 0; j < 4; j++) {
+                            p.vertex(nearCorners[j][0], nearCorners[j][1], -nearCorners[j][2]);
+                        }
+                        p.endShape(p.CLOSE);
+
+                        // Draw far plane
+                        p.beginShape();
+                        for (let j = 0; j < 4; j++) {
+                            p.vertex(farCorners[j][0], farCorners[j][1], -farCorners[j][2]);
+                        }
+                        p.endShape(p.CLOSE);
                         // Connect near and far planes
                         p.line(nearCorners[i][0], nearCorners[i][1], -nearCorners[i][2],
                                 farCorners[i][0], farCorners[i][1], -farCorners[i][2]);
@@ -791,6 +804,7 @@ function reloadBottomSketch() {
                         editorCamera.eyeX = 0;
                         editorCamera.eyeY = 0;
                         editorCamera.eyeZ = 800;
+                        cam.setPosition(0, 0, 800);
                     }
                 }
             }else{

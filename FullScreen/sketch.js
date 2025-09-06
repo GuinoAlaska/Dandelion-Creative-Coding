@@ -141,10 +141,11 @@ function reloadTopSketch(userCode) {
 
         p.draw = () => {
             const container = document.getElementById('displayer');
+            const isWebGL = p._renderer && p._renderer.isP3D;
             try {
-                p.push();
+                if(!isWebGL) p.push();
                 drawFn();
-                p.pop();
+                if(!isWebGL) p.pop();
             } catch (err) {
                 dropError(`Sketch runtime error:`,err);
                 p.noLoop();
