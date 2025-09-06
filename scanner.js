@@ -1747,10 +1747,9 @@ let acornSimulator = {
         }
         case "MemberExpression":{
           let object = ast.object.type === "MemberExpression" || ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
-          /*if(test.value===_dynamic.properties.any.value){
-            return _dynamic.properties.posibilities(acornSimulator.resolve(ast.consequent, undefined, [], scope, selfScope, thisScope),acornSimulator.resolve(ast.alternate, undefined, [], scope, selfScope, thisScope));
-          };*/
           
+          
+
           switch(object.type){
             case "Object": {
               let prop = ast.computed ? acornSimulator.coerce(acornSimulator.resolve(ast.property,undefined,[],scope,ast.object,thisScope)).value : ast.property.name;
@@ -1904,22 +1903,15 @@ let acornSimulator = {
       tdz.TDZ = false;
     }
 
-    return result.return ?
-      result.return.child ?
-        result.return.child
-      :
-        result.return
-    :
-      result;
+    return result.return ? result.return.child ? result.return.child : result.return : result;
   },
   coerce: (variable)=>{
-    //console.log(variable)
     switch(variable.type){
       case "Literal":
         return {type:"Literal", value: variable.value};
       case "Array":{
         const coercedElements = variable.elements.map(element => {
-          if (element == null) return ""; // sparse or undefined/null → ""
+          if (element == null) return {type:"Literal", value:""}; // sparse or undefined/null → ""
           let coerced = acornSimulator.coerce(element);
           return coerced.value != null ? String(coerced.value) : "";
         });
@@ -1942,13 +1934,13 @@ let acornSimulator = {
         acornSimulator.safe = false;
         break;
       case "Evaluation":
-        return undefined;
+        return variable.get();
       default:
         console.warn(`Unhandled '${variable.type}' coercion`);
         acornSimulator.safe = false;
         break;
     }
-    return undefined;
+    return {type:"Literal", value:""};
   }
 }
 
@@ -1960,6 +1952,7 @@ function acornScanner(userCode){
     let pcode = acorn.parse(userCode, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
     acornSimulator.simulate(pcode,"main",undefined);
     
+    /*
     externals = extPool2;
     
     acornSimulator.simulate(acorn.parse(`
@@ -1985,6 +1978,8 @@ function acornScanner(userCode){
       gamepadDisconnected(_Dynamic_.any);
     `, { ecmaVersion: 'latest', sourceType: 'module', locations: true }),"main",undefined);
     acornSimulator.simulate(acorn.parse(`draw;`, { ecmaVersion: 'latest', sourceType: 'module', locations: true }), "main", undefined, {dynamic:true});
+    
+    //*/
   }catch(err){
     dropError("",err);
     acornSimulator.safe = false;
@@ -2107,7 +2102,7 @@ function getExternals1(){
 	let pool = [];
   ExternalBuilder("_Dynamic_.any",{value:{}},pool).build();
   ExternalBuilder("_Dynamic_.possibilities",{
-    run:(...args)=>{return {type: "Literal", value: {possibilities:[...args]}};},
+    call:(...args)=>{return {type: "Literal", value: {possibilities:[...args]}};},
     get:()=>{return {type:"Literal",value:undefined};}
   },pool).build();
   const selfHandledFunctions = ["preload","setup","draw","mousePressed","mouseReleased","mouseClicked","mouseMoved","mouseDragged","mouseWheel","keyPressed","keyReleased","keyTyped","touchStarted","touchMoved","touchEnded","windowResized","deviceMoved","deviceTurned","deviceShaken","gamepadConnected","gamepadDisconnected"];
@@ -2244,6 +2239,8 @@ function getExternals1(){
     "Math.random",
     "Date",
     "Date.now",
+
+    "localStorage",
 
     // Eventos de usuario y sensores
     "deviceOrientation", "deviceRotationRate", "deviceAcceleration", // según p5 o Web API
@@ -2756,5 +2753,5 @@ function getExternals2(){
   return pool;
 }
 
-let extPool1 = getExternals1();
-let extPool2 = getExternals2();
+extPool1 = getExternals1();
+extPool2 = getExternals2();

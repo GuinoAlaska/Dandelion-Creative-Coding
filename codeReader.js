@@ -256,93 +256,6 @@ function detectScopeEscape(code) {
 
 let safe=false;
 
-function acornWalker(ast){
-    function walk(node, visitor) {
-        if (!node || typeof node.type !== "string") return;
-        if (visitor[node.type]) visitor[node.type](node);
-
-        for (let key in node) {
-            if (Array.isArray(node[key])) {
-                node[key].forEach(child => walk(child, visitor));
-            } else if (node[key] && typeof node[key] === "object" && node[key].type) {
-                walk(node[key], visitor);
-            }
-        }
-    }
-
-    let safeness = true;
-    walk(ast, {
-        // Block dangerous global identifiers and patterns
-        Identifier: node => {
-            const blocked = [
-                "eval", "Function", "setTimeout", "setInterval", "document", "location", "fetch",
-                "XMLHttpRequest", "window", "element", "getElementById", "getElementsByClassName",
-                "getElementsByTagName", "querySelector", "querySelectorAll", "appendChild",
-                "removeChild", "createElement", "innerHTML", "textContent", "setAttribute",
-                "removeAttribute", "style", "with"
-            ];
-            if (blocked.includes(node.name)) {
-                console.warn(`Use of '${node.name}' is blocked for security reasons.`);
-                safeness = false;
-            }
-        },
-        // Block import declarations
-        ImportDeclaration: node => {
-            console.warn("Use of 'import' is blocked for security reasons.");
-            safeness = false;
-        },
-        // Block dynamic import()
-        ImportExpression: node => {
-            console.warn("Use of dynamic 'import()' is blocked for security reasons.");
-            safeness = false;
-        },
-        // Block script.*src pattern in literals
-        Literal: node => {
-            if (typeof node.value === "string" && /script.*src/i.test(node.value)) {
-                console.warn("Use of 'script.*src' is blocked for security reasons.");
-                safeness = false;
-            }
-        },
-        // Block .innerHTML property access
-        MemberExpression: node => {
-            if (
-                node.property &&
-                ((node.property.type === "Identifier" && node.property.name === "innerHTML") ||
-                 (node.property.type === "Literal" && node.property.value === "innerHTML"))
-            ) {
-                console.warn("Use of '.innerHTML' is blocked for security reasons.");
-                safeness = false;
-            }
-        },
-        // Block 'with' statements
-        WithStatement: node => {
-            console.warn("Use of 'with' is blocked for security reasons.");
-            safeness = false;
-        },
-        // Block computed MemberExpression with string property
-        MemberExpression: node => {
-            if (node.computed && node.property && node.property.type === "Literal" && typeof node.property.value !== "number") {
-                console.warn("Computed property access is blocked for security reasons.");
-                safeness = false;
-            }
-            if (node.computed && node.property && node.property.type !== "Literal") {
-                console.warn("Computed property access is blocked for security reasons.");
-                safeness = false;
-            }
-            // Existing .innerHTML block
-            if (
-            node.property &&
-            ((node.property.type === "Identifier" && node.property.name === "innerHTML") ||
-                (node.property.type === "Literal" && node.property.value === "innerHTML"))
-            ) {
-            console.warn("Use of '.innerHTML' is blocked for security reasons.");
-            safeness = false;
-            }
-        }
-    });
-    return safeness;
-}
-
 function reloadTopSketch(userCode) {
     console.clear();
 
@@ -476,7 +389,27 @@ function reloadTopSketch(userCode) {
                 'loadPixels', 'updatePixels', 'get', 'set', 'filter', 'blend',
             
                 // Direct Canvas Context Access
-                'drawingContext'
+                'drawingContext',
+
+                // WEBGL functions:
+                'createCamera', 'camera', 'perspective', 'ortho',
+                'ambientLight', 'directionalLight', 'pointLight', 'spotLight',
+                'ambientMaterial', 'specularMaterial', 'emissiveMaterial', 'shininess',
+                'model', 'loadModel', 'normalMaterial',
+                'beginShape', 'endShape', 'vertex', 'texture', 'textureMode',
+                'box', 'sphere', 'cylinder', 'cone', 'torus', 'plane',
+                'push', 'pop', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'rotate', 'scale',
+                'applyMatrix', 'resetMatrix',
+                'createShader', 'shader', 'resetShader',
+                'createFramebuffer', 'framebuffer', 'setUniform',
+                'createTexture', 'textureWrap', 'textureFilter',
+                'createGraphics',
+                'getCamera', 'setCamera', 'orbitControl',
+                'directionalLight', 'ambientLight', 'pointLight', 'spotLight',
+                'lights', 'noLights',
+                'createEasyCam', 'easycam',
+                'loadShader', 'loadModel',
+                'createBuffer', 'bindBuffer', 'bufferData', 'drawArrays', 'drawElements'
             ];
 
             p5Fns.forEach(fnName => mirrorFunction(p, fnName));
@@ -500,13 +433,14 @@ function reloadTopSketch(userCode) {
 
         p.draw = () => {
             const container = document.getElementById('output-top');
+            const isWebGL = p._renderer && p._renderer.isP3D;
             try {
-                p.push();
+                if(!isWebGL) p.push();
                 commandsQueue = [];
                 isRecordingUserCode = true;
                 drawFn();
                 isRecordingUserCode = false;
-                p.pop();
+                if(!isWebGL) p.pop();
             } catch (err) {
                 dropError(`Sketch runtime error:`,err);
                 p.noLoop();
@@ -594,13 +528,22 @@ function reloadBottomSketch() {
     // Create a new sketch function dynamically
     bottomSketch = (p) => {
         let CameraContainer;
+        let cam;
 
         p.setup = () => {
             const container = document.getElementById('output-bottom');
             CameraContainer = document.getElementById('output-top');
-            p.createCanvas(container.offsetWidth, container.offsetHeight).parent(container);
+            
+            const isWebGL = topP5Instance._renderer && topP5Instance._renderer.isP3D;
+
+            if(isWebGL) p.createCanvas(container.offsetWidth, container.offsetHeight, p.WEBGL).parent(container);
+            else p.createCanvas(container.offsetWidth, container.offsetHeight).parent(container);
+            
+            if(isWebGL) cam = p.createCamera();
 
             p.createCanvas=()=>{};
+            p.createCamera=()=>{};
+            
 
             // Track focus state based on canvas focus
             const canvas = p.canvas;
@@ -612,152 +555,139 @@ function reloadBottomSketch() {
             const container = document.getElementById('output-bottom');
             p.resizeCanvas(container.offsetWidth, container.offsetHeight);
         };
-
+        
+        const isWebGL = topP5Instance._renderer && topP5Instance._renderer.isP3D;
         p.draw = () => {
             const container = document.getElementById('output-bottom');
-            editorCamera.x=p.lerp(editorCamera.x,editorCamera.tx,0.1);
-            editorCamera.y=p.lerp(editorCamera.y,editorCamera.ty,0.1);
-            editorCamera.z=p.lerp(editorCamera.z,editorCamera.tz,0.1);
-
-            p.background(25);
-
-            // === Guide Overlay ===
-            p.push();
-            p.translate(p.width / 2, p.height / 2);
-            p.scale(editorCamera.z);
-            p.translate(editorCamera.x, editorCamera.y);
-
-            // Draw axes
-            p.stroke(255, 0, 0, 100);
-            p.strokeWeight(1 / editorCamera.z);
-            p.line((-p.width/2)/editorCamera.z-editorCamera.x, 0, (p.width/2)/editorCamera.z-editorCamera.x, 0); // X axis
-            p.stroke(0, 255, 0, 100);
-            p.line(0, (-p.height/2)/editorCamera.z-editorCamera.y, 0, (p.height/2)/editorCamera.z-editorCamera.y); // Y axis
-
-            // Draw origin crosshair
-            p.stroke(255, 255, 255, 200);
-            p.strokeWeight(2 / editorCamera.z);
-            p.line(-10, 0, 10, 0);
-            p.line(0, -10, 0, 10);
-
-            // Optional grid
-            if (editorCamera.z > 0.03) {
-                p.stroke(255, 255, 255, 10);
-
-                let left = (-p.width / 2) / editorCamera.z - editorCamera.x;
-                let right = (p.width / 2) / editorCamera.z - editorCamera.x;
-                let top = (-p.height / 2) / editorCamera.z - editorCamera.y;
-                let bottom = (p.height / 2) / editorCamera.z - editorCamera.y;
-
-                let startX = Math.floor(left / 100) * 100;
-                let endX = Math.ceil(right / 100) * 100;
-                let startY = Math.floor(top / 100) * 100;
-                let endY = Math.ceil(bottom / 100) * 100;
-
-                for (let x = startX; x <= endX; x += 100) {
-                    p.line(x, top, x, bottom);
+            if(isWebGL){
+                p.background(25);
+                p.orbitControl();
+                p.push();
+                p.stroke(255,255,255,100);
+                let pos = cam.eyeX ? {x: cam.eyeX, y: cam.eyeY, z: cam.eyeZ} : {x:0,y:0,z:800};
+                for(let i=-100;i<100;i++){
+                    p.line(-2e4,0,i*100+p.floor(pos.z/200)*200,2e4,0,i*100+p.floor(pos.z/200)*200);
+                    p.line(i*100+p.floor(pos.x/200)*200,0,-2e4,i*100+p.floor(pos.x/200)*200,0,2e4);
                 }
-                for (let y = startY; y <= endY; y += 100) {
-                    p.line(left, y, right, y);
+                p.stroke(255,0,0,100)
+                p.line(-2e4,0,0,2e4,0,0);
+                p.stroke(0,0,255,100)
+                p.line(0,0,-2e4,0,0,2e4);
+                p.stroke(0,255,255,100)
+                p.line(0,-2e4,0,0,2e4,0);
+                p.pop();
+                commandsQueue.forEach(cmd => {
+                    p[cmd.fnName](...cmd.args);
+                });
+            }else{
+                editorCamera.x=p.lerp(editorCamera.x,editorCamera.tx,0.1);
+                editorCamera.y=p.lerp(editorCamera.y,editorCamera.ty,0.1);
+                editorCamera.z=p.lerp(editorCamera.z,editorCamera.tz,0.1);
+
+                p.background(25);
+
+                // === Guide Overlay ===
+                p.push();
+                p.translate(p.width / 2, p.height / 2);
+                p.scale(editorCamera.z);
+                p.translate(editorCamera.x, editorCamera.y);
+
+                // Draw axes
+                p.stroke(255, 0, 0, 100);
+                p.strokeWeight(1 / editorCamera.z);
+                p.line((-p.width/2)/editorCamera.z-editorCamera.x, 0, (p.width/2)/editorCamera.z-editorCamera.x, 0); // X axis
+                p.stroke(0, 255, 0, 100);
+                p.line(0, (-p.height/2)/editorCamera.z-editorCamera.y, 0, (p.height/2)/editorCamera.z-editorCamera.y); // Y axis
+
+                // Draw origin crosshair
+                p.stroke(255, 255, 255, 200);
+                p.strokeWeight(2 / editorCamera.z);
+                p.line(-10, 0, 10, 0);
+                p.line(0, -10, 0, 10);
+
+                // Optional grid
+                if (editorCamera.z > 0.03) {
+                    p.stroke(255, 255, 255, 10);
+
+                    let left = (-p.width / 2) / editorCamera.z - editorCamera.x;
+                    let right = (p.width / 2) / editorCamera.z - editorCamera.x;
+                    let top = (-p.height / 2) / editorCamera.z - editorCamera.y;
+                    let bottom = (p.height / 2) / editorCamera.z - editorCamera.y;
+
+                    let startX = Math.floor(left / 100) * 100;
+                    let endX = Math.ceil(right / 100) * 100;
+                    let startY = Math.floor(top / 100) * 100;
+                    let endY = Math.ceil(bottom / 100) * 100;
+
+                    for (let x = startX; x <= endX; x += 100) {
+                        p.line(x, top, x, bottom);
+                    }
+                    for (let y = startY; y <= endY; y += 100) {
+                        p.line(left, y, right, y);
+                    }
                 }
-            }
-            p.pop();
+                p.pop();
 
-            p.push();
-            p.translate(p.width / 2, p.height / 2);
-            p.scale(editorCamera.z);
-            p.translate(editorCamera.x, editorCamera.y);
-            p.translate(-p.width / 2, -p.height / 2);
-            p.push();
+                p.push();
+                p.translate(p.width / 2, p.height / 2);
+                p.scale(editorCamera.z);
+                p.translate(editorCamera.x, editorCamera.y);
+                p.translate(-p.width / 2, -p.height / 2);
+                p.push();
 
-            if(customCanvas){
-                p.translate((container.offsetWidth - customCanvas.width)/2, (container.offsetHeight - customCanvas.height)/2);
-            }else{
-                p.translate(0, (container.offsetHeight - CameraContainer.offsetHeight)/2);
-            };
-            commandsQueue.forEach(cmd => {
-                p[cmd.fnName](...cmd.args);
-            });
-
-            p.pop();
-            p.pop();
-
-            p.push();
-            p.translate(p.width / 2, p.height / 2);
-            p.scale(editorCamera.z);
-            p.translate(editorCamera.x, editorCamera.y);
-            p.stroke(200,200,200,150);
-            p.strokeWeight(5);
-            p.fill(200,200,200,100);
-            p.circle(0,0,50);
-            p.noFill();
-            p.rectMode(p.CENTER);
-            if(customCanvas){
-                p.rect(0,0,customCanvas.width, customCanvas.height);
-            }else{
-                p.rect(0,0,CameraContainer.offsetWidth, CameraContainer.offsetHeight);
-            };
-            p.pop();
-
-            /*
-            p.push();
-            function drawButtonRef(){
-                if(p.mouseX<200&&p.mouseY<50){
-                    //p.noStroke();
-                    //p.fill(150,150,150,100);
-                    //p.rect(5,10,20,20,5);
-                    //p.fill(200,200,200,100);
-                    //p.rect(5,5,20,20,5);
+                if(customCanvas){
+                    p.translate((container.offsetWidth - customCanvas.width)/2, (container.offsetHeight - customCanvas.height)/2);
                 }else{
-                    p.noStroke();
-                    p.fill(150);
-                    p.rect(5,10,20,20,5);
-                    p.fill(200);
-                    p.rect(5,5,20,20,5);
-                }
-            }
-            drawButtonRef();
-            p.translate(22,0);
-            drawButtonRef();
-            p.translate(22,0);
-            drawButtonRef();
-            p.translate(22,0);
-            drawButtonRef();
-            
-            p.translate(-60,23);
-            drawButtonRef();
-            p.translate(22,0);
-            drawButtonRef();
-            p.translate(22,0);
-            drawButtonRef();
-            p.translate(22,0);
-            drawButtonRef();
-            p.pop();
-            //*/
+                    p.translate(0, (container.offsetHeight - CameraContainer.offsetHeight)/2);
+                };
+                commandsQueue.forEach(cmd => {
+                    p[cmd.fnName](...cmd.args);
+                });
 
-            if(!editorFocused){
-                if(p.keyIsDown(87)){
-                    editorCamera.ty+=10/editorCamera.z;
-                }
-                if(p.keyIsDown(83)){
-                    editorCamera.ty-=10/editorCamera.z;
-                }
-                if(p.keyIsDown(65)){
-                    editorCamera.tx+=10/editorCamera.z;
-                }
-                if(p.keyIsDown(68)){
-                    editorCamera.tx-=10/editorCamera.z;
-                }
-                if(p.keyIsDown(82)){
-                    editorCamera.tz*=1.1;
-                }
-                if(p.keyIsDown(70)){
-                    editorCamera.tz/=1.1;
-                }
-                if(p.keyIsDown(32)){
-                    editorCamera.tx=0;
-                    editorCamera.ty=0;
-                    editorCamera.tz=1;
+                p.pop();
+                p.pop();
+
+                p.push();
+                p.translate(p.width / 2, p.height / 2);
+                p.scale(editorCamera.z);
+                p.translate(editorCamera.x, editorCamera.y);
+                p.stroke(200,200,200,150);
+                p.strokeWeight(5);
+                p.fill(200,200,200,100);
+                p.circle(0,0,50);
+                p.noFill();
+                p.rectMode(p.CENTER);
+                if(customCanvas){
+                    p.rect(0,0,customCanvas.width, customCanvas.height);
+                }else{
+                    p.rect(0,0,CameraContainer.offsetWidth, CameraContainer.offsetHeight);
+                };
+                p.pop();
+
+                if(!editorFocused){
+                    if(p.keyIsDown(87)){
+                        editorCamera.ty+=10/editorCamera.z;
+                    }
+                    if(p.keyIsDown(83)){
+                        editorCamera.ty-=10/editorCamera.z;
+                    }
+                    if(p.keyIsDown(65)){
+                        editorCamera.tx+=10/editorCamera.z;
+                    }
+                    if(p.keyIsDown(68)){
+                        editorCamera.tx-=10/editorCamera.z;
+                    }
+                    if(p.keyIsDown(82)){
+                        editorCamera.tz*=1.1;
+                    }
+                    if(p.keyIsDown(70)){
+                        editorCamera.tz/=1.1;
+                    }
+                    if(p.keyIsDown(32)){
+                        editorCamera.tx=0;
+                        editorCamera.ty=0;
+                        editorCamera.tz=1;
+                    }
                 }
             }
         };
@@ -766,64 +696,66 @@ function reloadBottomSketch() {
         let lastMouseX = 0;
         let lastMouseY = 0;
 
-        p.mousePressed = () => {
-            if (p.mouseButton === p.LEFT && p.mouseX >= 0 && p.mouseY >= 0 && p.mouseX <= p.width && p.mouseY <= p.height) {
-                isDragging = true;
-                lastMouseX = p.mouseX;
-                lastMouseY = p.mouseY;
-            }
-        };
+        if(!isWebGL){
+            p.mousePressed = () => {
+                if (p.mouseButton === p.LEFT && p.mouseX >= 0 && p.mouseY >= 0 && p.mouseX <= p.width && p.mouseY <= p.height) {
+                    isDragging = true;
+                    lastMouseX = p.mouseX;
+                    lastMouseY = p.mouseY;
+                }
+            };
 
-        p.mouseReleased = () => {
-            isDragging = false;
-        };
+            p.mouseReleased = () => {
+                isDragging = false;
+            };
 
-        p.mouseDragged = () => {
-            if (isDragging) {
-                const dx = p.mouseX - lastMouseX;
-                const dy = p.mouseY - lastMouseY;
+            p.mouseDragged = () => {
+                if (isDragging) {
+                    const dx = p.mouseX - lastMouseX;
+                    const dy = p.mouseY - lastMouseY;
 
-                const adjustedX = dx / editorCamera.z;
-                const adjustedY = dy / editorCamera.z;
+                    const adjustedX = dx / editorCamera.z;
+                    const adjustedY = dy / editorCamera.z;
 
-                editorCamera.tx += adjustedX;
-                editorCamera.ty += adjustedY;
-                editorCamera.x += adjustedX;
-                editorCamera.y += adjustedY;
+                    editorCamera.tx += adjustedX;
+                    editorCamera.ty += adjustedY;
+                    editorCamera.x += adjustedX;
+                    editorCamera.y += adjustedY;
 
-                lastMouseX = p.mouseX;
-                lastMouseY = p.mouseY;
-            }
-        };
+                    lastMouseX = p.mouseX;
+                    lastMouseY = p.mouseY;
+                }
+            };
 
-        p.mouseWheel = (event) => {
-            if(!editorFocused){
-                //const zoomFactor = 1.1;
-                //const scale = (event.delta > 0) ? 1 / zoomFactor : zoomFactor;
+            p.mouseWheel = (event) => {
+                if(!editorFocused){
+                    //const zoomFactor = 1.1;
+                    //const scale = (event.delta > 0) ? 1 / zoomFactor : zoomFactor;
 
-                const zoomStep = 0.05;
-                const scale = Math.pow(1 + zoomStep, -event.delta / 100);
+                    const zoomStep = 0.05;
+                    const scale = Math.pow(1 + zoomStep, -event.delta / 100);
 
-                const cx = p.width / 2;
-                const cy = p.height / 2;
+                    const cx = p.width / 2;
+                    const cy = p.height / 2;
 
-                // Translate mouse to canvas-centered coords
-                const mx = p.mouseX - cx;
-                const my = p.mouseY - cy;
+                    // Translate mouse to canvas-centered coords
+                    const mx = p.mouseX - cx;
+                    const my = p.mouseY - cy;
 
-                // Apply inverse rotation
+                    // Apply inverse rotation
 
-                const rotatedX = mx / editorCamera.z;
-                const rotatedY = my / editorCamera.z;
+                    const rotatedX = mx / editorCamera.z;
+                    const rotatedY = my / editorCamera.z;
 
-                // Update zoom target
-                editorCamera.tz *= scale;
+                    // Update zoom target
+                    editorCamera.tz *= scale;
 
-                // Adjust tx/ty to zoom toward mouse
-                editorCamera.tx -= rotatedX * (1 - 1 / scale);
-                editorCamera.ty -= rotatedY * (1 - 1 / scale);
-            }
-        };
+                    // Adjust tx/ty to zoom toward mouse
+                    editorCamera.tx -= rotatedX * (1 - 1 / scale);
+                    editorCamera.ty -= rotatedY * (1 - 1 / scale);
+                }
+            };
+        }
     };
 
     // Boot it up
