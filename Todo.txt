@@ -32,7 +32,7 @@
 - [/] Built-in p5.js library support
 - [/] CreateCanvas(); support
 - [?] keyboard and mouse inputs support
-- [?] WebGL Support
+- [/] WebGL Support
 - [?] Auto-completion for p5.js functions
 - [/] Error highlighting for p5.js-specific issues
 - [?] Example sketches for learning

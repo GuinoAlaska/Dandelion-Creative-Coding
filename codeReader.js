@@ -256,6 +256,8 @@ function detectScopeEscape(code) {
 
 let safe=false;
 
+let sketchCam;
+
 function reloadTopSketch(userCode) {
     console.clear();
 
@@ -365,7 +367,7 @@ function reloadTopSketch(userCode) {
         p.setup = () => {
             const container = document.getElementById('output-top');
             p.createCanvas(container.offsetWidth, container.offsetHeight).parent(container);
-            
+
             const p5Fns = [
                 // Primitive Drawing
                 'point', 'line', 'rect', 'ellipse', 'circle', 'arc',
@@ -392,20 +394,18 @@ function reloadTopSketch(userCode) {
                 'drawingContext',
 
                 // WEBGL functions:
-                'createCamera', 'camera', 'perspective', 'ortho',
+                'camera',
                 'ambientLight', 'directionalLight', 'pointLight', 'spotLight',
                 'ambientMaterial', 'specularMaterial', 'emissiveMaterial', 'shininess',
                 'model', 'loadModel', 'normalMaterial',
-                'beginShape', 'endShape', 'vertex', 'texture', 'textureMode',
+                'texture', 'textureMode',
                 'box', 'sphere', 'cylinder', 'cone', 'torus', 'plane',
-                'push', 'pop', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'rotate', 'scale',
-                'applyMatrix', 'resetMatrix',
+                'rotateX', 'rotateY', 'rotateZ',
                 'createShader', 'shader', 'resetShader',
                 'createFramebuffer', 'framebuffer', 'setUniform',
                 'createTexture', 'textureWrap', 'textureFilter',
                 'createGraphics',
-                'getCamera', 'setCamera', 'orbitControl',
-                'directionalLight', 'ambientLight', 'pointLight', 'spotLight',
+                'getCamera', 'setCamera',
                 'lights', 'noLights',
                 'createEasyCam', 'easycam',
                 'loadShader', 'loadModel',
@@ -418,6 +418,8 @@ function reloadTopSketch(userCode) {
 
             try {
                 setupFn();
+                const isWebGL = p._renderer && p._renderer.isP3D;
+                if(isWebGL) sketchCam = p.createCamera();
             } catch (err) {
                 dropError(`Sketch setup error:`,err);
                 p.noLoop();
@@ -541,6 +543,7 @@ function reloadBottomSketch() {
             
             if(isWebGL) cam = p.createCamera();
 
+
             p.createCanvas=()=>{};
             p.createCamera=()=>{};
             
@@ -561,9 +564,26 @@ function reloadBottomSketch() {
             const container = document.getElementById('output-bottom');
             if(isWebGL){
                 p.background(25);
-                p.orbitControl();
+            
+                // Update camera position if editorCamera.eyeX/Y/Z changed
+                if (typeof cam !== "undefined" && cam) {
+                    cam.setPosition(editorCamera.eyeX || cam.eyeX, editorCamera.eyeY || cam.eyeY, editorCamera.eyeZ || cam.eyeZ);
+                    cam.lookAt(editorCamera.centerX || 0, editorCamera.centerY || 0, editorCamera.centerZ || 0);
+                }
+            
+                if (p.mouseX >= 0 && p.mouseY >= 0 && p.mouseX <= p.width && p.mouseY <= p.height) {
+                    p.orbitControl();
+                    editorCamera.eyeX=cam.eyeX;
+                    editorCamera.eyeY=cam.eyeY;
+                    editorCamera.eyeZ=cam.eyeZ;
+                    editorCamera.centerX=cam.centerX;
+                    editorCamera.centerY=cam.centerY;
+                    editorCamera.centerZ=cam.centerZ;
+                }
                 p.push();
                 p.stroke(255,255,255,100);
+                p.strokeWeight(1);
+                p.noFill();
                 let pos = cam.eyeX ? {x: cam.eyeX, y: cam.eyeY, z: cam.eyeZ} : {x:0,y:0,z:800};
                 for(let i=-100;i<100;i++){
                     p.line(-2e4,0,i*100+p.floor(pos.z/200)*200,2e4,0,i*100+p.floor(pos.z/200)*200);
@@ -576,9 +596,203 @@ function reloadBottomSketch() {
                 p.stroke(0,255,255,100)
                 p.line(0,-2e4,0,0,2e4,0);
                 p.pop();
+
+                p.push();
+                p.stroke(255,255,255);
+                p.noFill();
+                let sketchCamPos = sketchCam.eyeX ? {x: sketchCam.eyeX, y: sketchCam.eyeY, z: sketchCam.eyeZ} : {x:0,y:0,z:800};
+                if (topP5Instance && topP5Instance._renderer) {
+                    const w = topP5Instance._renderer.width;
+                    const h = topP5Instance._renderer.height;
+                    // Get camera orientation angles
+                    const camX = sketchCam.eyeX || 0;
+                    const camY = sketchCam.eyeY || 0;
+                    const camZ = sketchCam.eyeZ || 800;
+                    const centerX = sketchCam.centerX || 0;
+                    const centerY = sketchCam.centerY || 0;
+                    const centerZ = sketchCam.centerZ || 0;
+
+                    //Get camera rendering mode
+                    const isPerspective = sketchCam.cameraType === "default";
+
+                    // Calculate direction vector
+                    const dx = centerX - camX;
+                    const dy = centerY - camY;
+                    const dz = centerZ - camZ;
+
+                    // Calculate yaw and pitch
+                    const yaw = Math.atan2(dx, dz);
+                    const pitch = Math.atan2(dy, Math.sqrt(dx * dx + dz * dz));
+
+                    p.translate(sketchCamPos.x,sketchCamPos.y,sketchCamPos.z);
+                    p.rotateY(yaw);
+                    p.rotateX(-pitch);
+                    p.rectMode(p.CENTER);
+                    //*
+                    // Calculate min and max render distance planes
+                    const minDist = sketchCam.cameraNear;
+                    const maxDist = sketchCam.cameraFar;
+                    const camDist = Math.sqrt(
+                        Math.pow(sketchCam.centerX - sketchCam.eyeX, 2) +
+                        Math.pow(sketchCam.centerY - sketchCam.eyeY, 2) +
+                        Math.pow(sketchCam.centerZ - sketchCam.eyeZ, 2)
+                    );
+
+                    // Draw min render distance rect
+                    p.stroke(255, 255, 255, 150);
+                    p.strokeWeight(2);
+                    p.noFill();
+                    p.rectMode(p.CENTER);
+                    p.push();
+                    p.translate(0, 0, maxDist);
+                    p.rect(0, 0, p.lerp(0,w,isPerspective?800-camDist+maxDist/camDist:1), p.lerp(0,h,isPerspective?800-camDist+maxDist/camDist:1));
+                    p.pop();
+
+                    // Draw max render distance rect
+                    p.stroke(255, 255, 255, 150);
+                    p.strokeWeight(2);
+                    p.noFill();
+                    p.rectMode(p.CENTER);
+                    p.push();
+                    p.translate(0, 0, minDist);
+                    p.rect(0, 0, p.lerp(0,w,isPerspective?800-camDist+minDist/camDist:1), p.lerp(0,h,isPerspective?800-camDist+minDist/camDist:1));
+                    p.pop();
+
+                    // Draw just render distance rect
+                    p.stroke(255, 255, 255, 150);
+                    p.strokeWeight(2);
+                    p.noFill();
+                    p.rectMode(p.CENTER);
+                    p.push();
+                    p.translate(0, 0, camDist);
+                    p.rect(0, 0, p.lerp(0,w,isPerspective?800-camDist+camDist/800:1), p.lerp(0,h,isPerspective?800-camDist+camDist/800:1));
+                    p.pop();
+                    //*/
+
+                    //console.log(sketchCam.fov);
+                    const fov = sketchCam.cameraFOV || Math.PI / 8.5;
+                    const aspect = sketchCam.aspectRatio || (topP5Instance._renderer.width / topP5Instance._renderer.height);
+                    const near = sketchCam.cameraNear;
+                    const far = sketchCam.cameraFar;
+
+                    // Calculate frustum corners in camera space
+                    function getFrustumCorners(dist) {
+                        const h = isPerspective? (2 * Math.tan(fov / 2) * dist) : topP5Instance._renderer.height;
+                        const w = isPerspective? (h * aspect) : topP5Instance._renderer.width;
+                        return [
+                            [ -w / 2,  h / 2, -dist ], // top-left
+                            [  w / 2,  h / 2, -dist ], // top-right
+                            [  w / 2, -h / 2, -dist ], // bottom-right
+                            [ -w / 2, -h / 2, -dist ]  // bottom-left
+                        ];
+                    }
+
+                    const nearCorners = getFrustumCorners(near);
+                    const farCorners = getFrustumCorners(far);
+
+                    // Draw frustum lines
+                    p.stroke(255, 255, 255, 200);
+                    p.strokeWeight(2);
+                    p.push();
+                    p.translate(0, 0, 0); // Camera origin
+
+                    for (let i = 0; i < 4; i++) {
+                        // Connect near and far planes
+                        p.line(nearCorners[i][0], nearCorners[i][1], -nearCorners[i][2],
+                                farCorners[i][0], farCorners[i][1], -farCorners[i][2]);
+                    }
+                    p.pop();
+                }
+                p.pop();
                 commandsQueue.forEach(cmd => {
                     p[cmd.fnName](...cmd.args);
                 });
+
+                if(!editorFocused){
+                    // forward vector
+                    let fx = editorCamera.centerX - editorCamera.eyeX;
+                    let fy = editorCamera.centerY - editorCamera.eyeY;
+                    let fz = editorCamera.centerZ - editorCamera.eyeZ;
+
+                    // normalize
+                    let len = Math.sqrt(fx*fx + fy*fy + fz*fz);
+                    fx /= len; fy /= len; fz /= len;
+
+                    // right vector = cross(forward, up)
+                    let up = {x:0, y:1, z:0};
+                    let rx = fy*up.z - fz*up.y;
+                    let ry = fz*up.x - fx*up.z;
+                    let rz = fx*up.y - fy*up.x;
+                    let rlen = Math.sqrt(rx*rx + ry*ry + rz*rz);
+                    rx /= rlen; ry /= rlen; rz /= rlen;
+
+                    let v = 10; // o 1 si quieres suavizado
+
+                    if(p.keyIsDown(87)){ // W
+                        editorCamera.eyeX += fx*v;
+                        editorCamera.eyeY += fy*v;
+                        editorCamera.eyeZ += fz*v;
+                        editorCamera.centerX += fx*v;
+                        editorCamera.centerY += fy*v;
+                        editorCamera.centerZ += fz*v;
+                    }
+                    if(p.keyIsDown(83)){ // S
+                        editorCamera.eyeX -= fx*v;
+                        editorCamera.eyeY -= fy*v;
+                        editorCamera.eyeZ -= fz*v;
+                        editorCamera.centerX -= fx*v;
+                        editorCamera.centerY -= fy*v;
+                        editorCamera.centerZ -= fz*v;
+                    }
+                    if(p.keyIsDown(65)){ // A
+                        editorCamera.eyeX -= rx*v;
+                        editorCamera.eyeY -= ry*v;
+                        editorCamera.eyeZ -= rz*v;
+                        editorCamera.centerX -= rx*v;
+                        editorCamera.centerY -= ry*v;
+                        editorCamera.centerZ -= rz*v;
+                    }
+                    if(p.keyIsDown(68)){ // D
+                        editorCamera.eyeX += rx*v;
+                        editorCamera.eyeY += ry*v;
+                        editorCamera.eyeZ += rz*v;
+                        editorCamera.centerX += rx*v;
+                        editorCamera.centerY += ry*v;
+                        editorCamera.centerZ += rz*v;
+                    }
+                    if(p.keyIsDown(81)){ // Q - subir
+                        editorCamera.eyeY += v;
+                        editorCamera.centerY += v;
+                    }
+                    if(p.keyIsDown(69)){ // E - bajar
+                        editorCamera.eyeY -= v;
+                        editorCamera.centerY -= v;
+                    }
+                    if(p.keyIsDown(82)){ // R - zoom in
+                        let fx = editorCamera.centerX - editorCamera.eyeX;
+                        let fy = editorCamera.centerY - editorCamera.eyeY;
+                        let fz = editorCamera.centerZ - editorCamera.eyeZ;
+                        editorCamera.eyeX += fx * 0.1;
+                        editorCamera.eyeY += fy * 0.1;
+                        editorCamera.eyeZ += fz * 0.1;
+                    }
+                    if(p.keyIsDown(70)){ // F - zoom out
+                        let fx = editorCamera.centerX - editorCamera.eyeX;
+                        let fy = editorCamera.centerY - editorCamera.eyeY;
+                        let fz = editorCamera.centerZ - editorCamera.eyeZ;
+                        editorCamera.eyeX -= fx * 0.1;
+                        editorCamera.eyeY -= fy * 0.1;
+                        editorCamera.eyeZ -= fz * 0.1;
+                    }
+                    if(p.keyIsDown(32)){ // Space - reset
+                        editorCamera.centerX = 0;
+                        editorCamera.centerY = 0;
+                        editorCamera.centerZ = 0;
+                        editorCamera.eyeX = 0;
+                        editorCamera.eyeY = 0;
+                        editorCamera.eyeZ = 800;
+                    }
+                }
             }else{
                 editorCamera.x=p.lerp(editorCamera.x,editorCamera.tx,0.1);
                 editorCamera.y=p.lerp(editorCamera.y,editorCamera.ty,0.1);
@@ -755,6 +969,14 @@ function reloadBottomSketch() {
                     editorCamera.ty -= rotatedY * (1 - 1 / scale);
                 }
             };
+        }else{
+            p.mouseDragged = () => {
+                if (!(p.mouseX >= 0 && p.mouseY >= 0 && p.mouseX <= p.width && p.mouseY <= p.height)) return false; // stop orbitControl from acting
+            }
+
+            p.mouseWheel = (event)=>{
+                if (!(p.mouseX >= 0 && p.mouseY >= 0 && p.mouseX <= p.width && p.mouseY <= p.height)) return false; // stop zoom when outside
+            }
         }
     };
 
