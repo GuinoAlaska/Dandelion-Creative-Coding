@@ -1686,6 +1686,8 @@ let acornSimulator = {
         case "NewExpression":{
           let callee = acornSimulator.resolve(ast.callee);
           
+          
+
           switch(callee.type){
             case "Class":{
               let constructor = undefined;
@@ -1879,7 +1881,7 @@ let acornSimulator = {
       }else{
         param = mem.params[i];
       }
-      let arg = argus[i];
+      let arg = argus[i] || {type: "Literal", value:undefined};
       switch(param.type){
         case "Identifier":
           if(acornSimulator.memory.find(mem => mem.name === param.name && !mem.TDZ)||externals.find(ext => ext.name === param.name && !ext.TDZ)) { //not all params are already defined, so we are not using remember(); but doing it by hand.
@@ -2109,6 +2111,7 @@ function getExternals1(){
   for(let p5fn of selfHandledFunctions){
     ExternalBuilder(p5fn+"()",{undefine:true},pool).build();
   }
+  ExternalBuilder("_class_",{type:"Object"},pool).build();
   const jsBuiltins = Object.getOwnPropertyNames(globalThis).filter(name => {
     try {
       const val = globalThis[name];
