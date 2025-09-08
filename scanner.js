@@ -771,7 +771,7 @@ let acornSimulator = {
               tarjet.super = resolution.super;
               break;
             default:
-              console.warn(`Unhandled '${resolution.type}' resolution declaration`);
+              console.warn(`Unhandled '${resolution.type}' resolution assignation`);
               acornSimulator.safe = false;
               break;
           }
@@ -878,7 +878,7 @@ let acornSimulator = {
             object = acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope);
             tarjet = acornSimulator.resolve(object).properties?.[property];
           }else{
-            object = kinda.parent;
+            object = kinda.parent.type === "Identifier" ? acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope) : kinda.parent;
             tarjet = object.properties?.[property];
           }
           
@@ -899,6 +899,7 @@ let acornSimulator = {
               tarjet.id = undefined;
               tarjet.params = undefined;
               tarjet.body = undefined;
+              tarjet.super = undefined;
               break;
             case "Array":
               tarjet.value = undefined;
@@ -907,6 +908,7 @@ let acornSimulator = {
               tarjet.id = undefined;
               tarjet.params = undefined;
               tarjet.body = undefined;
+              tarjet.super = undefined;
               break;
             case "Object":
               tarjet.value = undefined;
@@ -915,6 +917,7 @@ let acornSimulator = {
               tarjet.id = undefined;
               tarjet.params = undefined;
               tarjet.body = undefined;
+              tarjet.super = undefined;
               break;
             case "Function":
               tarjet.value = undefined;
@@ -923,21 +926,32 @@ let acornSimulator = {
               tarjet.id = resolution.id;
               tarjet.params = resolution.params;
               tarjet.body = resolution.body;
+              tarjet.super = undefined;
               break;
             case "ReturnSignal":
               acornSimulator.assignVariable(id,resolution.return,def,indexing,scope,object,thisScope,excludedKeys);
               skip = true;
               break;
-            /**/case "ArrowFunction":
-              console.warn(`Unhandled '${resolution.type}' resolution declaration`);
-              acornSimulator.safe = false;
+            case "ArrowFunction":
+              tarjet.value = undefined;
+              tarjet.elements = undefined;
+              tarjet.properties = resolution.properties;
+              tarjet.id = resolution.id;
+              tarjet.params = resolution.params;
+              tarjet.body = resolution.body;
+              tarjet.super = undefined;
               break;
-            /**/case "Class":
-              console.warn(`Unhandled '${resolution.type}' resolution declaration`);
-              acornSimulator.safe = false;
+            case "Class":
+              tarjet.value = undefined;
+              tarjet.elements = undefined;
+              tarjet.properties = resolution.properties;
+              tarjet.id = resolution.id;
+              tarjet.params = undefined;
+              tarjet.body = resolution.body;
+              tarjet.super = resolution.super;
               break;
             default:
-              console.warn(`Unhandled '${resolution.type}' resolution declaration`);
+              console.warn(`Unhandled '${resolution.type}' resolution MemberExpression assignation`);
               acornSimulator.safe = false;
               break;
           }
@@ -1686,8 +1700,6 @@ let acornSimulator = {
         case "NewExpression":{
           let callee = acornSimulator.resolve(ast.callee);
           
-          
-
           switch(callee.type){
             case "Class":{
               let constructor = undefined;
@@ -1898,7 +1910,7 @@ let acornSimulator = {
     }
     
     let result = acornSimulator.simulate(resolution,scope+"/function",resolution.type==="Function" ? mem.type === "Class"? thisScope : callee.type === "MemberExpression"? acornSimulator.resolve(callee).parent : undefined : resolution.type === "ArrowFunction" ? thisScope : undefined);
-    
+
     acornSimulator.forget(scope+"/function");
 
     for(let tdz of TDZs){
