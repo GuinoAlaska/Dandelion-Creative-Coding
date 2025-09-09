@@ -1700,7 +1700,6 @@ let acornSimulator = {
         }
         case "NewExpression":{
           let callee = acornSimulator.resolve(ast.callee);
-          
           switch(callee.type){
             case "Class":{
               let constructor = undefined;
@@ -1761,8 +1760,8 @@ let acornSimulator = {
           break;
         }
         case "MemberExpression":{
-          let object = ast.object.type === "MemberExpression" || ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).parent.name) : acornSimulator.remember(ast.object.name);
-
+          let object = ast.object.type === "MemberExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).parent.name) : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
+          
           switch(object.type){
             case "Object": {
               
@@ -1887,6 +1886,7 @@ let acornSimulator = {
       }
       return resolution.call(...args);
     };
+    
     let TDZs = acornSimulator.prepare(resolution.body);
     for(let i in resolution.params){
       let param;
@@ -1910,7 +1910,7 @@ let acornSimulator = {
           break;
       }
     }
-    
+
     let result = acornSimulator.simulate(resolution,scope+"/function",resolution.type==="Function" ? mem.type === "Class"? thisScope : callee.type === "MemberExpression"? acornSimulator.resolve(callee).parent : undefined : resolution.type === "ArrowFunction" ? thisScope : undefined);
 
     acornSimulator.forget(scope+"/function");
@@ -1918,6 +1918,8 @@ let acornSimulator = {
     for(let tdz of TDZs){
       tdz.TDZ = false;
     }
+
+    
 
     return result.return ? result.return.child ? result.return.child : result.return : result;
   },
@@ -1997,7 +1999,7 @@ function acornScanner(userCode){
     dropError("",err);
     acornSimulator.safe = false;
   }
-  console.log("memory:",acornSimulator.memory);
+  //console.log("memory:",acornSimulator.memory);
   return acornSimulator.safe;
 }
 
