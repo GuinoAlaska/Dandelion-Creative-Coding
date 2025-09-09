@@ -874,11 +874,11 @@ let acornSimulator = {
           let kinda = acornSimulator.resolve(id,def,indexing,scope,selfScope,thisScope);
           let property = id.computed ? acornSimulator.resolve(id.property,def,indexing,scope,selfScope,thisScope).value : id.property.name
           let object;
-          if(kinda.child){
-            object = acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope);
-            tarjet = acornSimulator.resolve(object).properties?.[property];
+          if(kinda.child?.value === undefined){
+            object = kinda.parent.type === "Identifier" ? acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope) : kinda.parent.type === "MemberExpression" ? acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope).child : kinda.parent;
+            tarjet = object.properties?.[property];
           }else{
-            object = kinda.parent.type === "Identifier" ? acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope) : kinda.parent;
+            object = acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope);
             tarjet = object.properties?.[property];
           }
           
@@ -1236,8 +1236,6 @@ let acornSimulator = {
           let variable = ast.argument.type === "Identifier" ? acornSimulator.remember(ast.argument.name) : ast.argument.type === "MemberExpression" ? acornSimulator.resolve(ast.argument,undefined,[],scope,selfScope,thisScope).child : acornSimulator.resolve(ast.argument,undefined,[],scope,selfScope,thisScope);
           
           let coertion = acornSimulator.coerce(variable);
-          
-          
 
           if (!variable || variable.type !== "Literal") {
             console.error("UpdateExpression on non-literal or undefined variable");
@@ -1391,7 +1389,8 @@ let acornSimulator = {
               }
             case "+=":
               {
-                let tarjet = acornSimulator.remember(ast.left.name);
+                let res = acornSimulator.resolve(ast.left);
+                let tarjet = res.child ? res.child : res;//acornSimulator.remember(ast.left.name);
                 let resolution = acornSimulator.resolve(ast.right,def,indexing,scope,selfScope,thisScope);
                 resolution = resolution.child?resolution.child:resolution;
                 if(resolution.value===_dynamic.properties.any.value) tarjet.value = _dynamic.properties.any;
@@ -1760,7 +1759,9 @@ let acornSimulator = {
           break;
         }
         case "MemberExpression":{
-          let object = ast.object.type === "MemberExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).parent.name) : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
+          //console.log(ast.object.type === "MemberExpression" ? acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope) : "");
+          //let object = ast.object.type === "MemberExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).parent.name) : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
+          let object = ast.object.type === "MemberExpression" ? acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).child : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
           
           switch(object.type){
             case "Object": {
