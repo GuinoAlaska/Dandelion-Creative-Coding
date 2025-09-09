@@ -1690,6 +1690,7 @@ let acornSimulator = {
         }
         case "CallExpression":{
           let resolution = acornSimulator.resolve(ast.callee,undefined,[],scope,undefined,thisScope);
+          
           if(resolution.value === _dynamic.properties.any.value){
             console.warn("trying to execute dynamicly");
             acornSimulator.safe = false;
@@ -1745,7 +1746,7 @@ let acornSimulator = {
               for(let arg of ast.arguments){
                 args.push(acornSimulator.resolve(arg,undefined,indexing,scope,selfScope,thisScope));
               }
-              return callee.run(...args);
+              return callee.construct(...args);
             case "Literal":
               if(callee.value === _dynamic.properties.any.value){
                 console.warn(`Trying to initialize a new dynamic`);
@@ -1760,15 +1761,14 @@ let acornSimulator = {
           break;
         }
         case "MemberExpression":{
-          let object = ast.object.type === "MemberExpression" || ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
-          
-          
+          let object = ast.object.type === "MemberExpression" || ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).parent.name) : acornSimulator.remember(ast.object.name);
 
           switch(object.type){
             case "Object": {
+              
               let prop = ast.computed ? acornSimulator.coerce(acornSimulator.resolve(ast.property,undefined,[],scope,ast.object,thisScope)).value : ast.property.name;
               let child = object.properties[prop];
-              child = child?child.child?child.child:child:undefined;
+              child = child?child.child?child.child:child:{type: "Literal", blocked:false, value:undefined};
               let toreturn = {parent:ast.object, child: child ? child.blocked === undefined? acornSimulator.remember("_object_").properties[prop]: child: acornSimulator.remember("_object_").properties[prop]};
               
               if(toreturn.child){
@@ -1876,7 +1876,9 @@ let acornSimulator = {
     return {type: "Literal", value:undefined};
   },
   call: (resolution,callee,argus,scope,thisScope)=>{
-    let mem = acornSimulator.remember(callee.type === "Identifier" ? callee.name : "undefined");
+    //console.log(acornSimulator.resolve(callee,undefined,[],scope,undefined,thisScope));
+    let mem = acornSimulator.remember(callee.type === "Identifier" ? callee.name : callee.type === "MemberExpression" ? "undefined" : "undefined");
+    
     if(resolution.type === "Evaluation") {
       let args = [];
       for(let arg of argus){
@@ -1966,7 +1968,6 @@ function acornScanner(userCode){
     let pcode = acorn.parse(userCode, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
     acornSimulator.simulate(pcode,"main",undefined);
     
-    /*
     externals = extPool2;
     
     acornSimulator.simulate(acorn.parse(`
@@ -1992,12 +1993,11 @@ function acornScanner(userCode){
       gamepadDisconnected(_Dynamic_.any);
     `, { ecmaVersion: 'latest', sourceType: 'module', locations: true }),"main",undefined);
     acornSimulator.simulate(acorn.parse(`draw;`, { ecmaVersion: 'latest', sourceType: 'module', locations: true }), "main", undefined, {dynamic:true});
-    
-    //*/
   }catch(err){
     dropError("",err);
     acornSimulator.safe = false;
   }
+  console.log("memory:",acornSimulator.memory);
   return acornSimulator.safe;
 }
 
@@ -2115,10 +2115,10 @@ let ExternalBuilder = (description,custom,pool)=>{
 function getExternals1(){
 	let pool = [];
   ExternalBuilder("_Dynamic_.any",{value:{}},pool).build();
-  ExternalBuilder("_Dynamic_.possibilities",{
+  /*ExternalBuilder("_Dynamic_.possibilities",{
     call:(...args)=>{return {type: "Literal", value: {possibilities:[...args]}};},
     get:()=>{return {type:"Literal",value:undefined};}
-  },pool).build();
+  },pool).build();*/
   const selfHandledFunctions = ["preload","setup","draw","mousePressed","mouseReleased","mouseClicked","mouseMoved","mouseDragged","mouseWheel","keyPressed","keyReleased","keyTyped","touchStarted","touchMoved","touchEnded","windowResized","deviceMoved","deviceTurned","deviceShaken","gamepadConnected","gamepadDisconnected"];
   for(let p5fn of selfHandledFunctions){
     ExternalBuilder(p5fn+"()",{undefine:true},pool).build();
@@ -2194,6 +2194,7 @@ function getExternals1(){
     "localStorage",
   ]);
 
+  let specialExternals = [];
   for(let al of allowedGlobals){
     ExternalBuilder(typeof globalThis[al] === "function"?al+"()":al,{},pool).build();
     let deepness = 0;
@@ -2217,6 +2218,7 @@ function getExternals1(){
             if(subtitle[0]==='.'){
               subtitle=subtitle.substring(1,subtitle.length);
             }
+            specialExternals.push(subtitle);
           }else{
             subtitle = title+prop;
             //console.log(subtitle);
@@ -2285,6 +2287,87 @@ function getExternals1(){
       element.call = ()=>{return externals.find(ext=>ext.name === "_Dynamic_").properties.any}
     }else{
       element.value = pool.find(ext=>ext.name === "_Dynamic_").properties.any.value;
+    }
+  }
+
+  for(let sp of specialExternals){
+    let external = pool.find(ext=>ext.name===sp)
+    if(external){
+      function undefine(external){
+        if(external.type === "Evaluation"){
+          external.call = ()=>{return {type:"Literal", blocked:false, value:undefined}};
+        } else if (external.type === "Object"){
+          for(let k of Object.keys(external.properties)){
+            undefine(external.properties[k]);
+          };
+        } else {
+          //console.log(external);
+        }
+      }
+
+      undefine(external);
+    }
+  }
+
+  pool.find(ext=>ext.name==="eval").call=(...args)=>{
+    try{
+      let coertion = acornSimulator.coerce(args[0]);
+      console.log(coertion);
+      let parsedCode = acorn.parse(coertion.value, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
+      acornSimulator.simulate(parsedCode,"main",undefined);
+    }catch(e){
+      dropError("",e);
+      acornSimulator.safe = false;
+    }
+  };
+
+  let Func = pool.find(ext=>ext.name==="Function");
+  Func.call=(...args)=>{
+    return Func.construct(...args);
+  };
+  Func.construct=(...args)=>{
+    try{
+      let argus = []
+      for(let arg of args){
+        argus.push(acornSimulator.coerce(arg).value);
+      }
+      argus.pop();
+      let coertion = acornSimulator.coerce(args[args.length-1]);
+      let parsedCode = acorn.parse(`function a(${argus.join(',')}){${coertion.value}}`, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
+      ast = parsedCode.body[0];
+      return {
+        type:"Function",
+        blocked: false,
+        properties:{},
+        id:null,
+        params:ast.params,
+        body:ast.body.body
+      }
+    }catch(e){
+      dropError("",e);
+      acornSimulator.safe = false;
+    }
+  };
+
+  let arr = pool.find(ext=>ext.name==="_array_");
+  for(let k of Object.keys(arr.properties)){
+    if(arr.properties[k].type==="Evaluation"){
+      arr.properties[k].call = (...args)=>{
+        return {type:"Literal",value:arr.properties[k].thisValue.elements[k](...args)};
+      };
+      arr.properties[k].get = ()=>{return {type:"Literal", value:`function ${k}(){[native code]}`}};
+    };
+  }
+
+  let obj=pool.find(ext=>ext.name==="_object_");
+  let objProp=["toLocaleString","toString"];
+  for(let k of objProp){
+    if(obj.properties[k].type==="Evaluation"){
+      console.log(obj.properties[k]);
+      obj.properties[k].call = (...args)=>{
+        return {type:"Literal",value:obj.properties[k].thisValue.properties[k](...args)};
+      };
+      obj.properties[k].get = ()=>{return {type:"Literal", value:`function ${k}(){[native code]}`}};
     }
   }
   
@@ -2688,8 +2771,6 @@ function getExternals2(){
     let c = p.createCanvas(100, 100);
     c.hide(); // p5 has a built-in `.hide()` method
   };});
-  //console.log(dummy.canvas)
-  //dummy.canvas.style.display = 'none';
   let proto = Object.getPrototypeOf(dummy);
   let keys = Object.getOwnPropertyNames(proto);
 
