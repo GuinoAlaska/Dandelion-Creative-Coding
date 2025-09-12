@@ -113,12 +113,12 @@ exportBtn.addEventListener('click', () => {
             }
 
             gatheringCode+=file.editor.getValue()+"\n";
-            if(!scanCode(file.editor.getValue(),i)){
+            if(!acornScanner(file.editor.getValue(),i)){
                 safe=false;
             }
             i++;
         }
-        if(!scanCode(gatheringCode)){
+        if(!acornScanner(gatheringCode)){
             safe=false;
         }
 
