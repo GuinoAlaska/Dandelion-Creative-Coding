@@ -1,7 +1,7 @@
 /*
             < < < < Author: Jonadab Moiseyev Olvera Marichal > > > >
     > Date Created: 15/04/2025
-    > Last Updated: 03/09/2025
+    > Last Updated: 15/09/2025
     > Project Description: This is a fully independent project — an IDE built entirely solo, designed to run p5.js code in a custom way.
 
     ┌──────────────── - - <<<<<<<< Copyright Notice: >>>>>>>> - - ────────────────┐

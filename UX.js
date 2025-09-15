@@ -874,6 +874,68 @@ document.getElementById('mobile-help-close-btn').addEventListener('click', () =>
     }, 300);
 });
 
+document.getElementById('save-file-mobile').addEventListener('click', () => {
+    saveProject();
+});
+
+document.getElementById('undo-mobile').addEventListener('click', () => {
+    IDEEditorUndo();
+});
+
+document.getElementById('redo-mobile').addEventListener('click', () => {
+    IDEEditorRedo();
+});
+
+document.getElementById('cut-mobile').addEventListener('click', () => {
+    const selectedText = editor.getSelection();
+    if (selectedText) {
+        navigator.clipboard.writeText(selectedText).then(() => {
+            editor.replaceSelection('');
+        }).catch(err => {
+            console.error('Clipboard write failed: ', err);
+        });
+    }
+});
+
+document.getElementById('copy-mobile').addEventListener('click', () => {
+    const selectedText = editor.getSelection();
+    if (selectedText) {
+        navigator.clipboard.writeText(selectedText).catch(err => {
+            console.error('Clipboard write failed: ', err);
+        });
+    }
+});
+
+document.getElementById('paste-mobile').addEventListener('click', () => {
+    navigator.clipboard.readText().then(text => {
+        editor.replaceSelection(text);
+    }).catch(err => {
+        console.error('Clipboard read failed: ', err);
+    });
+});
+
+document.getElementById('sort-mobile').addEventListener('click', () => {
+    IDEEditorSort();
+});
+
+document.getElementById('run-mobile').addEventListener('click', () => {
+    IDERunSketch();
+});
+
+document.getElementById('stop-mobile').addEventListener('click', () => {
+    IDEStopSketch();
+});
+
+document.getElementById('toggle-tabs-mobile').addEventListener('click', () => {
+    document.getElementById('tabs-panel').classList.toggle('hidden');
+    document.getElementById('resizer-horizontal-left').classList.toggle('hidden');
+});
+
+document.getElementById('toggle-console-mobile').addEventListener('click', () => {
+    document.getElementById('console-panel').classList.toggle('hidden');
+    document.getElementById('resizer-vertical-left').classList.toggle('hidden');
+});
+
 // Keybind handler
 document.addEventListener('keydown', function (event) {
     // Prevent default behavior for handled shortcuts
@@ -1211,8 +1273,13 @@ function saveProject() {
     });
     localStorage.setItem(SAVE_KEY, JSON.stringify(dummy));
 
-    document.getElementById('project-status').innerHTML = "Project saved";
-    document.getElementById('project-status').style.color = '#888';
+    if (window.isMobile) {
+        document.getElementById('mobile-project-status').innerHTML = "Project saved";
+        document.getElementById('mobile-project-status').style.color = '#888';
+    } else {
+        document.getElementById('project-status').innerHTML = "Project saved";
+        document.getElementById('project-status').style.color = '#888';
+    }
 }
 
 let loading=false;
@@ -1337,8 +1404,13 @@ function loadProject() {
     }
     openFile(0);
     
-    document.getElementById('project-status').innerHTML = "Project saved";
-    document.getElementById('project-status').style.color = '#888';
+    if (window.isMobile) {
+        document.getElementById('mobile-project-status').innerHTML = "Project saved";
+        document.getElementById('mobile-project-status').style.color = '#888';
+    } else {
+        document.getElementById('project-status').innerHTML = "Project saved";
+        document.getElementById('project-status').style.color = '#888';
+    }
     document.querySelectorAll('#tabs-list .tab').forEach(tab => {
         tab.style.setProperty('--tab-active-border-color', '#486');
     });

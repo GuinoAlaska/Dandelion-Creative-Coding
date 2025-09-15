@@ -50,6 +50,14 @@ Dandelion-6 (24/06/2025): <Security level>
     Version: 2025-A9_release
     Description:
         this["document"].body["innerHTML"] = "pwned!"
-    Priority: Extremelly Hight
+    Priority: Extremely Hight
     Status: Solved (03/09/2025)
     Notes: with a lot of effort, this problem is solved via a full Safety Scanner implementation, it still migth have errors, but for now, its the best we can have.
+
+Dandelion-7 (15/09/2025): Mobile burger menu buttons not working
+    Version: 2025-A12_release
+    Description:
+        On mobile, the buttons inside the burger menu were unresponsive and did not trigger any actions.
+    Priority: medium
+    Status: Solved (15/09/2025)
+    Notes: Fixed event listeners for mobile menu buttons; now all actions work as expected.

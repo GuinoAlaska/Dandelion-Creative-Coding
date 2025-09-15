@@ -37,8 +37,14 @@ const editorChangeFunction = (instance) => {
         CodePaused = false;
     }
     
-    document.getElementById('project-status').innerHTML = "Project not saved";
-    document.getElementById('project-status').style.color = '#F5A';
+
+    if (window.isMobile) {
+        document.getElementById('mobile-project-status').innerHTML = "Project not saved";
+        document.getElementById('mobile-project-status').style.color = '#F5A';
+    } else {
+        document.getElementById('project-status').innerHTML = "Project not saved";
+        document.getElementById('project-status').style.color = '#F5A';
+    }
 }
 
 function newFile() {
