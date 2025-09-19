@@ -508,13 +508,13 @@ function reloadTopSketch(userCode) {
 
 
         p.evaluateFromConsole = (code) => {
-            try {
+            /*try {
                 with (p) {
                     return { type: "log", log: eval(code) };
                 }
             } catch (err) {
                 return { type: "error", error: err.toString() };
-            }
+            }*/
         };
 
     };

@@ -104,7 +104,18 @@ let acornSimulator = {
       }
       return ext
     };
-    dropError("","Access to undefined variable or unhandled external.");
+    let dummy = externals.find(mem => mem.name === "scannerP5Dummy")
+    if(dummy){
+      let ext = dummy.properties[name];
+      if(ext){
+        if(ext.blocked){
+          console.warn("Attempt to access blocked external");
+          acornSimulator.safe = false;
+        }
+        return ext
+      }
+    }
+    dropError("","Access to undefined variable or unhandled external '"+name+"'.");
     acornSimulator.safe = false;
     return externals.find(ext => ext.name === "undefined");
   },
@@ -2004,6 +2015,16 @@ function acornScanner(userCode){
   return acornSimulator.safe;
 }
 
+let scannerP5Dummy = new p5((p) => {
+  p.setup = function () {
+    let c = p.createCanvas(1, 1);
+
+    console.log(p.createCanvas);
+    p.createCanvas = ()=>{};
+    c.hide();
+  };
+});
+
 let ExternalBuilder = (description,custom,pool)=>{
   let split = description.split(".")
   let isFunction = split[split.length-1].substring(split[split.length-1].length-2)==="()";
@@ -2704,6 +2725,7 @@ function getExternals2(){
     "TAU",
     "TWO_PI",
     "VERSION",
+    "WEBGL",
   ]
 
   let p5Dynamics = [
@@ -2770,11 +2792,7 @@ function getExternals2(){
     "isLooping",
   ]
 
-	let dummy = new p5((p)=>{p.setup = function () {
-    let c = p.createCanvas(100, 100);
-    c.hide(); // p5 has a built-in `.hide()` method
-  };});
-  let proto = Object.getPrototypeOf(dummy);
+  let proto = Object.getPrototypeOf(scannerP5Dummy);
   let keys = Object.getOwnPropertyNames(proto);
 
   for(let k of keys){
@@ -2782,11 +2800,15 @@ function getExternals2(){
     if(external){
       pool = pool.filter(ext => ext!==external);
     }
+    external = pool.find(ext => ext.name==="scannerP5Dummy."+k);
+    if(external){
+      pool = pool.filter(ext => ext!==external);
+    }
   }
 
   for(let al of p5BuiltIns){
-    let ext = ExternalBuilder(typeof proto[al] === "function"?al+"()":al,{},pool).build();
-    //console.log(ext);
+    let ext = ExternalBuilder(typeof proto[al] === "function"? "scannerP5Dummy."+al+"()":"scannerP5Dummy."+al,{},pool).build();
+    
     let deepness = 0;
     let visits = [];
     function externProperties(obj,title){
@@ -2812,7 +2834,7 @@ function getExternals2(){
             subtitle = title+prop;
             //console.log(subtitle);
           }
-          ExternalBuilder(typeof obj2 === "function"?subtitle+"()":subtitle,{},pool).build();
+          ExternalBuilder(typeof obj2 === "function"?"scannerP5Dummy."+subtitle+"()":"scannerP5Dummy."+subtitle,{},pool).build();
           if(typeof obj2 === "object" || typeof obj2 === "function"){
             let tit = subtitle+".";
             visits.push(obj);
@@ -2832,7 +2854,7 @@ function getExternals2(){
   }
 
   for(let d of p5Dynamics){
-    let external = pool.find(ext => ext.name===d);
+    let external = pool.find(ext => ext.name==="scannerP5Dummy."+d);
     let _dynamic_ = pool.find(ext => ext.name ==="_Dynamic_").properties.any
     if(external){
       switch(external.type){
@@ -2848,6 +2870,8 @@ function getExternals2(){
       }
     }
   }
+
+  pool.find(ext=>ext.name==="scannerP5Dummy").properties["WEBGL"]={type:"Literal",blocked:false,value:"webgl"};
   
   return pool;
 }

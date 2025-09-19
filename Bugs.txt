@@ -61,3 +61,11 @@ Dandelion-7 (15/09/2025): Mobile burger menu buttons not working
     Priority: medium
     Status: Solved (15/09/2025)
     Notes: Fixed event listeners for mobile menu buttons; now all actions work as expected.
+
+Dandelion-8 (19/09/2025): p5 standard functions not working except draw
+    Version: 2025-A13_release
+    Description:
+        All standard p5 functions (like setup, mousePressed, keyPressed, etc.) stopped working, only draw was being called.
+    Priority: hight
+    Status: Solved (19/09/2025)
+    Notes: Issue was caused by a recent refactor that broke the function registration. Restored correct registration for all standard p5 functions.
