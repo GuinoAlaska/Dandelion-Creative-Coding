@@ -2019,7 +2019,6 @@ let scannerP5Dummy = new p5((p) => {
   p.setup = function () {
     let c = p.createCanvas(1, 1);
 
-    console.log(p.createCanvas);
     p.createCanvas = ()=>{};
     c.hide();
   };
