@@ -69,3 +69,11 @@ Dandelion-8 (19/09/2025): p5 standard functions not working except draw
     Priority: hight
     Status: Solved (19/09/2025)
     Notes: Issue was caused by a recent refactor that broke the function registration. Restored correct registration for all standard p5 functions.
+
+Dandelion-9 (20/09/2025): Scanner glitches on property access after call
+    Version: 2025-A13_release
+    Description:
+        The scanner fails when parsing lines like "foo().prop", where a property is accessed immediately after a function call.
+    Priority: medium
+    Status: solved (20/09/2025)
+    Notes: gg ez, I just updated the logic for MemberExpression to handle it.

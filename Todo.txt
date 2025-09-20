@@ -1,6 +1,10 @@
 # Todo List
 
 #### Update
+- [ ] Main Page
+- [ ] projects Page
+- < > Ads
+- [?] Auto-save functionality
 
 ## Core Features
 - [/] Code editor with syntax highlighting
@@ -10,7 +14,7 @@
 - [?] File management system (create, open, save, delete files)
 - [/] Support for multiple tabs
 - [?] Auto-save functionality
-- [ ] make bulk download feature much more accessible and intuitive than OpenProcesing`s
+- [?] make bulk download feature much more accessible and intuitive than OpenProcesing`s
 
 ## User Interface
 - [/] Minimalistic and clean design
@@ -22,6 +26,8 @@
 - [/] EditorView prevent draw when hidden
 - [/] EditorView mouse control
 - [/] Support for multiple tabs
+- [ ] Main Page
+- [ ] projects Page
 
 ## p5.js Integration
 - [/] Built-in p5.js library support
@@ -47,13 +53,30 @@
 - [/] Mobile-friendly interface
 - [?] Offline mode support
 - [/] Full screen Execution
+- [?] Copilot
+- [?] Copilot for school
 
 ## Documentation
 - [?] Built-in guide section
-- [ ] Tutorials for beginners
+- [?] Tutorials for beginners
 - [/] API reference for p5.js
+- [?] Own documentation
 
 ## Deployment
 - [?] Host on a reliable server
 - [?] Ensure scalability for multiple users
 - [?] Secure user data and projects
+
+## Originals
+- [?] Macro recording
+- [?] Line-by-line execution
+- [?] Expression-by-expression execution
+- |?| ADHD aids (Who cares?, i do!)
+- |?| Epilepsy aids (Who cares?, i do!)
+- |?| Blindness aids (Who cares?, i do!)
+
+## Monetization
+- < > Ads
+- <?> Premium
+- <?> Scholar
+- <?> Enterprise

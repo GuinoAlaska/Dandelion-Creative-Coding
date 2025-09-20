@@ -1772,8 +1772,9 @@ let acornSimulator = {
         case "MemberExpression":{
           //console.log(ast.object.type === "MemberExpression" ? acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope) : "");
           //let object = ast.object.type === "MemberExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).parent.name) : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
-          let object = ast.object.type === "MemberExpression" ? acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).child : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
-          
+          let resolution = acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope)
+          let object = ast.object.type === "MemberExpression" ? resolution.child : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : ast.object.type === "CallExpression" ? resolution : acornSimulator.remember(ast.object.name);
+
           switch(object.type){
             case "Object": {
               
