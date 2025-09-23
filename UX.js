@@ -969,6 +969,7 @@ document.addEventListener('keydown', function (event) {
     // Step: Ctrl+Shift+S (example, you can change this)
     if (ctrlKey && event.altKey && event.key === 's') {
         event.preventDefault();
+        event.stopPropagation();
         IDERunSketchStep();
     }
 });
