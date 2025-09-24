@@ -189,6 +189,15 @@ console.warn = (...args) => {
 console.error = (...args) => {
     appendToConsole('error', args);
     originalConsole.error(...args);
+
+    // Try to extract error position if first argument is an Error
+    if (args[0] instanceof Error && args[0].stack) {
+        const mapped = mapErrorToEditor(args[0]);
+        if (mapped.length > 0) {
+            const first = mapped[0];
+            originalConsole.error(`(at line ${first.line}, column ${first.column})`);
+        }
+    }
 };
 
 console.clear = () => {
