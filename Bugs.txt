@@ -55,7 +55,7 @@ Dandelion-6 (24/06/2025): <Security level>
     Notes: with a lot of effort, this problem is solved via a full Safety Scanner implementation, it still migth have errors, but for now, its the best we can have.
 
 Dandelion-7 (15/09/2025): Mobile burger menu buttons not working
-    Version: 2025-A12_release
+    Version: 2025-A11_release
     Description:
         On mobile, the buttons inside the burger menu were unresponsive and did not trigger any actions.
     Priority: medium
@@ -63,7 +63,7 @@ Dandelion-7 (15/09/2025): Mobile burger menu buttons not working
     Notes: Fixed event listeners for mobile menu buttons; now all actions work as expected.
 
 Dandelion-8 (19/09/2025): p5 standard functions not working except draw
-    Version: 2025-A13_release
+    Version: 2025-A11_release
     Description:
         All standard p5 functions (like setup, mousePressed, keyPressed, etc.) stopped working, only draw was being called.
     Priority: hight
@@ -71,9 +71,41 @@ Dandelion-8 (19/09/2025): p5 standard functions not working except draw
     Notes: Issue was caused by a recent refactor that broke the function registration. Restored correct registration for all standard p5 functions.
 
 Dandelion-9 (20/09/2025): Scanner glitches on property access after call
-    Version: 2025-A13_release
+    Version: 2025-A11_release
     Description:
         The scanner fails when parsing lines like "foo().prop", where a property is accessed immediately after a function call.
     Priority: medium
     Status: solved (20/09/2025)
     Notes: gg ez, I just updated the logic for MemberExpression to handle it.
+
+Dandelion-10 (20/09/2025): safety scanner Scope context is off
+    Version: 2025-A11_release
+    Description:
+        Variables and functions are sometimes resolved in the wrong scope, leading to unexpected behavior when using nested blocks or closures.
+    Priority: hight
+    Status: suspended (23/09/2025)
+    Notes: Needs investigation into how scope chains are managed during code execution and parsing.
+
+Dandelion-11 (20/09/2025): Camera frustum mismatch with orbitControl()
+    Version: 2025-A11_release
+    Description:
+        When using orbitControl(), the frustum in the editor view appears different from what is seen when zooming in, causing a camera glitch.
+    Priority: medium
+    Status: solved (24/09/2025)
+    Notes: That was easy, i also improved ux on the topic.
+
+Dandelion-12 (20/09/2025): Constants can mutate during safety simulation
+    Version: 2025-A11_release
+    Description:
+        Constants declared with 'const' are not enforced as immutable in the safety simulation; their values can be changed at runtime.
+    Priority: hight
+    Status: open (20/09/2025)
+    Notes: Needs implementation of proper constant enforcement.
+
+Dandelion-13 (22/09/2025): Edge browser downloads page instead of saving project
+    Version: 2025-A11_release
+    Description:
+        When attempting to save a project in Edge browser, the page was downloaded instead of saving the project due to a missing line in the event listener.
+    Priority: medium
+    Status: Solved (22/09/2025)
+    Notes: Added the missing line to the listener to ensure correct save behavior in Edge.

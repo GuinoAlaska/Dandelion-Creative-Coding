@@ -638,61 +638,28 @@ function reloadBottomSketch() {
                     p.rotateX(-pitch);
                     p.rectMode(p.CENTER);
                     // Calculate min and max render distance planes
-                    const minDist = sketchCam.cameraNear;
-                    const maxDist = sketchCam.cameraFar;
                     const camDist = Math.sqrt(
                         Math.pow(sketchCam.centerX - sketchCam.eyeX, 2) +
                         Math.pow(sketchCam.centerY - sketchCam.eyeY, 2) +
                         Math.pow(sketchCam.centerZ - sketchCam.eyeZ, 2)
                     );
 
-                    /*
-                    // Draw min render distance rect
-                    p.stroke(255, 255, 255, 150);
-                    p.strokeWeight(2);
-                    p.noFill();
-                    p.rectMode(p.CENTER);
-                    p.push();
-                    p.translate(0, 0, maxDist);
-                    p.rect(0, 0, p.lerp(0,w,isPerspective?800-camDist+maxDist/camDist:1), p.lerp(0,h,isPerspective?800-camDist+maxDist/camDist:1));
-                    p.pop();
-
-                    // Draw max render distance rect
-                    p.stroke(255, 255, 255, 150);
-                    p.strokeWeight(2);
-                    p.noFill();
-                    p.rectMode(p.CENTER);
-                    p.push();
-                    p.translate(0, 0, minDist);
-                    p.rect(0, 0, p.lerp(0,w,isPerspective?800-camDist+minDist/camDist:1), p.lerp(0,h,isPerspective?800-camDist+minDist/camDist:1));
-                    p.pop();
-
-                    // Draw just render distance rect
-                    p.stroke(255, 255, 255, 150);
-                    p.strokeWeight(2);
-                    p.noFill();
-                    p.rectMode(p.CENTER);
-                    p.push();
-                    p.translate(0, 0, camDist);
-                    p.rect(0, 0, p.lerp(0,w,isPerspective?800-camDist+camDist/800:1), p.lerp(0,h,isPerspective?800-camDist+camDist/800:1));
-                    p.pop();
-                    //*/
-
                     //console.log(sketchCam.fov);
                     const fov = sketchCam.cameraFOV || Math.PI / 8.5;
                     const aspect = sketchCam.aspectRatio || (topP5Instance._renderer.width / topP5Instance._renderer.height);
                     const near = sketchCam.cameraNear;
                     const far = sketchCam.cameraFar;
+                    
 
                     // Calculate frustum corners in camera space
                     function getFrustumCorners(dist) {
                         const h = isPerspective? (2 * Math.tan(fov / 2) * dist) : topP5Instance._renderer.height;
                         const w = isPerspective? (h * aspect) : topP5Instance._renderer.width;
                         return [
-                            [ -w / 2,  h / 2, -dist + camDist ], // top-left
-                            [  w / 2,  h / 2, -dist + camDist ], // top-right
-                            [  w / 2, -h / 2, -dist + camDist ], // bottom-right
-                            [ -w / 2, -h / 2, -dist + camDist ]  // bottom-left
+                            [ -w / 2,  h / 2, -dist + 800 - near ], // top-left
+                            [  w / 2,  h / 2, -dist + 800 - near ], // top-right
+                            [  w / 2, -h / 2, -dist + 800 - near ], // bottom-right
+                            [ -w / 2, -h / 2, -dist + 800 - near ]  // bottom-left
                         ];
                     }
 
@@ -807,13 +774,13 @@ function reloadBottomSketch() {
                         editorCamera.eyeZ -= fz * 0.1;
                     }
                     if(p.keyIsDown(32)){ // Space - reset
-                        editorCamera.centerX = 0;
-                        editorCamera.centerY = 0;
-                        editorCamera.centerZ = 0;
-                        editorCamera.eyeX = 0;
-                        editorCamera.eyeY = 0;
-                        editorCamera.eyeZ = 800;
-                        cam.setPosition(0, 0, 800);
+                        editorCamera.centerX = sketchCam.centerX;
+                        editorCamera.centerY = sketchCam.centerY;
+                        editorCamera.centerZ = sketchCam.centerZ;
+                        editorCamera.eyeX = sketchCam.eyeX;
+                        editorCamera.eyeY = sketchCam.eyeY;
+                        editorCamera.eyeZ = sketchCam.eyeZ;
+                        cam.setPosition(sketchCam.eyeX, sketchCam.eyeY, sketchCam.eyeZ);
                     }
                 }
             }else{
