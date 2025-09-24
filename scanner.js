@@ -716,77 +716,83 @@ let acornSimulator = {
       case "Identifier":
         {
           let tarjet = acornSimulator.remember(id.name);
-          if(tarjet.name !== id.name){
-            break;
+          if(tarjet.kind !== "const"){
+            if(tarjet.name !== id.name){
+              break;
+            }
+            let resolution = acornSimulator.resolve(init,def,indexing,scope,selfScope,thisScope);
+            resolution = resolution.child?resolution.child:resolution;
+            tarjet.type = resolution.type;
+            switch(resolution.type){
+              case "Literal":
+                tarjet.value = resolution.value;
+                tarjet.elements = undefined;
+                tarjet.properties = undefined;
+                tarjet.id = undefined;
+                tarjet.params = undefined;
+                tarjet.body = undefined;
+                tarjet.super = undefined;
+                break;
+              case "Array":
+                tarjet.value = undefined;
+                tarjet.elements = resolution.elements;
+                tarjet.properties = resolution.properties;
+                tarjet.id = undefined;
+                tarjet.params = undefined;
+                tarjet.body = undefined;
+                tarjet.super = undefined;
+                break;
+              case "Object":
+                tarjet.value = undefined;
+                tarjet.elements = undefined;
+                tarjet.properties = resolution.properties;
+                tarjet.id = undefined;
+                tarjet.params = undefined;
+                tarjet.body = undefined;
+                tarjet.super = undefined;
+                break;
+              case "Function":
+                tarjet.value = undefined;
+                tarjet.elements = undefined;
+                tarjet.properties = resolution.properties;
+                tarjet.id = resolution.id;
+                tarjet.params = resolution.params;
+                tarjet.body = resolution.body;
+                tarjet.super = undefined;
+                break;
+              case "ReturnSignal":
+                acornSimulator.resolveVariable(id,resolution.return,def,indexing,scope,selfScope,thisScope,excludedKeys);
+                skip = true;
+                break;
+              case "ArrowFunction":
+                tarjet.value = undefined;
+                tarjet.elements = undefined;
+                tarjet.properties = resolution.properties;
+                tarjet.id = resolution.id;
+                tarjet.params = resolution.params;
+                tarjet.body = resolution.body;
+                tarjet.super = undefined;
+                break;
+              case "Class":
+                tarjet.value = undefined;
+                tarjet.elements = undefined;
+                tarjet.properties = resolution.properties;
+                tarjet.id = resolution.id;
+                tarjet.params = undefined;
+                tarjet.body = resolution.body;
+                tarjet.super = resolution.super;
+                break;
+              default:
+                console.warn(`Unhandled '${resolution.type}' resolution assignation`);
+                acornSimulator.safe = false;
+                break;
+            }
+            return tarjet;
+          }else{
+            console.error(`Cannot assign to constant variable '${id.name}'`);
+            acornSimulator.safe = false;
+            return tarjet;
           }
-          let resolution = acornSimulator.resolve(init,def,indexing,scope,selfScope,thisScope);
-          resolution = resolution.child?resolution.child:resolution;
-          tarjet.type = resolution.type;
-          switch(resolution.type){
-            case "Literal":
-              tarjet.value = resolution.value;
-              tarjet.elements = undefined;
-              tarjet.properties = undefined;
-              tarjet.id = undefined;
-              tarjet.params = undefined;
-              tarjet.body = undefined;
-              tarjet.super = undefined;
-              break;
-            case "Array":
-              tarjet.value = undefined;
-              tarjet.elements = resolution.elements;
-              tarjet.properties = resolution.properties;
-              tarjet.id = undefined;
-              tarjet.params = undefined;
-              tarjet.body = undefined;
-              tarjet.super = undefined;
-              break;
-            case "Object":
-              tarjet.value = undefined;
-              tarjet.elements = undefined;
-              tarjet.properties = resolution.properties;
-              tarjet.id = undefined;
-              tarjet.params = undefined;
-              tarjet.body = undefined;
-              tarjet.super = undefined;
-              break;
-            case "Function":
-              tarjet.value = undefined;
-              tarjet.elements = undefined;
-              tarjet.properties = resolution.properties;
-              tarjet.id = resolution.id;
-              tarjet.params = resolution.params;
-              tarjet.body = resolution.body;
-              tarjet.super = undefined;
-              break;
-            case "ReturnSignal":
-              acornSimulator.resolveVariable(id,resolution.return,def,indexing,scope,selfScope,thisScope,excludedKeys);
-              skip = true;
-              break;
-            case "ArrowFunction":
-              tarjet.value = undefined;
-              tarjet.elements = undefined;
-              tarjet.properties = resolution.properties;
-              tarjet.id = resolution.id;
-              tarjet.params = resolution.params;
-              tarjet.body = resolution.body;
-              tarjet.super = undefined;
-              break;
-            case "Class":
-              tarjet.value = undefined;
-              tarjet.elements = undefined;
-              tarjet.properties = resolution.properties;
-              tarjet.id = resolution.id;
-              tarjet.params = undefined;
-              tarjet.body = resolution.body;
-              tarjet.super = resolution.super;
-              break;
-            default:
-              console.warn(`Unhandled '${resolution.type}' resolution assignation`);
-              acornSimulator.safe = false;
-              break;
-          }
-          return tarjet;
         }
       case "ArrayPattern":
         {

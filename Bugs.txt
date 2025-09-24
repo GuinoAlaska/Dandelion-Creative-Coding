@@ -99,8 +99,8 @@ Dandelion-12 (20/09/2025): Constants can mutate during safety simulation
     Description:
         Constants declared with 'const' are not enforced as immutable in the safety simulation; their values can be changed at runtime.
     Priority: hight
-    Status: open (20/09/2025)
-    Notes: Needs implementation of proper constant enforcement.
+    Status: solved (24/09/2025)
+    Notes: ez.
 
 Dandelion-13 (22/09/2025): Edge browser downloads page instead of saving project
     Version: 2025-A11_release
