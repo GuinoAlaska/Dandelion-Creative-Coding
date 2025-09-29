@@ -109,3 +109,19 @@ Dandelion-13 (22/09/2025): Edge browser downloads page instead of saving project
     Priority: medium
     Status: Solved (22/09/2025)
     Notes: Added the missing line to the listener to ensure correct save behavior in Edge.
+
+Dandelion-14 (27/09/2025): Dynamic variables not set as dynamic
+    Version: 2025-A11_release
+    Description:
+        Some variables intended to be dynamic were not properly flagged as dynamic, causing unexpected static behavior in certain cases.
+    Priority: hight
+    Status: Solved (29/09/2025)
+    Notes: It was a thing about looping external pool.
+
+Dandelion-15 (29/09/2025): p5 variables/functions declaration at externals may have bugs
+    Version: 2025-A11_release
+    Description:
+        There is suspicion that the declaration of p5 variables and functions at the externals may contain bugs. Needs review to ensure correct behavior and compatibility.
+    Priority: medium
+    Status: pending (29/09/2025)
+    Notes: Its just suspicious.
