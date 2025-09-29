@@ -569,11 +569,12 @@ function reloadBottomSketch() {
         };
         
         const isWebGL = topP5Instance._renderer && topP5Instance._renderer.isP3D;
+        let interpol = false;
         p.draw = () => {
             const container = document.getElementById('output-bottom');
             if(isWebGL){
                 p.background(25);
-            
+
                 // Update camera position if editorCamera.eyeX/Y/Z changed
                 if (typeof cam !== "undefined" && cam) {
                     cam.setPosition(editorCamera.eyeX || cam.eyeX, editorCamera.eyeY || cam.eyeY, editorCamera.eyeZ || cam.eyeZ);
@@ -724,6 +725,7 @@ function reloadBottomSketch() {
                         editorCamera.centerX += fx*v;
                         editorCamera.centerY += fy*v;
                         editorCamera.centerZ += fz*v;
+                        interpol = false;
                     }
                     if(p.keyIsDown(83)){ // S
                         editorCamera.eyeX -= fx*v;
@@ -732,6 +734,7 @@ function reloadBottomSketch() {
                         editorCamera.centerX -= fx*v;
                         editorCamera.centerY -= fy*v;
                         editorCamera.centerZ -= fz*v;
+                        interpol = false;
                     }
                     if(p.keyIsDown(65)){ // A
                         editorCamera.eyeX -= rx*v;
@@ -740,6 +743,7 @@ function reloadBottomSketch() {
                         editorCamera.centerX -= rx*v;
                         editorCamera.centerY -= ry*v;
                         editorCamera.centerZ -= rz*v;
+                        interpol = false;
                     }
                     if(p.keyIsDown(68)){ // D
                         editorCamera.eyeX += rx*v;
@@ -748,14 +752,17 @@ function reloadBottomSketch() {
                         editorCamera.centerX += rx*v;
                         editorCamera.centerY += ry*v;
                         editorCamera.centerZ += rz*v;
+                        interpol = false;
                     }
                     if(p.keyIsDown(81)){ // Q - subir
                         editorCamera.eyeY += v;
                         editorCamera.centerY += v;
+                        interpol = false;
                     }
                     if(p.keyIsDown(69)){ // E - bajar
                         editorCamera.eyeY -= v;
                         editorCamera.centerY -= v;
+                        interpol = false;
                     }
                     if(p.keyIsDown(82)){ // R - zoom in
                         let fx = editorCamera.centerX - editorCamera.eyeX;
@@ -764,6 +771,7 @@ function reloadBottomSketch() {
                         editorCamera.eyeX += fx * 0.1;
                         editorCamera.eyeY += fy * 0.1;
                         editorCamera.eyeZ += fz * 0.1;
+                        interpol = false;
                     }
                     if(p.keyIsDown(70)){ // F - zoom out
                         let fx = editorCamera.centerX - editorCamera.eyeX;
@@ -772,15 +780,24 @@ function reloadBottomSketch() {
                         editorCamera.eyeX -= fx * 0.1;
                         editorCamera.eyeY -= fy * 0.1;
                         editorCamera.eyeZ -= fz * 0.1;
+                        interpol = false;
                     }
                     if(p.keyIsDown(32)){ // Space - reset
-                        editorCamera.centerX = sketchCam.centerX;
-                        editorCamera.centerY = sketchCam.centerY;
-                        editorCamera.centerZ = sketchCam.centerZ;
-                        editorCamera.eyeX = sketchCam.eyeX;
-                        editorCamera.eyeY = sketchCam.eyeY;
-                        editorCamera.eyeZ = sketchCam.eyeZ;
-                        cam.setPosition(sketchCam.eyeX, sketchCam.eyeY, sketchCam.eyeZ);
+                        interpol = true;
+                    }
+                    if (p.mouseIsPressed) {
+                        interpol = false;
+                    }
+                    if(interpol){
+                        const smooth = 0.2;
+
+                        editorCamera.centerX = p.lerp(editorCamera.centerX, sketchCam.centerX, smooth);
+                        editorCamera.centerY = p.lerp(editorCamera.centerY, sketchCam.centerY, smooth);
+                        editorCamera.centerZ = p.lerp(editorCamera.centerZ, sketchCam.centerZ, smooth);
+                        editorCamera.eyeX = p.lerp(editorCamera.eyeX, sketchCam.eyeX, smooth);
+                        editorCamera.eyeY = p.lerp(editorCamera.eyeY, sketchCam.eyeY, smooth);
+                        editorCamera.eyeZ = p.lerp(editorCamera.eyeZ, sketchCam.eyeZ, smooth);
+                        cam.setPosition(editorCamera.eyeX, editorCamera.eyeY, editorCamera.eyeZ);
                     }
                 }
             }else{

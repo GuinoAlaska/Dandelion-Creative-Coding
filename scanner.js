@@ -2860,25 +2860,25 @@ function getExternals2(){
   }
 
   for(let d of p5Dynamics){
-    let external = pool.find(ext => ext.name==="scannerP5Dummy."+d);
+    let scanner = pool.find(ext => ext.name === "scannerP5Dummy");
     let _dynamic_ = pool.find(ext => ext.name ==="_Dynamic_").properties.any
-    if(external){
-      switch(external.type){
+    if(scanner){
+      switch(scanner.properties[d].type){
         case "Literal":
         case "Array":
         case "Object":
-          external = _dynamic_;
+          scanner.properties[d] = _dynamic_;
           break;
         case "Evaluation":
-          external.construct = ()=>{return _dynamic_};
-          external.call = ()=>{return _dynamic_};
+          scanner.properties[d].construct = ()=>{return _dynamic_};
+          scanner.properties[d].call = ()=>{return _dynamic_};
           break;
       }
     }
   }
 
   pool.find(ext=>ext.name==="scannerP5Dummy").properties["WEBGL"]={type:"Literal",blocked:false,value:"webgl"};
-  
+
   return pool;
 }
 
