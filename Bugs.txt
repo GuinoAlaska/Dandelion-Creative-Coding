@@ -117,11 +117,27 @@ Dandelion-14 (27/09/2025): Dynamic variables not set as dynamic
     Priority: hight
     Status: Solved (29/09/2025)
     Notes: It was a thing about looping external pool.
+    
+Dandelion-15 (27/09/2025): for-of loop not handled properly
+    Version: 2025-A11_release
+    Description:
+        The for-of loop is not parsed or executed correctly, leading to unexpected behavior. All loop constructs should be reviewed for proper handling.
+    Priority: hight
+    Status: solved (30/09/2025)
+    Notes: Solved. It was just a missing line for the for-of loop, not that bad.
 
-Dandelion-15 (29/09/2025): p5 variables/functions declaration at externals may have bugs
+Dandelion-16 (29/09/2025): p5 variables/functions declaration at externals may have bugs
     Version: 2025-A11_release
     Description:
         There is suspicion that the declaration of p5 variables and functions at the externals may contain bugs. Needs review to ensure correct behavior and compatibility.
     Priority: medium
-    Status: pending (29/09/2025)
+    Status: pending (30/09/2025)
     Notes: Its just suspicious.
+
+Dandelion-17 (30/09/2025): 'Maximum call stack size exceeded' when using background() inside p5 static function
+    Version: 2025-A11_release
+    Description:
+        Calling background() inside a static p5 function causes a 'Maximum call stack size exceeded' error.
+    Priority: hight
+    Status: pending (30/09/2025)
+    Notes: Needs investigation into how static functions interact with p5's rendering and function call stack.

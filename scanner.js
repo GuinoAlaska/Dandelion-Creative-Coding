@@ -148,6 +148,7 @@ let acornSimulator = {
         case "IfStatement":
         case "ForStatement":
         case "ForInStatement":
+        case "ForOfStatement":
         case "WhileStatement":
         case "DoWhileStatement":
         case "SwitchStatement":
@@ -1986,11 +1987,13 @@ function acornScanner(userCode){
   try{
 		externals = extPool1;
 
+    console.log("(1990) 'simulating userCode...'");
     let pcode = acorn.parse(userCode, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
     acornSimulator.simulate(pcode,"main",undefined);
     
     externals = extPool2;
     
+    console.log("(1996) 'simulating static p5 functions'");
     acornSimulator.simulate(acorn.parse(`
       preload();
       setup();
@@ -2013,6 +2016,7 @@ function acornScanner(userCode){
       gamepadConnected(_Dynamic_.any);
       gamepadDisconnected(_Dynamic_.any);
     `, { ecmaVersion: 'latest', sourceType: 'module', locations: true }),"main",undefined);
+    console.log("(1996) 'simulating p5 draw function'");
     acornSimulator.simulate(acorn.parse(`draw;`, { ecmaVersion: 'latest', sourceType: 'module', locations: true }), "main", undefined, {dynamic:true});
   }catch(err){
     dropError("",err);
