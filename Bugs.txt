@@ -139,5 +139,13 @@ Dandelion-17 (30/09/2025): 'Maximum call stack size exceeded' when using backgro
     Description:
         Calling background() inside a static p5 function causes a 'Maximum call stack size exceeded' error.
     Priority: hight
-    Status: solved (30/09/2025)
+    Status: solved (01/10/2025)
     Notes: Solved, however, I'm sure there is a whole family of bugs related to this.
+
+Dandelion-18 (01/10/2025): Ghost resizer misplaced at mobile when running
+    Version: 2025-A11_release
+    Description:
+        There is a ghost resizer element that appears misplaced on mobile devices when running the project. It seems to be possibly tied to the console height.
+    Priority: medium
+    Status: pending (01/10/2025)
+    Notes: Needs investigation into mobile layout and console resizing logic.
