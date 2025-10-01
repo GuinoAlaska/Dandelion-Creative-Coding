@@ -139,5 +139,5 @@ Dandelion-17 (30/09/2025): 'Maximum call stack size exceeded' when using backgro
     Description:
         Calling background() inside a static p5 function causes a 'Maximum call stack size exceeded' error.
     Priority: hight
-    Status: pending (30/09/2025)
-    Notes: Needs investigation into how static functions interact with p5's rendering and function call stack.
+    Status: solved (30/09/2025)
+    Notes: Solved, however, I'm sure there is a whole family of bugs related to this.

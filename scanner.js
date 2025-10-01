@@ -2879,6 +2879,12 @@ function getExternals2(){
   }
 
   pool.find(ext=>ext.name==="scannerP5Dummy").properties["WEBGL"]={type:"Literal",blocked:false,value:"webgl"};
+  
+  pool.find(ext => ext.name === "scannerP5Dummy").properties["background"].call = (...args) => { return { type: "Literal", blocked: false, value: undefined }; };
+  pool.find(ext => ext.name === "scannerP5Dummy").properties["background"].construct = (...args) => {
+    dropError("", "background is not a constructor");
+    return { type: "Literal", blocked: false, value: undefined };
+  };
 
   return pool;
 }
