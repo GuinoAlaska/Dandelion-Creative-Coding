@@ -83,7 +83,7 @@ Dandelion-10 (20/09/2025): safety scanner Scope context is off
     Description:
         Variables and functions are sometimes resolved in the wrong scope, leading to unexpected behavior when using nested blocks or closures.
     Priority: hight
-    Status: suspended (23/09/2025)
+    Status: pending (23/09/2025)
     Notes: Needs investigation into how scope chains are managed during code execution and parsing.
 
 Dandelion-11 (20/09/2025): Camera frustum mismatch with orbitControl()
