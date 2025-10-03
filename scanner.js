@@ -596,6 +596,10 @@ let acornSimulator = {
               variable.body = resolution.body;
               variable.properties = resolution.properties;
               break;
+            case "Closure":
+              variable.value = resolution.value;
+              variable.env = resolution.env;
+              break;
             case "Evaluation":
               acornSimulator.declareVariable(id,resolution.get(),def,kind,indexing,scope,selfScope,thisScope,excludedKeys);
               skip = true;
@@ -733,6 +737,7 @@ let acornSimulator = {
                 tarjet.params = undefined;
                 tarjet.body = undefined;
                 tarjet.super = undefined;
+                tarjet.env = undefined;
                 break;
               case "Array":
                 tarjet.value = undefined;
@@ -742,6 +747,7 @@ let acornSimulator = {
                 tarjet.params = undefined;
                 tarjet.body = undefined;
                 tarjet.super = undefined;
+                tarjet.env = undefined;
                 break;
               case "Object":
                 tarjet.value = undefined;
@@ -751,6 +757,7 @@ let acornSimulator = {
                 tarjet.params = undefined;
                 tarjet.body = undefined;
                 tarjet.super = undefined;
+                tarjet.env = undefined;
                 break;
               case "Function":
                 tarjet.value = undefined;
@@ -760,6 +767,7 @@ let acornSimulator = {
                 tarjet.params = resolution.params;
                 tarjet.body = resolution.body;
                 tarjet.super = undefined;
+                tarjet.env = undefined;
                 break;
               case "ReturnSignal":
                 acornSimulator.resolveVariable(id,resolution.return,def,indexing,scope,selfScope,thisScope,excludedKeys);
@@ -773,6 +781,7 @@ let acornSimulator = {
                 tarjet.params = resolution.params;
                 tarjet.body = resolution.body;
                 tarjet.super = undefined;
+                tarjet.env = undefined;
                 break;
               case "Class":
                 tarjet.value = undefined;
@@ -782,7 +791,17 @@ let acornSimulator = {
                 tarjet.params = undefined;
                 tarjet.body = resolution.body;
                 tarjet.super = resolution.super;
+                tarjet.env = undefined;
                 break;
+              case "Closure":
+                tarjet.value = resolution.value;
+                tarjet.elements = undefined;
+                tarjet.properties = undefined;
+                tarjet.id = undefined;
+                tarjet.params = undefined;
+                tarjet.body = undefined;
+                tarjet.super = undefined;
+                tarjet.env = resolution.env;
               default:
                 console.warn(`Unhandled '${resolution.type}' resolution assignation`);
                 acornSimulator.safe = false;
@@ -1006,6 +1025,8 @@ let acornSimulator = {
                 return {type: mem.type, blocked: false, prototype: mem.prototype, id: mem.id, params: mem.params, body: mem.body};
               /**/case "Class":
                 return {type: mem.type, blocked: false, prototype: mem.prototype, id: mem.id, super: mem.super, body: mem.body};
+              case "Closure":
+                return {type: mem.type, blocked: false, prototype: mem.prototype, value: mem.value, env: mem.env};
               case "Evaluation":
                 return {type: mem.type, blocked: false, prototype: mem.prototype, construct:mem.construct, call:mem.call, get:mem.get};
               default:
@@ -1707,13 +1728,90 @@ let acornSimulator = {
         }
         case "CallExpression":{
           let resolution = acornSimulator.resolve(ast.callee,undefined,[],scope,undefined,thisScope);
-          
+
           if(resolution.value === _dynamic.properties.any.value){
             console.warn("trying to execute dynamicly");
             acornSimulator.safe = false;
             return {type:"Literal",value:undefined};
           }
-          return acornSimulator.call(ast.callee.type === "MemberExpression" ? resolution.child : resolution,ast.callee,ast.arguments,scope,thisScope);
+
+          if(ast.callee.type === "MemberExpression"){
+            if(resolution.child.type === "Closure"){
+              let TDZs = [];
+              let Forgetables = [];
+              for(let e of resolution.child.env){
+                if(e.TDZ === true){
+                  let mem = acornSimulator.memory.find(mem => mem.name === e.name && !mem.TDZ);
+                  if(mem){
+                    TDZs.push(mem);
+                    mem.TDZ = true;
+                  }else{
+                    let ext = externals.find(ext => ext.name === e.name);
+                    if(ext){
+                      //...
+                    }else{
+                      let dummy = externals.find(mem => mem.name === "scannerP5Dummy")
+                      if(dummy){
+                        let ext = dummy.properties[e.name];
+                        if(ext){
+                          //...
+                        }
+                      }
+                    }
+                  }
+                  e.TDZ = false;
+                  Forgetables.push(e);
+                }
+              }
+              let result = acornSimulator.call(resolution.child.value,ast.callee,ast.arguments,scope,thisScope);
+              for(let f of Forgetables){
+                f.TDZ = true;
+              }
+              for(let t of TDZs){
+                t.TDZ = false;
+              }
+              return result;
+            }else{
+              return acornSimulator.call(resolution.child,ast.callee,ast.arguments,scope,thisScope);
+            }
+          }else if(resolution.type === "Closure"){
+            let TDZs = [];
+            let Forgetables = [];
+            for(let e of resolution.env){
+              if(e.TDZ === true){
+                let mem = acornSimulator.memory.find(mem => mem.name === e.name && !mem.TDZ);
+                if(mem){
+                  TDZs.push(mem);
+                  mem.TDZ = true;
+                }else{
+                  let ext = externals.find(ext => ext.name === e.name);
+                  if(ext){
+                    //...
+                  }else{
+                    let dummy = externals.find(mem => mem.name === "scannerP5Dummy")
+                    if(dummy){
+                      let ext = dummy.properties[e.name];
+                      if(ext){
+                        //...
+                      }
+                    }
+                  }
+                }
+                e.TDZ = false;
+                Forgetables.push(e);
+              }
+            }
+            let result = acornSimulator.call(resolution.value,ast.callee,ast.arguments,scope,thisScope);
+            for(let f of Forgetables){
+              f.TDZ = true;
+            }
+            for(let t of TDZs){
+              t.TDZ = false;
+            }
+            return result;
+          }else{
+            return acornSimulator.call(resolution,ast.callee,ast.arguments,scope,thisScope);
+          }
         }
         case "NewExpression":{
           let callee = acornSimulator.resolve(ast.callee);
@@ -1848,6 +1946,14 @@ let acornSimulator = {
               }
               return toreturn;
             }
+            case "Closure": {
+              let prop = ast.computed ? acornSimulator.coerce(acornSimulator.resolve(ast.property, undefined, [], scope, ast.object, thisScope)).value : ast.property.name;
+              let child = object.value.properties ? object.value.properties[prop] : undefined;
+              return {
+                parent: ast.object,
+                child: child ? {type: "Closure", blocked: false, value:child, env:object.env} : { type: "Literal", blocked: false, value: undefined }
+              };
+            }
             case "Literal": {
               if(object.value === _dynamic.properties.any.value){
                 return {father:object,child:{type: "Literal", blocked:false, value:_dynamic.properties.any.value}};
@@ -1933,15 +2039,15 @@ let acornSimulator = {
 
     let result = acornSimulator.simulate(resolution,scope+"/function",resolution.type==="Function" ? mem.type === "Class"? thisScope : callee.type === "MemberExpression"? acornSimulator.resolve(callee).parent : undefined : resolution.type === "ArrowFunction" ? thisScope : undefined);
 
+    let env = acornSimulator.memory.filter(mem => mem.TDZ === false);
+
     acornSimulator.forget(scope+"/function");
 
     for(let tdz of TDZs){
       tdz.TDZ = false;
     }
 
-    
-
-    return result.return ? result.return.child ? result.return.child : result.return : result;
+    return {type: "Closure", blocked: false, value: result.return ? result.return.child ? result.return.child : result.return : result, env};
   },
   coerce: (variable)=>{
     switch(variable.type){
@@ -1971,6 +2077,8 @@ let acornSimulator = {
         console.warn(`Unhandled '${variable.type}' coercion`);
         acornSimulator.safe = false;
         break;
+      case "Closure":
+        return acornSimulator.coerce(variable.value);
       case "Evaluation":
         return variable.get();
       default:

@@ -83,8 +83,8 @@ Dandelion-10 (20/09/2025): safety scanner Scope context is off
     Description:
         Variables and functions are sometimes resolved in the wrong scope, leading to unexpected behavior when using nested blocks or closures.
     Priority: hight
-    Status: pending (23/09/2025)
-    Notes: Needs investigation into how scope chains are managed during code execution and parsing.
+    Status: solved (03/10/2025)
+    Notes: It wasn't easy, but then i rested, and i founded the problem. It was about how js really returns on functions.
 
 Dandelion-11 (20/09/2025): Camera frustum mismatch with orbitControl()
     Version: 2025-A11_release
