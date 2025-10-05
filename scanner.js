@@ -1,72 +1,78 @@
+let traductionMemory = [];
 let traduction = (element)=>{
-  let toreturn={type:"Literal", blocked:false, value:undefined};
-  if (Array.isArray(element)) {
-    toreturn = { type: "Array", blocked: false, elements: [] };
-    element.forEach((val) => {
-      toreturn.elements.push(traduction(val));
-    });
-    return toreturn;
-  }
-  if(typeof element === "function" && /^class\b/.test(Function.prototype.toString.call(element))){
-    toreturn = {type:"Evaluation", blocked:false, properties:{}, construct:(...args)=>{
-      let argGathering = args.map(arg => acornSimulator.coerce(arg).value);
-      let instance = new element(...argGathering);
-      return traduction(instance);
-    },call:(...args)=>{
-      let argGathering = args.map(arg => acornSimulator.coerce(arg).value);
-      let instance = element(...argGathering);
-      return traduction(instance);
-    },get:()=>{
-      return {type:"Literal",value:element.toString()};
-    }}
-    return toreturn;
-  }
-  
-  if(element!==null){
-    switch(typeof element){
-      case "object":{
-        let keys = Object.keys(element);
-        toreturn={type:"Object", blocked:false, properties:{}};
-        for (let key of keys){
-          toreturn.properties[key] = traduction(element[key]);
-        }
-        break;
-      }
-      case "number":
-      case "string":
-      case "boolean":
-        toreturn = {type:"Literal", blocked:false, value:element}
-        break;
-      case "function":{
-        let keys = Object.getOwnPropertyNames(element);
-        toreturn = {type:"Evaluation", blocked:false, properties:{},construct:(...args)=>{
-          let argGathering = [];
-          for(let arg of args){
-            argGathering.push(acornSimulator.coerce(arg).value);
-          }
-          return traduction(new element(...argGathering));
-        },call:(...args)=>{
-          let argGathering = [];
-          for(let arg of args){
-            argGathering.push(acornSimulator.coerce(arg).value);
-          }
-          return traduction(element(...argGathering));
-        },get:()=>{
-          return {type:"Literal",value:element.toString()};
-        }}
-        for (let key of keys){
-          toreturn.properties[key] = traduction(element[key]);
-        }
-        break;
-      }
-      case "undefined":
-        break;
-      default:
-        console.log(typeof element);
-        break;
+  if(traductionMemory.includes(element)){
+    return {type:"Literal", blocked:false, value:undefined};
+  }else{
+    traductionMemory.push(element);
+    let toreturn={type:"Literal", blocked:false, value:undefined};
+    if (Array.isArray(element)) {
+      toreturn = { type: "Array", blocked: false, elements: [] };
+      element.forEach((val) => {
+        toreturn.elements.push(traduction(val));
+      });
+      return toreturn;
     }
+    if(typeof element === "function" && /^class\b/.test(Function.prototype.toString.call(element))){
+      toreturn = {type:"Evaluation", blocked:false, properties:{}, construct:(...args)=>{
+        let argGathering = args.map(arg => acornSimulator.coerce(arg).value);
+        let instance = new element(...argGathering);
+        return traduction(instance);
+      },call:(...args)=>{
+        let argGathering = args.map(arg => acornSimulator.coerce(arg).value);
+        let instance = element(...argGathering);
+        return traduction(instance);
+      },get:()=>{
+        return {type:"Literal",value:element.toString()};
+      }}
+      return toreturn;
+    }
+    
+    if(element!==null){
+      switch(typeof element){
+        case "object":{
+          let keys = Object.keys(element);
+          toreturn={type:"Object", blocked:false, properties:{}};
+          for (let key of keys){
+            toreturn.properties[key] = traduction(element[key]);
+          }
+          break;
+        }
+        case "number":
+        case "string":
+        case "boolean":
+          toreturn = {type:"Literal", blocked:false, value:element}
+          break;
+        case "function":{
+          let keys = Object.getOwnPropertyNames(element);
+          toreturn = {type:"Evaluation", blocked:false, properties:{},construct:(...args)=>{
+            let argGathering = [];
+            for(let arg of args){
+              argGathering.push(acornSimulator.coerce(arg).value);
+            }
+            return traduction(new element(...argGathering));
+          },call:(...args)=>{
+            let argGathering = [];
+            for(let arg of args){
+              argGathering.push(acornSimulator.coerce(arg).value);
+            }
+            return traduction(element(...argGathering));
+          },get:()=>{
+            return {type:"Literal",value:element.toString()};
+          }}
+          for (let key of keys){
+            toreturn.properties[key] = traduction(element[key]);
+          }
+          break;
+        }
+        case "undefined":
+          break;
+        default:
+          console.log(typeof element);
+          break;
+      }
+    }
+    return toreturn;
   }
-  return toreturn;
 }
 
 let externals = [];
@@ -987,6 +993,16 @@ let acornSimulator = {
               tarjet.body = resolution.body;
               tarjet.super = resolution.super;
               break;
+            case "Closure":
+              tarjet.value = resolution.value;
+              tarjet.elements = undefined;
+              tarjet.properties = undefined;
+              tarjet.id = undefined;
+              tarjet.params = undefined;
+              tarjet.body = undefined;
+              tarjet.super = undefined;
+              tarjet.env = resolution.env;
+              break;
             default:
               console.warn(`Unhandled '${resolution.type}' resolution MemberExpression assignation`);
               acornSimulator.safe = false;
@@ -1006,35 +1022,36 @@ let acornSimulator = {
       return _dynamic.properties.any
     }
     if(ast) {
+      //console.log(`(acornSimulator.resolve:1015) ast.type:`,ast);
       switch(ast.type){
         case "ThisExpression":{
           return thisScope ? thisScope : acornSimulator.remember("window");
         }
         case "Identifier":{
-            let mem = acornSimulator.remember(ast.name);
-            switch(mem.type){
-              case "Literal":
-                return {type: mem.type, blocked: false, prototype: mem.prototype, value: mem.value === undefined ? def ? def.value : undefined : mem.value};
-              case "Array":
-                return {type: mem.type, blocked: false, prototype: mem.prototype, elements: mem.elements};
-              case "Object":
-                return {type: mem.type, blocked: false, prototype: mem.prototype, properties: mem.properties};
-              case "Function":
-                return {type: mem.type, blocked: false, prototype: mem.prototype, id: mem.id, params: mem.params, body: mem.body};
-              case "ArrowFunction":
-                return {type: mem.type, blocked: false, prototype: mem.prototype, id: mem.id, params: mem.params, body: mem.body};
-              /**/case "Class":
-                return {type: mem.type, blocked: false, prototype: mem.prototype, id: mem.id, super: mem.super, body: mem.body};
-              case "Closure":
-                return {type: mem.type, blocked: false, prototype: mem.prototype, value: mem.value, env: mem.env};
-              case "Evaluation":
-                return {type: mem.type, blocked: false, prototype: mem.prototype, construct:mem.construct, call:mem.call, get:mem.get};
-              default:
-                console.warn(`Unhandled '${mem.type}' identification`);
-                acornSimulator.safe = false;
-                break;
-            }
+          let mem = acornSimulator.remember(ast.name);
+          switch(mem.type){
+            case "Literal":
+              return {type: mem.type, blocked: false, prototype: mem.prototype, value: mem.value === undefined ? def ? def.value : undefined : mem.value};
+            case "Array":
+              return {type: mem.type, blocked: false, prototype: mem.prototype, elements: mem.elements};
+            case "Object":
+              return {type: mem.type, blocked: false, prototype: mem.prototype, properties: mem.properties};
+            case "Function":
+              return {type: mem.type, blocked: false, prototype: mem.prototype, id: mem.id, params: mem.params, body: mem.body};
+            case "ArrowFunction":
+              return {type: mem.type, blocked: false, prototype: mem.prototype, id: mem.id, params: mem.params, body: mem.body};
+            /**/case "Class":
+              return {type: mem.type, blocked: false, prototype: mem.prototype, id: mem.id, super: mem.super, body: mem.body};
+            case "Closure":
+              return {type: mem.type, blocked: false, prototype: mem.prototype, value: mem.value, env: mem.env};
+            case "Evaluation":
+              return {type: mem.type, blocked: false, prototype: mem.prototype, construct:mem.construct, call:mem.call, get:mem.get};
+            default:
+              console.warn(`Unhandled '${mem.type}' identification`);
+              acornSimulator.safe = false;
+              break;
           }
+        }
         case "Literal":{
             let value = 
               indexing&&indexing.length>0 ?
@@ -1093,22 +1110,22 @@ let acornSimulator = {
         }
         case "FunctionExpression":
         case "FunctionDeclaration":{
-            if(!ast.expression&&!ast.generator&&!ast.async){
-              return {type:"Function", blocked: false, properties:{}, id:ast.id, params:ast.params, body:ast.body.body};
-            }else{
-              console.warn(`Unhandled '${ast.type}' resolution (by expression:${ast.expression}, generator:${ast.generator}, async:${ast.async})`);
-              acornSimulator.safe = false;
-            }
-            break;
+          if(!ast.expression&&!ast.generator&&!ast.async){
+            return {type:"Function", blocked: false, properties:{}, id:ast.id, params:ast.params, body:ast.body.body};
+          }else{
+            console.warn(`Unhandled '${ast.type}' resolution (by expression:${ast.expression}, generator:${ast.generator}, async:${ast.async})`);
+            acornSimulator.safe = false;
           }
+          break;
+        }
         case "ArrowFunctionExpression":{ 
-            if(!ast.expression&&!ast.generator&&!ast.async){
-              return {type:"ArrowFunction", blocked: false, properties:{}, id:ast.id, params:ast.params, body:ast.body.body};
-            }else{
-              console.warn(`Unhandled '${ast.type}' resolution (by expression:${ast.expression}, generator:${ast.generator}, async:${ast.async})`);
-              acornSimulator.safe = false;
-            }
-            break;
+          if(!ast.expression&&!ast.generator&&!ast.async){
+            return {type:"ArrowFunction", blocked: false, properties:{}, id:ast.id, params:ast.params, body:ast.body.body};
+          }else{
+            console.warn(`Unhandled '${ast.type}' resolution (by expression:${ast.expression}, generator:${ast.generator}, async:${ast.async})`);
+            acornSimulator.safe = false;
+          }
+          break;
           }
         case "ClassExpression":
         case "ClassDeclaration":{
@@ -1736,6 +1753,7 @@ let acornSimulator = {
           }
 
           if(ast.callee.type === "MemberExpression"){
+            
             if(resolution.child.type === "Closure"){
               let TDZs = [];
               let Forgetables = [];
@@ -1978,20 +1996,20 @@ let acornSimulator = {
           }
         }
         /**/case "YieldExpression":{
-            console.warn(`Unhandled '${ast.type}' resolution`);
-            acornSimulator.safe = false;
-            break;
-          }
+          console.warn(`Unhandled '${ast.type}' resolution`);
+          acornSimulator.safe = false;
+          break;
+        }
         /**/case "AwaitExpression":{
-            console.warn(`Unhandled '${ast.type}' resolution`);
-            acornSimulator.safe = false;
-            break;
-          }
+          console.warn(`Unhandled '${ast.type}' resolution`);
+          acornSimulator.safe = false;
+          break;
+        }
         case "ImportExpression":{
-            console.warn(`Use of dynamic Import()`);
-            acornSimulator.safe = false;
-            break;
-          }
+          console.warn(`Use of dynamic Import()`);
+          acornSimulator.safe = false;
+          break;
+        }
         default:
           console.warn(`Unhandled '${ast.type}' resolution`);
           acornSimulator.safe = false;
@@ -2012,7 +2030,11 @@ let acornSimulator = {
       }
       return resolution.call(...args);
     };
-    
+
+    if (resolution.type === "Literal" && resolution.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
+      return externals.find(ext => ext.name === "_Dynamic_").properties.any;
+    }
+
     let TDZs = acornSimulator.prepare(resolution.body);
     for(let i in resolution.params){
       let param;
@@ -2093,13 +2115,13 @@ let acornSimulator = {
 function acornScanner(userCode){
 	acornSimulator.reset();
   try{
+    
 		externals = extPool1;
 
     let pcode = acorn.parse(userCode, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
     acornSimulator.simulate(pcode,"main",undefined);
     
     externals = extPool2;
-    
     acornSimulator.simulate(acorn.parse(`
       preload();
       setup();
@@ -2127,8 +2149,9 @@ function acornScanner(userCode){
     dropError("",err);
     acornSimulator.safe = false;
   }
-  //console.log("memory:",acornSimulator.memory);
-  return acornSimulator.safe;
+  //console.log("memory:",acornSimulator.memory);.safe;
+  
+  return acornSimulator
 }
 
 let scannerP5Dummy = new p5((p) => {
@@ -2146,8 +2169,6 @@ let ExternalBuilder = (description,custom,pool)=>{
   let name = isFunction?split[split.length-1].substring(split[split.length-1].length-2)==="()"?split[split.length-1].substring(0,split[split.length-1].length-2):split[split.length-1]:split[split.length-1];
   let parent;
   let external;
-  
-  
   
   const constructFn = () => {return {type: "Object", blocked:false, properties:{}}};
   const callFn = () => {return {type: "Literal", blocked:false, value: undefined}};
@@ -2188,6 +2209,9 @@ let ExternalBuilder = (description,custom,pool)=>{
         properties:custom?.properties?custom.properties:(custom?.type==="Object"||custom?.type==="Array"||custom?.type==="Function"||custom?.type==="Class"||custom?.type==="Evaluation")?{}:isFunction?{}:undefined,
         construct:isFunction?custom?.construct?custom.construct:custom?.undefine?constructFn:(...args)=>{
           let argGathering = [];
+          if (args.some(arg => acornSimulator.coerce(arg).value === pool.find(ext => ext.name === "_Dynamic_").properties.any.value)) {
+            return pool.find(ext => ext.name === "_Dynamic_").properties.any;
+          }
           for(let arg of args){
             let val = acornSimulator.coerce(arg).value;
             argGathering.push(typeof val === "string"?`"${val}"`:val);
@@ -2197,6 +2221,9 @@ let ExternalBuilder = (description,custom,pool)=>{
         }:undefined,
         call:isFunction?custom?.call?custom.call:custom?.undefine?callFn:(...args)=>{
           let argGathering = [];
+          if (args.some(arg => acornSimulator.coerce(arg).value === pool.find(ext => ext.name === "_Dynamic_").properties.any.value)) {
+            return pool.find(ext => ext.name === "_Dynamic_").properties.any;
+          }
           for(let arg of args){
             let val = acornSimulator.coerce(arg).value;
             argGathering.push(typeof val === "string"?`"${val}"`:val);
@@ -2222,6 +2249,9 @@ let ExternalBuilder = (description,custom,pool)=>{
       properties:custom?.properties?custom.properties:(custom?.type==="Object"||custom?.type==="Array"||custom?.type==="Function"||custom?.type==="Class"||custom?.type==="Evaluation")?{}:isFunction?{}:undefined,
       construct:isFunction?custom?.construct?custom.construct:custom?.undefine?constructFn:(...args)=>{
         let argGathering = [];
+        if (args.some(arg => acornSimulator.coerce(arg).value === pool.find(ext => ext.name === "_Dynamic_").properties.any.value)) {
+          return pool.find(ext => ext.name === "_Dynamic_").properties.any;
+        }
         for(let arg of args){
           let val = acornSimulator.coerce(arg).value;
           argGathering.push(typeof val === "string"?`"${val}"`:val);
@@ -2231,6 +2261,9 @@ let ExternalBuilder = (description,custom,pool)=>{
       }:undefined,	
       call:isFunction?custom?.call?custom.call:custom?.undefine?callFn:(...args)=>{
         let argGathering = [];
+        if (args.some(arg => acornSimulator.coerce(arg).value === pool.find(ext => ext.name === "_Dynamic_").properties.any.value)) {
+          return pool.find(ext => ext.name === "_Dynamic_").properties.any;
+        }
         for(let arg of args){
           let val = acornSimulator.coerce(arg).value;
           argGathering.push(typeof val === "string"?`"${val}"`:val);
@@ -2821,7 +2854,7 @@ function getExternals2(){
     "draw",
     "isLooping",
     "loop",
-    "noloop",
+    "noLoop",
     "pop",
     "preload",
     "push",
@@ -2987,12 +3020,11 @@ function getExternals2(){
   }
 
   pool.find(ext=>ext.name==="scannerP5Dummy").properties["WEBGL"]={type:"Literal",blocked:false,value:"webgl"};
-  
-  pool.find(ext => ext.name === "scannerP5Dummy").properties["background"].call = (...args) => { return { type: "Literal", blocked: false, value: undefined }; };
-  pool.find(ext => ext.name === "scannerP5Dummy").properties["background"].construct = (...args) => {
-    dropError("", "background is not a constructor");
-    return { type: "Literal", blocked: false, value: undefined };
-  };
+  pool.find(ext=>ext.name==="scannerP5Dummy").properties["LEFT"]={type:"Literal",blocked:false,value:"left"};
+  pool.find(ext=>ext.name==="scannerP5Dummy").properties["RIGHT"]={type:"Literal",blocked:false,value:"right"};
+  pool.find(ext=>ext.name==="scannerP5Dummy").properties["TOP"]={type:"Literal",blocked:false,value:"top"};
+  pool.find(ext=>ext.name==="scannerP5Dummy").properties["BOTTOM"]={type:"Literal",blocked:false,value:"bottom"};
+  pool.find(ext=>ext.name==="scannerP5Dummy").properties["CENTER"]={type:"Literal",blocked:false,value:"center"};
 
   return pool;
 }

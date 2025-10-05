@@ -131,8 +131,8 @@ Dandelion-16 (29/09/2025): p5 variables/functions declaration at externals may h
     Description:
         There is suspicion that the declaration of p5 variables and functions at the externals may contain bugs. Needs review to ensure correct behavior and compatibility.
     Priority: medium
-    Status: pending (30/09/2025)
-    Notes: Its just suspicious.
+    Status: partial (05/10/2025)
+    Notes: There is a second swarm of bugs related.
 
 Dandelion-17 (30/09/2025): 'Maximum call stack size exceeded' when using background() inside p5 static function
     Version: 2025-A11_release
