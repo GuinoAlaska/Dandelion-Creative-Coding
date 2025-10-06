@@ -2052,6 +2052,18 @@ let acornSimulator = {
           };
           acornSimulator.declareVariable(param,arg,undefined,"init",[],scope+"/function");
           break;
+        case "ArrayPattern":
+          acornSimulator.declareVariable(param, arg, undefined, "init", [], scope + "/function");
+          break;
+        case "ObjectPattern":
+          acornSimulator.declareVariable(param, arg, undefined, "init", [], scope + "/function");
+          break;
+        case "AssignmentPattern":
+          acornSimulator.declareVariable(param.left, arg !== undefined ? arg : param.right, undefined, "init", [], scope + "/function");
+          break;
+        case "RestElement":
+          acornSimulator.declareVariable(param, arg, undefined, "init", [], scope + "/function");
+          break;
         default:
           console.warn(`Unhandled '${param.type}' parameter parsing`); 
           acornSimulator.safe = false;
@@ -2151,7 +2163,7 @@ function acornScanner(userCode){
   }
   //console.log("memory:",acornSimulator.memory);.safe;
   
-  return acornSimulator
+  return acornSimulator.safe;
 }
 
 let scannerP5Dummy = new p5((p) => {
