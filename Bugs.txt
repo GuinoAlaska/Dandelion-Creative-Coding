@@ -149,3 +149,23 @@ Dandelion-18 (01/10/2025): Ghost resizer misplaced at mobile when running
     Priority: medium
     Status: pending (01/10/2025)
     Notes: Needs investigation into mobile layout and console resizing logic.
+
+Dandelion-19 (06/10/2025): Cannot set properties of undefined (setting '#<Object>')
+    Version: 2025-A11_release
+    Description:
+        function setup() {
+            createCanvas(1000, 1000);
+            buildCanvasTexture(width, height);
+        }
+        function buildCanvasTexture(w, h) {
+            const tex = createGraphics(w, h);
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                const idx = 4 * (y * w + x);
+                tex.pixels[idx]     = 0;
+                }
+            }
+        }
+    Priority: medium
+    Status: pending (06/10/2025)
+    Notes: Its hard to catch, the error log itself is not mine at all, however is triggered by the safety scanner anyways.

@@ -257,6 +257,18 @@ let acornSimulator = {
             TDZs.push(...n);
           }
           
+          const testValue = acornSimulator.resolve(element.test, undefined, [], scope, thisScope, thisScope).value;
+          if (testValue === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
+            let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+            if(sim.type==="ReturnSignal") return sim;
+            acornSimulator.forget(scope+"/forLoopBody");
+            
+            for(let tdz of TDZs){
+              tdz.TDZ = false;
+            }
+
+            break;
+          }
           while(stackCount < stackLimit){
             let test = acornSimulator.coerce(acornSimulator.resolve(element.test,undefined,[],scope,thisScope,thisScope));
             if(test.value || test.value===undefined){
@@ -304,6 +316,17 @@ let acornSimulator = {
             TDZs.push(...n);
           }
           
+          if (right.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
+            let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+            if(sim.type==="ReturnSignal") return sim;
+            acornSimulator.forget(scope+"/forLoopBody");
+            
+            for(let tdz of TDZs){
+              tdz.TDZ = false;
+            }
+
+            break;
+          }
           while(stackCount < stackLimit){
             let test = i < (right.elements?right.elements.length:right.properties?Object.keys(right.properties).length:right.value.length);
             if(test){
@@ -352,6 +375,17 @@ let acornSimulator = {
             TDZs.push(...n);
           }
           
+          if (right.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
+            let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+            if(sim.type==="ReturnSignal") return sim;
+            acornSimulator.forget(scope+"/forLoopBody");
+            
+            for(let tdz of TDZs){
+              tdz.TDZ = false;
+            }
+
+            break;
+          }
           while(stackCount < stackLimit){
             let test = i < (right.elements?right.elements.length:right.properties?Object.keys(right.properties).length:right.value.length);
             if(test){
@@ -808,6 +842,7 @@ let acornSimulator = {
                 tarjet.body = undefined;
                 tarjet.super = undefined;
                 tarjet.env = resolution.env;
+                break;
               default:
                 console.warn(`Unhandled '${resolution.type}' resolution assignation`);
                 acornSimulator.safe = false;
