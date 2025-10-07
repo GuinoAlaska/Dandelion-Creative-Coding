@@ -167,5 +167,5 @@ Dandelion-19 (06/10/2025): Cannot set properties of undefined (setting '#<Object
             }
         }
     Priority: medium
-    Status: pending (06/10/2025)
-    Notes: Its hard to catch, the error log itself is not mine at all, however is triggered by the safety scanner anyways.
+    Status: solved (07/10/2025)
+    Notes: It was an unhandled for dynamic at assigning MemberExpression.
