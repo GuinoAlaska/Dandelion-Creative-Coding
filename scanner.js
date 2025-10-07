@@ -3130,6 +3130,14 @@ function getExternals2(){
     "TWO_PI",
     "VERSION",
     "WEBGL",
+
+    "LEFT",
+    "RIGHT",
+    "TOP",
+    "BOTTOM",
+    "CENTER",
+    "SQUARE",
+    
   ]
 
   let p5Dynamics = [
@@ -3211,8 +3219,13 @@ function getExternals2(){
   }
 
   for(let al of p5BuiltIns){
-    let ext = ExternalBuilder(typeof proto[al] === "function"? "scannerP5Dummy."+al+"()":"scannerP5Dummy."+al,{},pool).build();
-    
+    let ext
+    if(typeof proto[al] === "function"){
+      ext = ExternalBuilder("scannerP5Dummy."+al+"()",{},pool).build();
+    }else{
+      ext = ExternalBuilder("scannerP5Dummy."+al,{value:proto[al]},pool).build();
+    }
+
     let deepness = 0;
     let visits = [];
     function externProperties(obj,title){
@@ -3251,9 +3264,11 @@ function getExternals2(){
       }
     }
     let obj = proto[al];
-    if(obj){
-      let title = al+"."
-      externProperties(obj,title);
+    if(obj && ext){
+      if(ext.type !== "Literal"){
+        let title = al+"."
+        externProperties(obj,title);
+      }
     }
   }
 
@@ -3275,12 +3290,12 @@ function getExternals2(){
     }
   }
 
-  pool.find(ext=>ext.name==="scannerP5Dummy").properties["WEBGL"]={type:"Literal",blocked:false,value:"webgl"};
-  pool.find(ext=>ext.name==="scannerP5Dummy").properties["LEFT"]={type:"Literal",blocked:false,value:"left"};
-  pool.find(ext=>ext.name==="scannerP5Dummy").properties["RIGHT"]={type:"Literal",blocked:false,value:"right"};
-  pool.find(ext=>ext.name==="scannerP5Dummy").properties["TOP"]={type:"Literal",blocked:false,value:"top"};
-  pool.find(ext=>ext.name==="scannerP5Dummy").properties["BOTTOM"]={type:"Literal",blocked:false,value:"bottom"};
-  pool.find(ext=>ext.name==="scannerP5Dummy").properties["CENTER"]={type:"Literal",blocked:false,value:"center"};
+  //pool.find(ext=>ext.name==="scannerP5Dummy").properties["WEBGL"]={type:"Literal",blocked:false,value:"webgl"};
+  //pool.find(ext=>ext.name==="scannerP5Dummy").properties["LEFT"]={type:"Literal",blocked:false,value:"left"};
+  //pool.find(ext=>ext.name==="scannerP5Dummy").properties["RIGHT"]={type:"Literal",blocked:false,value:"right"};
+  //pool.find(ext=>ext.name==="scannerP5Dummy").properties["TOP"]={type:"Literal",blocked:false,value:"top"};
+  //pool.find(ext=>ext.name==="scannerP5Dummy").properties["BOTTOM"]={type:"Literal",blocked:false,value:"bottom"};
+  //pool.find(ext=>ext.name==="scannerP5Dummy").properties["CENTER"]={type:"Literal",blocked:false,value:"center"};
 
   return pool;
 }

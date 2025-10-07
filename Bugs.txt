@@ -15,7 +15,7 @@ Dandelion-2 (02/06/2025): Collapsible blocks issue
     Notes: Folding blocks when you change back on tabs is now implemented.
 
 Dandelion-3 (04/06/2025): Drawing Context not working
-    Version: 2025-A6_beta
+    Version: 2025-A7_beta
     Description:
         I tried to use drawingContext on my project and it contains some errors, when i try it on editor.p5js the errors arn´t there.
     Priority: hight
@@ -23,7 +23,7 @@ Dandelion-3 (04/06/2025): Drawing Context not working
     Notes: Dandelion support for inner variables is not fully implemented and it might have errors, however you can still use drawingContext if you write: "p._renderer.drawingContext" instead. maybe in the future we can solve this to be more accessible.
 
 Dandelion-4 (06/06/2025): keyReleased not working
-    Version: 2025-A6_beta
+    Version: 2025-A7_beta
     Description:
         I was making a game in which keyReleased is needed for a mechanic, but after i builded the function it isn´t called as expected.
     Priority: hight
