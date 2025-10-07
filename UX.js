@@ -1222,6 +1222,8 @@ window.addEventListener("load", () => {
                 let h = document.getElementById("right-panel").offsetHeight;
                 document.getElementById("output-top").style.height = `calc(${h}px - ${document.getElementById("runner-panel").offsetHeight}px)`;
 
+                document.getElementById("resizer-vertical-right").style.display = "none";
+
                 setTimeout(() => {
                     IDERunSketch();
                 }, 100);

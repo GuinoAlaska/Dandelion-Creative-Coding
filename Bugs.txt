@@ -147,8 +147,8 @@ Dandelion-18 (01/10/2025): Ghost resizer misplaced at mobile when running
     Description:
         There is a ghost resizer element that appears misplaced on mobile devices when running the project. It seems to be possibly tied to the console height.
     Priority: medium
-    Status: pending (01/10/2025)
-    Notes: Needs investigation into mobile layout and console resizing logic.
+    Status: solved (01/10/2025)
+    Notes: it was just a missing line.
 
 Dandelion-19 (06/10/2025): Cannot set properties of undefined (setting '#<Object>')
     Version: 2025-A11_release
@@ -169,3 +169,19 @@ Dandelion-19 (06/10/2025): Cannot set properties of undefined (setting '#<Object
     Priority: medium
     Status: solved (07/10/2025)
     Notes: It was an unhandled for dynamic at assigning MemberExpression.
+
+Dandelion-20 (07/10/2025): Scanner stuck on bracketless loops
+    Version: 2025-A11_release
+    Description:
+        When parsing loops (for, while, etc.) without curly brackets, the scanner gets stuck and does not proceed, causing the editor to freeze or hang.
+    Priority: hight
+    Status: solved (07/10/2025)
+    Notes: Now it handles bracketless loops properly.
+
+Dandelion-21 (07/10/2025): update property on for loop not handled properly
+    Version: 2025-A11_release
+    Description:
+        When parsing for loops with a different-than "++" update expression, the scanner loops indefinitedly, exceeding the loop Stack limit.
+    Priority: hight
+    Status: solved (07/10/2025)
+    Notes: It was a missing line.

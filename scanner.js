@@ -253,13 +253,36 @@ let acornSimulator = {
           const stackLimit = 10000;
           let stackCount = 0;
           {
-            let n = acornSimulator.prepare(element.body.body);
+            let n;
+            switch(element.body.type){
+              case "BlockStatement":
+                n=acornSimulator.prepare(element.body.body);
+                break;
+              case "ExpressionStatement":
+                n=acornSimulator.prepare([element.body]);
+                break;
+              case "EmptyStatement":
+                n=[];
+                break;
+            }
             TDZs.push(...n);
           }
           
           const testValue = acornSimulator.resolve(element.test, undefined, [], scope, thisScope, thisScope).value;
+          
           if (testValue === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
-            let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+            let sim;
+            switch(element.body.type){
+              case "BlockStatement":
+                sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                break;
+              case "ExpressionStatement":
+                sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                break;
+              case "EmptyStatement":
+                sim = {type:"Literal",blocked:false,value:undefined};
+                break;
+            }
             if(sim.type==="ReturnSignal") return sim;
             acornSimulator.forget(scope+"/forLoopBody");
             
@@ -269,17 +292,37 @@ let acornSimulator = {
 
             break;
           }
+          
           while(stackCount < stackLimit){
             let test = acornSimulator.coerce(acornSimulator.resolve(element.test,undefined,[],scope,thisScope,thisScope));
             if(test.value || test.value===undefined){
-              let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+              let sim;
+              switch(element.body.type){
+                case "BlockStatement":
+                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "ExpressionStatement":
+                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "EmptyStatement":
+                  sim = {type:"Literal",blocked:false,value:undefined};
+                  break;
+              }
               if(sim.type==="BreakSignal") break;
               if(sim.type==="ReturnSignal") return sim;
+              //console.log(acornSimulator.memory);
 							acornSimulator.resolve(element.update,undefined,[],scope+"/forLoopBody", thisScope, thisScope);
             }else{
               break;
             }
-            acornSimulator.prepare(element.body.body);
+            switch(element.body.type){
+              case "BlockStatement":
+                acornSimulator.prepare(element.body.body);
+                break;
+              case "ExpressionStatement":
+                acornSimulator.prepare([element.body]);
+                break;
+            }
             stackCount++;
           }
           
@@ -312,12 +355,34 @@ let acornSimulator = {
           const stackLimit = 10000;
           let stackCount = 0;
           {
-            let n = acornSimulator.prepare(element.body.body);
+            let n;
+            switch(element.body.type){
+              case "BlockStatement":
+                n=acornSimulator.prepare(element.body.body);
+                break;
+              case "ExpressionStatement":
+                n=acornSimulator.prepare([element.body]);
+                break;
+              case "EmptyStatement":
+                n=[];
+                break;
+            }
             TDZs.push(...n);
           }
           
           if (right.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
-            let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+            let sim;
+            switch(element.body.type){
+              case "BlockStatement":
+                sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                break;
+              case "ExpressionStatement":
+                sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                break;
+              case "EmptyStatement":
+                sim = {type:"Literal",blocked:false,value:undefined};
+                break;
+            }
             if(sim.type==="ReturnSignal") return sim;
             acornSimulator.forget(scope+"/forLoopBody");
             
@@ -330,7 +395,18 @@ let acornSimulator = {
           while(stackCount < stackLimit){
             let test = i < (right.elements?right.elements.length:right.properties?Object.keys(right.properties).length:right.value.length);
             if(test){
-              let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope);
+              let sim;
+              switch(element.body.type){
+                case "BlockStatement":
+                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "ExpressionStatement":
+                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "EmptyStatement":
+                  sim = {type:"Literal",blocked:false,value:undefined};
+                  break;
+              }
               if(sim.type==="BreakSignal") break;
               if(sim.type==="ReturnSignal") return sim;
               i++;
@@ -338,7 +414,14 @@ let acornSimulator = {
             }else{
               break;
             }
-            acornSimulator.prepare(element.body.body);
+            switch(element.body.type){
+              case "BlockStatement":
+                acornSimulator.prepare(element.body.body);
+                break;
+              case "ExpressionStatement":
+                acornSimulator.prepare([element.body]);
+                break;
+            }
             stackCount++;
           }
           
@@ -371,12 +454,34 @@ let acornSimulator = {
           const stackLimit = 10000;
           let stackCount = 0;
           {
-            let n = acornSimulator.prepare(element.body.body);
+            let n;
+            switch(element.body.type){
+              case "BlockStatement":
+                n=acornSimulator.prepare(element.body.body);
+                break;
+              case "ExpressionStatement":
+                n=acornSimulator.prepare([element.body]);
+                break;
+              case "EmptyStatement":
+                n=[];
+                break;
+            }
             TDZs.push(...n);
           }
           
           if (right.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
-            let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+            let sim;
+            switch(element.body.type){
+              case "BlockStatement":
+                sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                break;
+              case "ExpressionStatement":
+                sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                break;
+              case "EmptyStatement":
+                sim = {type:"Literal",blocked:false,value:undefined};
+                break;
+            }
             if(sim.type==="ReturnSignal") return sim;
             acornSimulator.forget(scope+"/forLoopBody");
             
@@ -389,7 +494,18 @@ let acornSimulator = {
           while(stackCount < stackLimit){
             let test = i < (right.elements?right.elements.length:right.properties?Object.keys(right.properties).length:right.value.length);
             if(test){
-              let sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope);
+              let sim;
+              switch(element.body.type){
+                case "BlockStatement":
+                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "ExpressionStatement":
+                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "EmptyStatement":
+                  sim = {type:"Literal",blocked:false,value:undefined};
+                  break;
+              }
               if(sim.type==="BreakSignal") break;
               if(sim.type==="ReturnSignal") return sim;
               i++;
@@ -397,7 +513,14 @@ let acornSimulator = {
             }else{
               break;
             }
-            acornSimulator.prepare(element.body.body);
+            switch(element.body.type){
+              case "BlockStatement":
+                acornSimulator.prepare(element.body.body);
+                break;
+              case "ExpressionStatement":
+                acornSimulator.prepare([element.body]);
+                break;
+            }
             stackCount++;
           }
           
@@ -416,12 +539,52 @@ let acornSimulator = {
         case "WhileStatement":{
           const stackLimit = 10000;
           let stackCount = 0;
-          let TDZs = acornSimulator.prepare(element.body.body);
+          let TDZs;
+          switch(element.body.type){
+            case "BlockStatement":
+              TDZs=acornSimulator.prepare(element.body.body);
+              break;
+            case "ExpressionStatement":
+              TDZs=acornSimulator.prepare([element.body]);
+              break;
+            case "EmptyStatement":
+              TDZs=[];
+              break;
+          }
 
+          if(acornSimulator.resolve(element.test, undefined, [], scope, thisScope, thisScope).value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value){
+            let sim;
+            switch(element.body.type){
+              case "BlockStatement":
+                sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                break;
+              case "ExpressionStatement":
+                sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                break;
+              case "EmptyStatement":
+                sim = {type:"Literal",blocked:false,value:undefined};
+                break;
+            }
+            if (sim.type === "ReturnSignal") return sim;
+            acornSimulator.forget(scope + "/whileBody");
+            for (let tdz of TDZs) tdz.TDZ = false;
+            break;
+          }
           while(stackCount < stackLimit){
             let test = acornSimulator.coerce(acornSimulator.resolve(element.test, undefined, [], scope, thisScope, thisScope));
             if(test.value || test.value === undefined){
-              let sim = acornSimulator.simulate(element.body, scope+"/whileBody", thisScope);
+              let sim;
+              switch(element.body.type){
+                case "BlockStatement":
+                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "ExpressionStatement":
+                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "EmptyStatement":
+                  sim = {type:"Literal",blocked:false,value:undefined};
+                  break;
+              }
               if(sim.type === "BreakSignal") break;
               if(sim.type === "ReturnSignal") return sim;
             } else break;
@@ -440,16 +603,53 @@ let acornSimulator = {
         case "DoWhileStatement":{
           const stackLimit = 10000;
           let stackCount = 0;
-          let TDZs = acornSimulator.prepare(element.body.body);
+          let TDZs;
+          switch(element.body.type){
+            case "BlockStatement":
+              TDZs=acornSimulator.prepare(element.body.body);
+              break;
+            case "ExpressionStatement":
+              TDZs=acornSimulator.prepare([element.body]);
+              break;
+            case "EmptyStatement":
+              TDZs=[];
+              break;
+          }
 
           let test = true;
           while(stackCount < stackLimit){
             if(test.value || test.value === undefined){
-              let sim = acornSimulator.simulate(element.body, scope+"/whileBody", thisScope);
+              let sim;
+              switch(element.body.type){
+                case "BlockStatement":
+                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "ExpressionStatement":
+                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  break;
+                case "EmptyStatement":
+                  sim = {type:"Literal",blocked:false,value:undefined};
+                  break;
+              }
               if(sim.type === "BreakSignal") break;
               if(sim.type === "ReturnSignal") return sim;
             } else break;
             test = acornSimulator.coerce(acornSimulator.resolve(element.test, undefined, [], scope, thisScope, thisScope));
+            if(test.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value){
+              let sim;
+              switch(element.body.type){
+                case "BlockStatement":
+                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                  break;
+                case "ExpressionStatement":
+                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                  break;
+                case "EmptyStatement":
+                  sim = {type:"Literal",blocked:false,value:undefined};
+                  break;
+              }
+              break;
+            }
             stackCount++;
           }
 
@@ -1485,8 +1685,10 @@ let acornSimulator = {
               {
                 let res = acornSimulator.resolve(ast.left);
                 let tarjet = res.child ? res.child : res;//acornSimulator.remember(ast.left.name);
+                
                 let resolution = acornSimulator.resolve(ast.right,def,indexing,scope,selfScope,thisScope);
                 resolution = resolution.child?resolution.child:resolution;
+                
                 if(resolution.value===_dynamic.properties.any.value) tarjet.value = _dynamic.properties.any;
                 else if(resolution.value.possibilities){
                   let toreturn = {possibilities:[]};
@@ -1497,6 +1699,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value += resolution.value;
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "-=":
@@ -1514,6 +1717,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value -= resolution.value;
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "*=":
@@ -1531,7 +1735,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value *= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "/=":
@@ -1549,7 +1753,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value /= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "%=":
@@ -1566,7 +1770,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value %= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "**=":
@@ -1584,7 +1788,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value **= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "<<=":
@@ -1601,7 +1805,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value <<= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case ">>=":
@@ -1619,7 +1823,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value >>= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case ">>>=":
@@ -1637,7 +1841,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value >>>= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "&=":
@@ -1655,7 +1859,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value &= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "|=":
@@ -1673,7 +1877,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value |= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "^=":
@@ -1691,7 +1895,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value ^= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "&&=":
@@ -1709,7 +1913,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value &&= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "||=":
@@ -1727,7 +1931,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value ||= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             case "??=":
@@ -1745,7 +1949,7 @@ let acornSimulator = {
                   tarjet.value = toreturn;
                 }
                 else tarjet.value ??= resolution.value;
-
+                acornSimulator.assignVariable(ast.left,tarjet,def,indexing,scope,selfScope,thisScope);
                 return {type: resolution.type, value: resolution.value === undefined ? def ? def.value : undefined : resolution.value};
               }
             default:
