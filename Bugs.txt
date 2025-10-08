@@ -19,8 +19,8 @@ Dandelion-3 (04/06/2025): Drawing Context not working
     Description:
         I tried to use drawingContext on my project and it contains some errors, when i try it on editor.p5js the errors arn´t there.
     Priority: hight
-    Status: suspended (04/06/2025)
-    Notes: Dandelion support for inner variables is not fully implemented and it might have errors, however you can still use drawingContext if you write: "p._renderer.drawingContext" instead. maybe in the future we can solve this to be more accessible.
+    Status: partial (07/10/2025)
+    Notes: Dandelion support for inner variables is not fully implemented and it might have errors, drawingContext now works normally for the sketch, but can´t be mirrored to the editorview yet.
 
 Dandelion-4 (06/06/2025): keyReleased not working
     Version: 2025-A7_beta
@@ -131,8 +131,8 @@ Dandelion-16 (29/09/2025): p5 variables/functions declaration at externals may h
     Description:
         There is suspicion that the declaration of p5 variables and functions at the externals may contain bugs. Needs review to ensure correct behavior and compatibility.
     Priority: medium
-    Status: partial (05/10/2025)
-    Notes: There is a second swarm of bugs related.
+    Status: solved (07/10/2025)
+    Notes: All done 3 swarms of bugs where this.
 
 Dandelion-17 (30/09/2025): 'Maximum call stack size exceeded' when using background() inside p5 static function
     Version: 2025-A11_release
@@ -185,3 +185,14 @@ Dandelion-21 (07/10/2025): update property on for loop not handled properly
     Priority: hight
     Status: solved (07/10/2025)
     Notes: It was a missing line.
+
+Dandelion-22 (07/10/2025):
+    Version: 2025-A11_release
+    Description:
+        let a = [10,15];
+        a[Math.random()];
+        
+        logs: TypeError: Object.defineProperty called on non-object
+    Priority: medium (07/10/2025)
+    Status: pending (07/10/2025)
+    Notes: could be another thing from MemberExpression...

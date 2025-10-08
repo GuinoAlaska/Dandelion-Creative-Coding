@@ -400,7 +400,7 @@ function reloadTopSketch(userCode) {
                 'loadPixels', 'updatePixels', 'get', 'set', 'filter', 'blend',
             
                 // Direct Canvas Context Access
-                'drawingContext',
+                //'drawingContext',
 
                 // WEBGL functions:
                 'camera',
@@ -515,7 +515,6 @@ function reloadTopSketch(userCode) {
             }
         }
 
-
         p.evaluateFromConsole = (code) => {
             /*try {
                 with (p) {
@@ -572,6 +571,7 @@ function reloadBottomSketch() {
         let interpol = false;
         p.draw = () => {
             const container = document.getElementById('output-bottom');
+            const originalDrawingContext = p._renderer.drawingContext
             if(isWebGL){
                 p.background(25);
 
@@ -694,9 +694,11 @@ function reloadBottomSketch() {
                     p.pop();
                 }
                 p.pop();
+                //p._renderer.drawingContext = topP5Instance._renderer.drawingContext;
                 commandsQueue.forEach(cmd => {
                     p[cmd.fnName](...cmd.args);
                 });
+                p._renderer.drawingContext = originalDrawingContext;
 
                 if(!editorFocused){
                     // forward vector
@@ -864,6 +866,7 @@ function reloadBottomSketch() {
                 commandsQueue.forEach(cmd => {
                     p[cmd.fnName](...cmd.args);
                 });
+                p._renderer.drawingContext = originalDrawingContext;
 
                 p.pop();
                 p.pop();

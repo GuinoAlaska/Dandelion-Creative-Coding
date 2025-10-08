@@ -2140,11 +2140,8 @@ let acornSimulator = {
           let resolution = acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope)
           let object = ast.object.type === "MemberExpression" ? resolution.child : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : ast.object.type === "CallExpression" ? resolution : acornSimulator.remember(ast.object.name);
 
-          
-
           switch(object.type){
             case "Object": {
-              
               let prop = ast.computed ? acornSimulator.coerce(acornSimulator.resolve(ast.property,undefined,[],scope,ast.object,thisScope)).value : ast.property.name;
               let child = object.properties[prop];
               child = child?child.child?child.child:child:{type: "Literal", blocked:false, value:undefined};
@@ -2167,9 +2164,13 @@ let acornSimulator = {
             }
             case "Array": {
               let prop = ast.computed ? acornSimulator.coerce(acornSimulator.resolve(ast.property,undefined,[],scope,ast.object,thisScope)).value : ast.property.name;
-              let child = object.elements[prop];
+              let child;
+              if(prop === _dynamic.properties.any.value){
+                child = {type:"Literal",blocked:false,value:_dynamic.properties.any.value};
+              }else{
+                child = object.elements[prop];
+              }
               let toreturn = {parent:ast.object, child: child ? child.blocked === undefined? acornSimulator.remember("_array_").properties[prop]: child: acornSimulator.remember("_array_").properties[prop]};
-              
               Object.defineProperty(toreturn.child, "thisValue", {
                 value: object,
                 enumerable: false,
