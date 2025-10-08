@@ -19,8 +19,8 @@ Dandelion-3 (04/06/2025): Drawing Context not working
     Description:
         I tried to use drawingContext on my project and it contains some errors, when i try it on editor.p5js the errors arn´t there.
     Priority: hight
-    Status: partial (07/10/2025)
-    Notes: Dandelion support for inner variables is not fully implemented and it might have errors, drawingContext now works normally for the sketch, but can´t be mirrored to the editorview yet.
+    Status: solved (07/10/2025)
+    Notes: It wasn´t that complex, but the experiencie worth it.
 
 Dandelion-4 (06/06/2025): keyReleased not working
     Version: 2025-A7_beta
@@ -193,6 +193,45 @@ Dandelion-22 (07/10/2025):
         a[Math.random()];
         
         logs: TypeError: Object.defineProperty called on non-object
-    Priority: medium (07/10/2025)
-    Status: pending (07/10/2025)
-    Notes: could be another thing from MemberExpression...
+    Priority: medium
+    Status: solved (07/10/2025)
+    Notes: could be wooshed from other bugfix
+
+Dandelion-23 (08/10/2025):
+    Version: 2025-A11_release
+    Description:
+        class A {
+            constructor() {
+                this.b = 0;
+            }
+        }
+        let a = new A();
+
+        logs: TypeError: Cannot read properties of undefined (reading 'type')
+    Priority: hight
+    Status: solved (08/10/2025)
+    Notes: it was a variable naming thing.
+
+Dandelion-24 (08/10/2025): loop flow continues after return inside dynamic condition
+    Version: 2025-A11_release
+    Description:
+        so... basicly that.
+    Priority: hight
+    Status: solved (08/10/2025)
+    Notes: Wasn´t easy to spot, but now its solved.
+
+Dandelion-25 (08/10/2025): Lag on scanning
+    Version: 2025-A11_release
+    Description:
+        when trying to scan heavy code, it just lags in a way that now users can´t code without a huge delay.
+    Priority: medium
+    Status: pending (08/10/2025)
+    Notes: I need to multithreading... would be solved for A13.
+
+Dandelion-26 (08/10/2025): Setup is not being mirrored on the editor view
+    Version: 2025-A1_release
+    Description:
+        Any drawing function is not mirrored on the editor view, creating async behaviour.
+    Priority: medium
+    Status: nothingToDo (08/10/2025)
+    Notes: This is an aknowledge issue when implementing the editor view. There is no way we can cleanly solve it, without creating artifacts and async behaviour. However, part of the effect is now disolved.

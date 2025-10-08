@@ -1418,6 +1418,15 @@ function loadProject() {
         tab.style.setProperty('--tab-active-border-color', '#486');
     });
     loading = false;
+    clearConsole();
+    let gatheringCode = "";
+    let i=0;
+    for(let file of files){
+        gatheringCode+=file.editor.getValue()+"\n";
+        //acornScanner(file.editor.getValue(),i);
+        i++;
+    }
+    acornScanner(gatheringCode);
 }
 
 // Optional: auto-load on page start

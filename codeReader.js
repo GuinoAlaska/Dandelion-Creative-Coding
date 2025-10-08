@@ -70,7 +70,7 @@ let allowedToExecute=false;
 function reloadAll(code){
     customCanvas = null
     //check for code safety:
-    safeToExecute = acornScanner(code);
+    safeToExecute = acornSimulator.safe;//acornScanner(code);
     if(safeToExecute || allowedToExecute){
         reloadTopSketch(code);
         const EditorViewIsHidden = document.getElementById("output-bottom").classList.contains("hidden");
@@ -320,7 +320,7 @@ function reloadTopSketch(userCode) {
                 mirrorDisabled = false;
             
                 if (isRecordingUserCode) {
-                    commandsQueue.push({ fnName, args });
+                    commandsQueue.push({type:"functionCall", fnName, args });
                 }
 
                 return result;
@@ -373,10 +373,29 @@ function reloadTopSketch(userCode) {
             p.noLoop();
         }
 
+        let setItUp = false;
         p.setup = () => {
             const container = document.getElementById('output-top');
             p.createCanvas(container.offsetWidth, container.offsetHeight).parent(container);
 
+            const originalCtx = p.drawingContext;
+            p.drawingContext = new Proxy(originalCtx, {
+                set(target, prop, value) {
+                    commandsQueue.push({ type: 'variableSet', prop, value });
+                    target[prop] = value;
+                    return true;
+                },
+                get(target, prop) {
+                    const val = target[prop];
+                    if (typeof val === 'function') {
+                        return function(...args) {
+                            commandsQueue.push({ type: 'variableCall', name: prop, args });
+                            return val.apply(target, args);
+                        }
+                    }
+                    return val;
+                }
+            });
             const p5Fns = [
                 // Primitive Drawing
                 'point', 'line', 'rect', 'ellipse', 'circle', 'arc',
@@ -426,7 +445,11 @@ function reloadTopSketch(userCode) {
             createCanvasHandler(p, container);
 
             try {
+                setItUp = true;
+                commandsQueue = [];
+                isRecordingUserCode = true;
                 setupFn();
+                isRecordingUserCode = false;
                 const isWebGL = p._renderer && p._renderer.isP3D;
                 if(isWebGL) sketchCam = p.createCamera();
             } catch (err) {
@@ -447,7 +470,11 @@ function reloadTopSketch(userCode) {
             const isWebGL = p._renderer && p._renderer.isP3D;
             try {
                 if(!isWebGL) p.push();
-                commandsQueue = [];
+                if(!setItUp){
+                    commandsQueue = [];
+                }else{
+                    setItUp = false;
+                }
                 isRecordingUserCode = true;
                 drawFn();
                 isRecordingUserCode = false;
@@ -696,7 +723,7 @@ function reloadBottomSketch() {
                 p.pop();
                 //p._renderer.drawingContext = topP5Instance._renderer.drawingContext;
                 commandsQueue.forEach(cmd => {
-                    p[cmd.fnName](...cmd.args);
+                    if(cmd.type === "functionCall") p[cmd.fnName](...cmd.args);
                 });
                 p._renderer.drawingContext = originalDrawingContext;
 
@@ -864,7 +891,9 @@ function reloadBottomSketch() {
                     p.translate(0, (container.offsetHeight - CameraContainer.offsetHeight)/2);
                 };
                 commandsQueue.forEach(cmd => {
-                    p[cmd.fnName](...cmd.args);
+                    if(cmd.type === "functionCall") p[cmd.fnName](...cmd.args);
+                    if(cmd.type === "variableSet") p._renderer.drawingContext[cmd.prop] = cmd.value;
+                    if(cmd.type === "variableCall") p._renderer.drawingContext[cmd.name](...cmd.args);
                 });
                 p._renderer.drawingContext = originalDrawingContext;
 

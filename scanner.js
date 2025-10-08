@@ -222,6 +222,7 @@ let acornSimulator = {
         }
         case "IfStatement":{
           let test = acornSimulator.coerce(acornSimulator.resolve(element.test,undefined,[],scope,thisScope,thisScope));
+          
           if(test.value === _dynamic.properties.any.value){
             acornSimulator.simulate({body:[element.consequent]},scope,thisScope,{dynamic:true});
             if(element.alternate) acornSimulator.simulate({body:[element.alternate]},scope,thisScope,{dynamic:true});
@@ -241,12 +242,13 @@ let acornSimulator = {
         }
         case "ForStatement":{
           let TDZs = [];
+          let forInitScope = new Object({name:scope.name+"/forLoopInit"})
           if(element.init){
             if(element.init.type === "VariableDeclaration"){
               TDZs = acornSimulator.prepare([element.init]);
-              acornSimulator.simulate({body:[element.init]},scope+"/forLoopInit",thisScope,others);
+              acornSimulator.simulate({body:[element.init]},forInitScope,thisScope,others);
             }else{
-              acornSimulator.resolve(element.init,undefined,[],scope+"/forLoopInit",thisScope,thisScope);
+              acornSimulator.resolve(element.init,undefined,[],forInitScope,thisScope,thisScope);
             }
           }
           
@@ -269,22 +271,23 @@ let acornSimulator = {
           }
           
           const testValue = acornSimulator.resolve(element.test, undefined, [], scope, thisScope, thisScope).value;
-          
+          let forScope = new Object({name:scope.name+"/forLoopBody"})
           if (testValue === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
             let sim;
             switch(element.body.type){
               case "BlockStatement":
-                sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                sim = acornSimulator.simulate(element.body, forScope, thisScope, {dynamic:true});
                 break;
               case "ExpressionStatement":
-                sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, {dynamic:true});
                 break;
               case "EmptyStatement":
                 sim = {type:"Literal",blocked:false,value:undefined};
                 break;
             }
             if(sim.type==="ReturnSignal") return sim;
-            acornSimulator.forget(scope+"/forLoopBody");
+            acornSimulator.forget(forScope);
+            acornSimulator.forget(forInitScope);
             
             for(let tdz of TDZs){
               tdz.TDZ = false;
@@ -293,25 +296,27 @@ let acornSimulator = {
             break;
           }
           
+          let returnDynamic = false;
           while(stackCount < stackLimit){
             let test = acornSimulator.coerce(acornSimulator.resolve(element.test,undefined,[],scope,thisScope,thisScope));
             if(test.value || test.value===undefined){
               let sim;
               switch(element.body.type){
                 case "BlockStatement":
-                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate(element.body, forScope, thisScope, others);
                   break;
                 case "ExpressionStatement":
-                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, others);
                   break;
                 case "EmptyStatement":
                   sim = {type:"Literal",blocked:false,value:undefined};
                   break;
               }
+              if(sim.type==="Literal"&&sim.value===_dynamic.properties.any.value) returnDynamic = true;
               if(sim.type==="BreakSignal") break;
               if(sim.type==="ReturnSignal") return sim;
-              //console.log(acornSimulator.memory);
-							acornSimulator.resolve(element.update,undefined,[],scope+"/forLoopBody", thisScope, thisScope);
+
+							acornSimulator.resolve(element.update,undefined,[],forScope, thisScope, thisScope);
             }else{
               break;
             }
@@ -326,7 +331,8 @@ let acornSimulator = {
             stackCount++;
           }
           
-          acornSimulator.forget(scope+"/forLoopBody");
+          acornSimulator.forget(forScope);
+          acornSimulator.forget(forInitScope);
             
           for(let tdz of TDZs){
             tdz.TDZ = false;
@@ -336,6 +342,10 @@ let acornSimulator = {
             console.warn(`loop Stack Overflow`);
             acornSimulator.safe = false;
           }
+
+          if(returnDynamic){
+            return _dynamic.properties.any;
+          }
           break;
         }
         case "ForInStatement":{
@@ -343,12 +353,13 @@ let acornSimulator = {
           let indexer;
           let i=0;
           let TDZs = [];
+          let forLeftScope = new Object({name:scope.name+"/forInLoopLeft"})
           if(element.left.type === "VariableDeclaration"){
             TDZs = acornSimulator.prepare([element.left]);
-            acornSimulator.simulate({body:[element.left]},scope+"/forInLoopLeft");
+            acornSimulator.simulate({body:[element.left]},forLeftScope);
             indexer = acornSimulator.remember(element.left.declarations[0].id.name);
           }else{
-            indexer = acornSimulator.resolve(element.left,undefined,[],scope+"/forInLoopLeft",thisScope,thisScope);
+            indexer = acornSimulator.resolve(element.left,undefined,[],forLeftScope,thisScope,thisScope);
           }
           indexer.value = right.properties?Object.keys(right.properties)[i]:i;
           
@@ -369,22 +380,23 @@ let acornSimulator = {
             }
             TDZs.push(...n);
           }
-          
+          let forScope = new Object({name:scope.name+"/forLoopBody"})
           if (right.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
             let sim;
             switch(element.body.type){
               case "BlockStatement":
-                sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                sim = acornSimulator.simulate(element.body, forScope, thisScope, {dynamic:true});
                 break;
               case "ExpressionStatement":
-                sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, {dynamic:true});
                 break;
               case "EmptyStatement":
                 sim = {type:"Literal",blocked:false,value:undefined};
                 break;
             }
             if(sim.type==="ReturnSignal") return sim;
-            acornSimulator.forget(scope+"/forLoopBody");
+            acornSimulator.forget(forScope);
+            acornSimulator.forget(forLeftScope);
             
             for(let tdz of TDZs){
               tdz.TDZ = false;
@@ -392,21 +404,23 @@ let acornSimulator = {
 
             break;
           }
+          let returnDynamic = false;
           while(stackCount < stackLimit){
             let test = i < (right.elements?right.elements.length:right.properties?Object.keys(right.properties).length:right.value.length);
             if(test){
               let sim;
               switch(element.body.type){
                 case "BlockStatement":
-                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate(element.body, forScope, thisScope, others);
                   break;
                 case "ExpressionStatement":
-                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, others);
                   break;
                 case "EmptyStatement":
                   sim = {type:"Literal",blocked:false,value:undefined};
                   break;
               }
+              if(sim.type==="Literal"&&sim.value===_dynamic.properties.any.value) returnDynamic=true;
               if(sim.type==="BreakSignal") break;
               if(sim.type==="ReturnSignal") return sim;
               i++;
@@ -425,7 +439,8 @@ let acornSimulator = {
             stackCount++;
           }
           
-          acornSimulator.forget(scope+"/forLoopBody");
+          acornSimulator.forget(forScope);
+          acornSimulator.forget(forLeftScope);
             
           for(let tdz of TDZs){
             tdz.TDZ = false;
@@ -435,6 +450,10 @@ let acornSimulator = {
             console.warn(`loop Stack Overflow`);
             acornSimulator.safe = false;
           }
+
+          if(returnDynamic){
+            return _dynamic.properties.any;
+          }
           break;
         }
         /*sort of*/case "ForOfStatement":{
@@ -442,12 +461,13 @@ let acornSimulator = {
           let indexer;
           let i=0;
           let TDZs = [];
+          let forLeftScope = new Object({name:scope.name+"/forOFLoopLeft"})
           if(element.left.type === "VariableDeclaration"){
             TDZs = acornSimulator.prepare([element.left]);
-            acornSimulator.simulate({body:[element.left]},scope+"/forOFLoopLeft");
+            acornSimulator.simulate({body:[element.left]},forLeftScope);
             indexer = acornSimulator.remember(element.left.declarations[0].id.name);
           }else{
-            indexer = acornSimulator.resolve(element.left,undefined,[],scope+"/forOFLoopLeft",thisScope,thisScope);
+            indexer = acornSimulator.resolve(element.left,undefined,[],forLeftScope,thisScope,thisScope);
           }
           indexer.value = right.properties?right.properties[Object.keys(right.properties)[i]]:right.elements?right.elements[i]:right.value[i];
           
@@ -468,22 +488,23 @@ let acornSimulator = {
             }
             TDZs.push(...n);
           }
-          
+          let forScope = new Object({name:scope.name+"/forLoopBody"})
           if (right.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
             let sim;
             switch(element.body.type){
               case "BlockStatement":
-                sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                sim = acornSimulator.simulate(element.body, forScope, thisScope, {dynamic:true});
                 break;
               case "ExpressionStatement":
-                sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, {dynamic:true});
                 break;
               case "EmptyStatement":
                 sim = {type:"Literal",blocked:false,value:undefined};
                 break;
             }
             if(sim.type==="ReturnSignal") return sim;
-            acornSimulator.forget(scope+"/forLoopBody");
+            acornSimulator.forget(forScope);
+            acornSimulator.forget(forLeftScope);
             
             for(let tdz of TDZs){
               tdz.TDZ = false;
@@ -491,21 +512,23 @@ let acornSimulator = {
 
             break;
           }
+          let returnDynamic = false;
           while(stackCount < stackLimit){
             let test = i < (right.elements?right.elements.length:right.properties?Object.keys(right.properties).length:right.value.length);
             if(test){
               let sim;
               switch(element.body.type){
                 case "BlockStatement":
-                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate(element.body, forScope, thisScope, others);
                   break;
                 case "ExpressionStatement":
-                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, others);
                   break;
                 case "EmptyStatement":
                   sim = {type:"Literal",blocked:false,value:undefined};
                   break;
               }
+              if(sim.type==="Literal"&&sim.value === _dynamic.properties.any.value) returnDynamic = true;
               if(sim.type==="BreakSignal") break;
               if(sim.type==="ReturnSignal") return sim;
               i++;
@@ -524,7 +547,8 @@ let acornSimulator = {
             stackCount++;
           }
           
-          acornSimulator.forget(scope+"/forLoopBody");
+          acornSimulator.forget(forScope);
+          acornSimulator.forget(forLeftScope);
             
           for(let tdz of TDZs){
             tdz.TDZ = false;
@@ -533,6 +557,9 @@ let acornSimulator = {
           if(stackCount >= stackLimit){
             console.warn(`loop Stack Overflow`);
             acornSimulator.safe = false;
+          }
+          if(returnDynamic){
+            return _dynamic.properties.any;
           }
           break;
         }
@@ -551,52 +578,57 @@ let acornSimulator = {
               TDZs=[];
               break;
           }
-
+          let forScope = new Object({name:scope.name+"/forLoopBody"})
           if(acornSimulator.resolve(element.test, undefined, [], scope, thisScope, thisScope).value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value){
             let sim;
             switch(element.body.type){
               case "BlockStatement":
-                sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                sim = acornSimulator.simulate(element.body, forScope, thisScope, {dynamic:true});
                 break;
               case "ExpressionStatement":
-                sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, {dynamic:true});
                 break;
               case "EmptyStatement":
                 sim = {type:"Literal",blocked:false,value:undefined};
                 break;
             }
             if (sim.type === "ReturnSignal") return sim;
-            acornSimulator.forget(scope + "/whileBody");
+            acornSimulator.forget(forScope);
             for (let tdz of TDZs) tdz.TDZ = false;
             break;
           }
+          let returnDynamic=false;
           while(stackCount < stackLimit){
             let test = acornSimulator.coerce(acornSimulator.resolve(element.test, undefined, [], scope, thisScope, thisScope));
             if(test.value || test.value === undefined){
               let sim;
               switch(element.body.type){
                 case "BlockStatement":
-                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate(element.body, forScope, thisScope, others);
                   break;
                 case "ExpressionStatement":
-                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, others);
                   break;
                 case "EmptyStatement":
                   sim = {type:"Literal",blocked:false,value:undefined};
                   break;
               }
+              if(sim.type === "Literal"&&sim.value === _dynamic.properties.any.value) returnDynamic=true;
               if(sim.type === "BreakSignal") break;
               if(sim.type === "ReturnSignal") return sim;
             } else break;
             stackCount++;
           }
 
-          acornSimulator.forget(scope+"/whileBody");
+          acornSimulator.forget(forScope);
           for(let tdz of TDZs) tdz.TDZ = false;
 
           if(stackCount >= stackLimit){
             console.warn(`loop Stack Overflow`);
             acornSimulator.safe = false;
+          }
+          if(returnDynamic){
+            return _dynamic.properties.any;
           }
           break;
         }
@@ -615,22 +647,24 @@ let acornSimulator = {
               TDZs=[];
               break;
           }
-
+          let forScope = new Object({name:scope.name+"/forLoopBody"})
           let test = true;
+          let returnDynamic=false;
           while(stackCount < stackLimit){
             if(test.value || test.value === undefined){
               let sim;
               switch(element.body.type){
                 case "BlockStatement":
-                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate(element.body, forScope, thisScope, others);
                   break;
                 case "ExpressionStatement":
-                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, others);
+                  sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, others);
                   break;
                 case "EmptyStatement":
                   sim = {type:"Literal",blocked:false,value:undefined};
                   break;
               }
+              if(sim.type === "Literal"&&sim.value === _dynamic.properties.any.value)returnDynamic=true;
               if(sim.type === "BreakSignal") break;
               if(sim.type === "ReturnSignal") return sim;
             } else break;
@@ -639,10 +673,10 @@ let acornSimulator = {
               let sim;
               switch(element.body.type){
                 case "BlockStatement":
-                  sim = acornSimulator.simulate(element.body, scope+"/forLoopBody", thisScope, {dynamic:true});
+                  sim = acornSimulator.simulate(element.body, forScope, thisScope, {dynamic:true});
                   break;
                 case "ExpressionStatement":
-                  sim = acornSimulator.simulate({body:[element.body]}, scope+"/forLoopBody", thisScope, {dynamic:true});
+                  sim = acornSimulator.simulate({body:[element.body]}, forScope, thisScope, {dynamic:true});
                   break;
                 case "EmptyStatement":
                   sim = {type:"Literal",blocked:false,value:undefined};
@@ -653,12 +687,15 @@ let acornSimulator = {
             stackCount++;
           }
 
-          acornSimulator.forget(scope+"/whileBody");
+          acornSimulator.forget(forScope);
           for(let tdz of TDZs) tdz.TDZ = false;
 
           if(stackCount >= stackLimit){
             console.warn(`loop Stack Overflow`);
             acornSimulator.safe = false;
+          }
+          if(returnDynamic){
+            return _dynamic.properties.any;
           }
           break;
         }
@@ -703,8 +740,7 @@ let acornSimulator = {
           return { type: "ContinueSignal" };
         }
         case "ReturnStatement":{
-          let r = acornSimulator.resolve(element.argument,undefined,[],scope, thisScope,thisScope);
-          
+          let r = acornSimulator.resolve(element.argument,undefined,[],scope, thisScope,thisScope,others);
           return { type: "ReturnSignal", return: r };
         }
         case "ThrowStatement":{
@@ -1153,15 +1189,15 @@ let acornSimulator = {
           let property = id.computed ? acornSimulator.resolve(id.property,def,indexing,scope,selfScope,thisScope).value : id.property.name
           let object;
           if(kinda.child?.value === undefined){
-            object = kinda.father.type === "Identifier" ? acornSimulator.resolve(kinda.father,undefined,[],scope,selfScope,thisScope) : kinda.parent.type === "MemberExpression" ? acornSimulator.resolve(kinda.father,undefined,[],scope,selfScope,thisScope).child : kinda.father;
+            object = kinda.parent.type === "Identifier" ? acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope) : kinda.parent.type === "MemberExpression" ? acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope).child : kinda.parent;
             tarjet = object.properties?.[property];
           }else{
-            object = acornSimulator.resolve(kinda.father,undefined,[],scope,selfScope,thisScope);
+            object = acornSimulator.resolve(kinda.parent,undefined,[],scope,selfScope,thisScope);
             tarjet = object.properties?.[property];
           }
           
           if(!tarjet){
-            if (object.type === "Literal" && object.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value) {
+            if (!object.properties||!object.properties[property]){//(object.type === "Literal" && object.value === externals.find(ext => ext.name === "_Dynamic_").properties.any.value)||object.type === "Object") {
               object.properties = object.properties || {};
               object.properties[property] = { type: "Literal", blocked: false, value: undefined };
             }
@@ -1170,6 +1206,7 @@ let acornSimulator = {
           }
           
           let resolution = acornSimulator.resolve(init,def,indexing,scope,object,thisScope);
+          resolution = resolution.child?resolution.child:resolution;
           
           tarjet.type = resolution.type;
           switch(resolution.type){
@@ -1260,7 +1297,6 @@ let acornSimulator = {
       return _dynamic.properties.any
     }
     if(ast) {
-      //console.log(`(acornSimulator.resolve:1015) ast.type:`,ast);
       switch(ast.type){
         case "ThisExpression":{
           return thisScope ? thisScope : acornSimulator.remember("window");
@@ -1318,19 +1354,21 @@ let acornSimulator = {
           return {type:"Literal", blocked: false,value: value};
         }
         case "ArrayExpression":{
-            if(indexing&&indexing.length>0){
-              let newIndexing = [...indexing];
-              newIndexing.splice(0,1);
-              let r = ast.elements[indexing[0]];
-              return acornSimulator.resolve(r ? r : def, def ,newIndexing,scope, selfScope, thisScope);
-            }else{
-              let elements = [];
-              for(let element of ast.elements){
-                elements.push(acornSimulator.resolve(element,undefined,[],scope, selfScope, thisScope));
-              }
-              return {type:"Array", blocked: false, elements:elements === undefined ? def ? def.value : undefined : elements, properties:{}};
+          if(indexing&&indexing.length>0){
+            let newIndexing = [...indexing];
+            newIndexing.splice(0,1);
+            let r = ast.elements[indexing[0]];
+            return acornSimulator.resolve(r ? r : def, def ,newIndexing,scope, selfScope, thisScope);
+          }else{
+            let elements = [];
+            for(let element of ast.elements){
+              elements.push(acornSimulator.resolve(element,undefined,[],scope, selfScope, thisScope));
             }
+            let toreturn = {type:"Array", blocked: false, elements:elements === undefined ? def ? def.value : undefined : elements, properties:{...acornSimulator.remember("_array_").properties}};
+            toreturn.properties.length = {type:"Literal", blocked: false, value:toreturn.elements.length};
+            return toreturn;
           }
+        }
         case "ObjectExpression":{
           if(indexing&&indexing.length>0){
             let newIndexing = [...indexing];
@@ -2138,7 +2176,7 @@ let acornSimulator = {
           //console.log(ast.object.type === "MemberExpression" ? acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope) : "");
           //let object = ast.object.type === "MemberExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).parent.name) : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : acornSimulator.remember(ast.object.name);
           let resolution = acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope)
-          let object = ast.object.type === "MemberExpression" ? resolution.child : ast.object.type === "ThisExpression" ? acornSimulator.remember(acornSimulator.resolve(ast.object,undefined,[],scope,selfScope,thisScope).name) : ast.object.type === "CallExpression" ? resolution : acornSimulator.remember(ast.object.name);
+          let object = ast.object.type === "MemberExpression" ? resolution.child : ast.object.type === "ThisExpression" ? acornSimulator.remember(resolution.name) : ast.object.type === "CallExpression" ? resolution : acornSimulator.remember(ast.object.name);
 
           switch(object.type){
             case "Object": {
@@ -2164,13 +2202,14 @@ let acornSimulator = {
             }
             case "Array": {
               let prop = ast.computed ? acornSimulator.coerce(acornSimulator.resolve(ast.property,undefined,[],scope,ast.object,thisScope)).value : ast.property.name;
+              
               let child;
               if(prop === _dynamic.properties.any.value){
                 child = {type:"Literal",blocked:false,value:_dynamic.properties.any.value};
               }else{
                 child = object.elements[prop];
               }
-              let toreturn = {parent:ast.object, child: child ? child.blocked === undefined? acornSimulator.remember("_array_").properties[prop]: child: acornSimulator.remember("_array_").properties[prop]};
+              let toreturn = {parent:ast.object, child: child ? child.blocked === undefined? object.properties[prop]||{type:"literal",blocked:false,value:undefined}: child: object.properties[prop]||{type:"Literal",blocked:false,value:undefined}};
               Object.defineProperty(toreturn.child, "thisValue", {
                 value: object,
                 enumerable: false,
@@ -2178,6 +2217,8 @@ let acornSimulator = {
                 configurable: true
               });
               
+              //console.log(toreturn);
+
               if(toreturn.child.blocked) {
                 console.warn("Attempt to access blocked external");
                 acornSimulator.safe = false;
@@ -2219,19 +2260,19 @@ let acornSimulator = {
             }
             case "Literal": {
               if(object.value === _dynamic.properties.any.value){
-                return {father:object,child:{type: "Literal", blocked:false, value:_dynamic.properties.any.value}};
+                return {parent:object,child:{type: "Literal", blocked:false, value:_dynamic.properties.any.value}};
               }else{
                 let prop = ast.computed ? acornSimulator.coerce(acornSimulator.resolve(ast.property,undefined,[],scope,ast.object,thisScope)).value : ast.property.name;
-                return {father:object,child:{type: "Literal", blocked:false, value:object.value[prop]}};
+                return {parent:object,child:{type: "Literal", blocked:false, value:object.value[prop]}};
               }
             }
             case "Function":
             case "Evaluation":{
               if(object.properties){
                 let prop = ast.computed ? acornSimulator.coerce(acornSimulator.resolve(ast.property,undefined,[],scope,ast.object,thisScope)).value : ast.property.name;
-                return {father:object,child:object.properties[prop]};
+                return {parent:object,child:object.properties[prop]};
               }else{
-                return {father:object,child:{type: "Literal", blocked:false, value:undefined}};
+                return {parent:object,child:{type: "Literal", blocked:false, value:undefined}};
               }
             }
             default:
@@ -2316,11 +2357,12 @@ let acornSimulator = {
       }
     }
 
-    let result = acornSimulator.simulate(resolution,scope+"/function",resolution.type==="Function" ? mem.type === "Class"? thisScope : callee.type === "MemberExpression"? acornSimulator.resolve(callee).parent : undefined : resolution.type === "ArrowFunction" ? thisScope : undefined);
+    let functionScope = new Object({name:scope.name+"/function"})
+    let result = acornSimulator.simulate(resolution,functionScope,resolution.type==="Function" ? mem.type === "Class"? thisScope : callee.type === "MemberExpression"? acornSimulator.resolve(callee).parent : undefined : resolution.type === "ArrowFunction" ? thisScope : undefined);
 
     let env = acornSimulator.memory.filter(mem => mem.TDZ === false);
 
-    acornSimulator.forget(scope+"/function");
+    acornSimulator.forget(functionScope);
 
     for(let tdz of TDZs){
       tdz.TDZ = false;
@@ -2372,11 +2414,12 @@ let acornSimulator = {
 function acornScanner(userCode){
 	acornSimulator.reset();
   try{
-    
 		externals = extPool1;
 
+    const mainScope = {name:"main"};
+
     let pcode = acorn.parse(userCode, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
-    acornSimulator.simulate(pcode,"main",undefined);
+    acornSimulator.simulate(pcode,mainScope,undefined);
     
     externals = extPool2;
     acornSimulator.simulate(acorn.parse(`
@@ -2400,13 +2443,13 @@ function acornScanner(userCode){
       deviceShaken(_Dynamic_.any);
       gamepadConnected(_Dynamic_.any);
       gamepadDisconnected(_Dynamic_.any);
-    `, { ecmaVersion: 'latest', sourceType: 'module', locations: true }),"main",undefined);
-    acornSimulator.simulate(acorn.parse(`draw;`, { ecmaVersion: 'latest', sourceType: 'module', locations: true }), "main", undefined, {dynamic:true});
+    `, { ecmaVersion: 'latest', sourceType: 'module', locations: true }),mainScope,undefined);
+    acornSimulator.simulate(acorn.parse(`draw;`, { ecmaVersion: 'latest', sourceType: 'module', locations: true }), mainScope, undefined, {dynamic:true});
   }catch(err){
     dropError("",err);
     acornSimulator.safe = false;
   }
-  //console.log("memory:",acornSimulator.memory);.safe;
+  //console.log("memory:",acornSimulator.memory);
   
   return acornSimulator.safe;
 }
