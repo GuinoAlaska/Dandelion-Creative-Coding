@@ -884,23 +884,50 @@ function reloadBottomSketch() {
                 p.scale(editorCamera.z);
                 p.translate(editorCamera.x, editorCamera.y);
                 p.translate(-p.width / 2, -p.height / 2);
-                //p.push();
 
                 if(customCanvas){
                     p.translate((container.offsetWidth - customCanvas.width)/2, (container.offsetHeight - customCanvas.height)/2);
                 }else{
                     p.translate(0, (container.offsetHeight - CameraContainer.offsetHeight)/2);
                 };
-                if(userDrawingContext) p._renderer.drawingContext=userDrawingContext;
+                const ctx = p._renderer.drawingContext;
+
+                const trackedProps = [
+                    "fillStyle", "strokeStyle", "lineWidth", "lineCap", "lineJoin",
+                    "miterLimit", "globalAlpha", "globalCompositeOperation",
+                    "shadowColor", "shadowBlur", "shadowOffsetX", "shadowOffsetY",
+                    "font", "textAlign", "textBaseline",
+                    "imageSmoothingEnabled", "imageSmoothingQuality",
+                    "filter"
+                ];
+
+                function snapshotContext(ctx, props) {
+                    const snap = {};
+                    for (const p of props) snap[p] = ctx[p];
+                    snap.lineDash = ctx.getLineDash();
+                    return snap;
+                }
+
+                function restoreContext(ctx, snap) {
+                    for (const [k, v] of Object.entries(snap)) {
+                        if (k === "lineDash") ctx.setLineDash(v);
+                        else ctx[k] = v;
+                    }
+                }
+
+                ctx.save();
+                if (userDrawingContext) {
+                    restoreContext(ctx,userDrawingContext);
+                }
+                
                 commandsQueue.forEach(cmd => {
                     if(cmd.type === "functionCall") p[cmd.fnName](...cmd.args);
-                    if(cmd.type === "variableSet") p._renderer.drawingContext[cmd.prop] = cmd.value;
-                    if(cmd.type === "variableCall") p._renderer.drawingContext[cmd.name](...cmd.args);
+                    if(cmd.type === "variableSet") ctx[cmd.prop] = cmd.value;
+                    if(cmd.type === "variableCall") ctx[cmd.name](...cmd.args);
                 });
-                userDrawingContext = p._renderer.drawingContext;
-
-                //p.pop();
-                //p.pop();
+                userDrawingContext = snapshotContext(ctx, trackedProps);
+                ctx.restore()
+                //p._renderer.drawingContext = originalDrawingContext;
 
                 p.push();
                 function resetAllModes(p) {
@@ -925,7 +952,6 @@ function reloadBottomSketch() {
                     p.resetMatrix();
                 }
                 resetAllModes(p);
-                p._renderer.drawingContext = originalDrawingContext;
                 p.resetMatrix();
                 p.translate(p.width / 2, p.height / 2);
                 p.scale(editorCamera.z);
