@@ -598,6 +598,30 @@ function reloadBottomSketch() {
         let interpol = false;
         let userDrawingContext;
         p.draw = () => {
+            const ctx = p._renderer.drawingContext;
+            function resetAllModes(p) {
+                // Geometry & interpretation modes
+                p.rectMode(p.CORNER);
+                p.ellipseMode(p.CENTER);
+                p.imageMode(p.CORNER);
+                p.colorMode(p.RGB, 255);
+                p.angleMode(p.RADIANS);
+                p.textAlign(p.LEFT, p.BASELINE);
+
+                // Basic drawing styles
+                p.stroke(0);
+                p.fill(255);
+                p.strokeWeight(1);
+                p.strokeCap(p.ROUND);
+                p.strokeJoin(p.MITER);
+                p.blendMode(p.BLEND);
+                p.noSmooth(false); // reset smoothing if used
+
+                // Reset transform
+                p.resetMatrix();
+            }
+            resetAllModes(p);
+            //ctx.restore()
             const container = document.getElementById('output-bottom');
             const originalDrawingContext = p._renderer.drawingContext
             if(isWebGL){
@@ -890,7 +914,6 @@ function reloadBottomSketch() {
                 }else{
                     p.translate(0, (container.offsetHeight - CameraContainer.offsetHeight)/2);
                 };
-                const ctx = p._renderer.drawingContext;
 
                 const trackedProps = [
                     "fillStyle", "strokeStyle", "lineWidth", "lineCap", "lineJoin",
@@ -930,27 +953,6 @@ function reloadBottomSketch() {
                 //p._renderer.drawingContext = originalDrawingContext;
 
                 p.push();
-                function resetAllModes(p) {
-                    // Geometry & interpretation modes
-                    p.rectMode(p.CORNER);
-                    p.ellipseMode(p.CENTER);
-                    p.imageMode(p.CORNER);
-                    p.colorMode(p.RGB, 255);
-                    p.angleMode(p.RADIANS);
-                    p.textAlign(p.LEFT, p.BASELINE);
-
-                    // Basic drawing styles
-                    p.stroke(0);
-                    p.fill(255);
-                    p.strokeWeight(1);
-                    p.strokeCap(p.ROUND);
-                    p.strokeJoin(p.MITER);
-                    p.blendMode(p.BLEND);
-                    p.noSmooth(false); // reset smoothing if used
-
-                    // Reset transform
-                    p.resetMatrix();
-                }
                 resetAllModes(p);
                 p.resetMatrix();
                 p.translate(p.width / 2, p.height / 2);
