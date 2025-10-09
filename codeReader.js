@@ -469,7 +469,7 @@ function reloadTopSketch(userCode) {
             const container = document.getElementById('output-top');
             const isWebGL = p._renderer && p._renderer.isP3D;
             try {
-                if(!isWebGL) p.push();
+                //if(!isWebGL) p.push();
                 if(!setItUp){
                     commandsQueue = [];
                 }else{
@@ -478,7 +478,7 @@ function reloadTopSketch(userCode) {
                 isRecordingUserCode = true;
                 drawFn();
                 isRecordingUserCode = false;
-                if(!isWebGL) p.pop();
+                //if(!isWebGL) p.pop();
             } catch (err) {
                 dropError(`Sketch runtime error:`,err);
                 p.noLoop();
@@ -596,6 +596,7 @@ function reloadBottomSketch() {
         
         const isWebGL = topP5Instance._renderer && topP5Instance._renderer.isP3D;
         let interpol = false;
+        let userDrawingContext;
         p.draw = () => {
             const container = document.getElementById('output-bottom');
             const originalDrawingContext = p._renderer.drawingContext
@@ -878,29 +879,54 @@ function reloadBottomSketch() {
                 }
                 p.pop();
 
-                p.push();
+                //p.push();
                 p.translate(p.width / 2, p.height / 2);
                 p.scale(editorCamera.z);
                 p.translate(editorCamera.x, editorCamera.y);
                 p.translate(-p.width / 2, -p.height / 2);
-                p.push();
+                //p.push();
 
                 if(customCanvas){
                     p.translate((container.offsetWidth - customCanvas.width)/2, (container.offsetHeight - customCanvas.height)/2);
                 }else{
                     p.translate(0, (container.offsetHeight - CameraContainer.offsetHeight)/2);
                 };
+                if(userDrawingContext) p._renderer.drawingContext=userDrawingContext;
                 commandsQueue.forEach(cmd => {
                     if(cmd.type === "functionCall") p[cmd.fnName](...cmd.args);
                     if(cmd.type === "variableSet") p._renderer.drawingContext[cmd.prop] = cmd.value;
                     if(cmd.type === "variableCall") p._renderer.drawingContext[cmd.name](...cmd.args);
                 });
-                p._renderer.drawingContext = originalDrawingContext;
+                userDrawingContext = p._renderer.drawingContext;
 
-                p.pop();
-                p.pop();
+                //p.pop();
+                //p.pop();
 
                 p.push();
+                function resetAllModes(p) {
+                    // Geometry & interpretation modes
+                    p.rectMode(p.CORNER);
+                    p.ellipseMode(p.CENTER);
+                    p.imageMode(p.CORNER);
+                    p.colorMode(p.RGB, 255);
+                    p.angleMode(p.RADIANS);
+                    p.textAlign(p.LEFT, p.BASELINE);
+
+                    // Basic drawing styles
+                    p.stroke(0);
+                    p.fill(255);
+                    p.strokeWeight(1);
+                    p.strokeCap(p.ROUND);
+                    p.strokeJoin(p.MITER);
+                    p.blendMode(p.BLEND);
+                    p.noSmooth(false); // reset smoothing if used
+
+                    // Reset transform
+                    p.resetMatrix();
+                }
+                resetAllModes(p);
+                p._renderer.drawingContext = originalDrawingContext;
+                p.resetMatrix();
                 p.translate(p.width / 2, p.height / 2);
                 p.scale(editorCamera.z);
                 p.translate(editorCamera.x, editorCamera.y);

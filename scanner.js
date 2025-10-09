@@ -3239,6 +3239,8 @@ function getExternals2(){
     "winMouseX",
     "winMouseY",
 
+    "drawingContext",
+
     "touches",
 
     "shuffle",
