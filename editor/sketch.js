@@ -19,7 +19,7 @@
     > - The hot reload mechanism is custom-built and not derived from any external template.
     > - Features like auto-save, console input, Gizmos functions (`beginGizmos()` / `endGizmos()`), and project management are custom-built.
     > - Portions of the codebase were written with the assistance of GitHub Copilot and/or ChatGPT.
-    > - Content related to Garabatospr (found in Default/DefaultProjects.json, Default/DefaultUsers.json, and Default/.thumbnails) is not part of the platform's copyrighted material. Its inclusion is explicitly authorized for use via e-mail permission.
+    > - Content related to Garabatospr (found in Default/DefaultProjects.json, Default/DefaultUsers.json, and Default/thumbnails) is not part of the platform's copyrighted material. Its inclusion is explicitly authorized for use via e-mail permission.
     └────────────────────────────────────────────────────────────────────────────>\\\\\
 
     ┌──────────────── - - <<<<<<<< Security Disclaimer:  >>>>>>>> - - ────────────────┐
