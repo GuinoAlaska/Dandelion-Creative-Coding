@@ -6,9 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="sprites/Logo.jpg">
-    <meta name="description" content="Dandelion Creative Coding - Main">
+    <meta name="description" content="Dandelion Creative Coding - project">
     <title>Dandelion CC</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="projectVisualization/styles.css">
     <script src="configuration/config.js"></script>
 </head>
 <body>
@@ -33,7 +33,11 @@
                     </li>
                     <li style="flex: 1 1 auto;"></li>
                 </ul>
-                <div id="divisor"></div>
+                <!--div id="divisor"></div-->
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="Explore projects!!!" value="">
+                    <button id="SearchBtn" style="background-image: var(--SearchIcon); background-repeat: no-repeat; background-position: center; width: 70px;"></button>
+                </div>
                 <ul>
                     <li class="dropdown" style="padding-right:10px">
                         <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px; margin-right:0px;">
@@ -87,42 +91,58 @@
         </nav>
     </div>
     <div id="content">
-        <!--div id="leftAds-div">
-            <div class="ad-wrapper ad-160x600" data-ad-slot="main-sidebar">
-                <div class="ad-placeholder" role="img" aria-label="Ad placeholder">
-                    <span class="ad-label">AD PLACEHOLDER</span>
-                    <span class="ad-size">160×600</span>
-                </div>
-            </div>
-        </div-->
         <main>
-            <div id="search-panel">
-                <h2>Search</h2>
-                <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Explore projects!!!" value="">
-                    <button id="SearchBtn" style="background-image: var(--SearchIcon); background-repeat: no-repeat; background-position: center; width: 70px;"></button>
+            <div id="project-container">
+                <div id="interaction">
+                    <div id="runner-panel">
+                        <button id="source-btn" style="background-image: var(--SourceIcon); background-repeat: no-repeat; background-position: 7px 7px;"></button>
+                        <div class="group">
+                            <button id="execute-stop-btn" style="background-image: var(--Icons); background-position: -8px -8px;"></button>
+                            <button id="pause-btn" style="background-image: var(--Icons); background-position: -158px -108px;"></button>
+                        </div>
+                        <button id="fullScreen-btn" style="background-image: var(--FullScreenIcon); background-repeat: no-repeat; background-position: 7px 7px;"></button>
+                    </div>
+                    <div id="iframe-container" style="aspect-ratio: 2 / 1; transition: all 0.3s;">
+                        <iframe id="sketch" sandbox="allow-scripts" src="FullScreen/index.html" width="100%" height="100%" allow="accelerometer; gyroscope;" frameborder="0"></iframe>
+                    </div>
+                    <h3 id="project-title"></h3>
+                    <div id="metrics">
+                        <p id="publicationDate"></p>
+                        <span class="metric-wrapper"><a style="background-image: var(--ViewsIcon); background-repeat: no-repeat; width: 20px; height:20px;"></a>0</span>
+                        <div class="group">
+                            <button id="likeProject" style="background-image: var(--LikeIcon); background-repeat: no-repeat; background-position: 7px 7px;"></button>
+                            <p>0</p>
+                            <button id="dislikeProject" style="background-image: var(--DislikeIcon); background-repeat: no-repeat; background-position: 7px 7px;"></button>
+                        </div>
+                        <div id="spacer"></div>
+                        <div class="group">
+                            <button id="shareProject" style="background-image: var(--ShareIcon); background-repeat: no-repeat; background-position: 7px 7px;"></button>
+                            <div class="dropdown" style="padding-right:10px">
+                                <a class="dropbtn" style="background-image: var(--DotsBurgerHorizontalIcon); background-repeat: no-repeat; background-position: 7px 7px;"></a>
+                                <div class="dropdown-content">
+                                    <a id="reportProject" style="background-image: var(--ReportIcon); background-repeat: no-repeat; background-position: 7px 7px;"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="project-info">
+                    <a class="profile"></a>
+                    <div class="description">
+                        <h1>Description:</h1>
+                        some description
+                    </div>
+                    <div class="instructions">
+                        <h1>Instructions:</h1>
+                        some instructions... if apply xd
+                    </div>
                 </div>
             </div>
-            <div id="comunity-panel">
-                <!--h2 id="comunity-title">Community</h2-->
-                <div class="project-grid">
-                </div>
-            </div>
-            <div id="internship">
-                <a href="Internship/index.html"><h1>Help me get an internship!</h1></a>
-            </div>
-            <div id="contacts-panel">
-                <h2>Contacts</h2>
-                <div class="contact-icons">
-                    <a href="https://discord.gg/KN7kFxtTcB" target="_blank">
-                        <img src="https://cdn.simpleicons.org/discord/7289DA" alt="Discord" width="40" height="40">
-                    </a>
-                    <a href="https://www.reddit.com/r/DandelionCC/" target="_blank">
-                        <img src="https://cdn.simpleicons.org/reddit/FF4500" alt="Reddit" width="40" height="40">
-                    </a>
-                    <a href="https://buymeacoffee.com/guinoalaska" target="_blank">
-                        <img src="https://cdn.simpleicons.org/buymeacoffee/F7B400" alt="Buy Me a Coffee" width="40" height="40">
-                    </a>
+            <div id="bottom">
+                <div id="comments-section"></div>
+                <div id="other-proyects">
+                    <div class="project-grid">
+                    </div>
                 </div>
             </div>
         </main>
@@ -135,24 +155,10 @@
             </div>
         </div-->
     </div>
-    <footer>
-        &copy; 2024 Jonadab Moiseyev Olvera Marichal
-    </footer>
-    <script data-goatcounter="https://dandelioncc.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
     <script src="loadProjects.js"></script>
+    <script src="projectVisualization/sketch.js"></script>
     <script src="searchBar.js"></script>
     <script src="theme.js"></script>
-    <script src="loadMain.js"></script>
     <script src="MobileMenu.js"></script>
 </body>
 </html>
-
-<!--<div id="content"></div>
-
-<script>
-    fetch("content.html")
-        .then(res => res.text())
-        .then(html => document.getElementById("content").innerHTML = html);
-</script>
--->

@@ -17,7 +17,7 @@ class Dseed {
     }
     draw() {
         if (this.on) {
-            stroke(255);
+            stroke(config.theme? config.theme==="dark"?255:100:100);
             strokeWeight(this.sw);
             line(0, 0, this.x+10*abs(sin(frameCount/100*this.r)), this.y+10*sin(this.x/100));
             if(random(0,1000)<1){
@@ -29,7 +29,7 @@ class Dseed {
         }
         push();
         noStroke();
-        fill(255);
+        fill(config.theme? config.theme==="dark"?255:100:100);
         translate(this.x+10*abs(sin(frameCount/100*this.r)), this.y+10*sin(this.x/100));
         if(this.x+10*abs(sin(frameCount/100*this.r))>2*width){
             dseeds.splice(dseeds.indexOf(this),1)
@@ -97,7 +97,7 @@ function setup() {
 }
 
 function draw() {
-    background(0);
+    background(config.theme? config.theme==="dark"?0:200:200);
     translate(100, height / 2);
 
     let x = 0;
@@ -105,7 +105,7 @@ function draw() {
 
     scale(0.7);
     //translate(-200, -60);
-    stroke(255);
+    stroke(config.theme? config.theme==="dark"?255:100:100);
     strokeWeight(5);
     noFill();
     curve(-100, 0, 0, 0, -50, 200, -300, 200);

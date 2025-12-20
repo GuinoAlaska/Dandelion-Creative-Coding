@@ -1,24 +1,50 @@
 # Todo List
+- [/] Main Page
+- [/] fullScreen Page <deffer>
+- [/] project view page
+- [/] 404 Page
+- [/] 503 maintenance page
+- < > Ads
+- [/] Auto-save functionality
+- [/] Console input for debugging
+- [*] load multimedia
+  - [/] js
+  - [/] txt
+  - [/] json
+  - [?] images
+  - [?] audio
+  - [?] video
+  - [?] 3D models
+- [/] Gizmos drawing functions
+- [/] Make em mobile
+- [/] I want that internship
+- {/} Fix the export from presence of beginGizmos() and endGizmos()
+- {/} Fix the export from presence of other file types
+
+- {/} Update about/index.html
+- {/} Update Legal.txt
+- {/} Update editor/sketch.js
 
 #### Update
-- [ ] Main Page
-- [ ] projects Page
-- < > Ads
-- [?] Auto-save functionality
+- [*] load multimedia
+  - [ ] images
+  - [ ] audio
+  - [ ] video
+  - [?] 3D models
 
 ## Core Features
 - [/] Code editor with syntax highlighting
 - [/] Real-time code execution
 - [/] Console output for debugging
-- [?] Console input for debugging
+- [/] Console input for debugging
 - [?] File management system (create, open, save, delete files)
 - [/] Support for multiple tabs
-- [?] Auto-save functionality
+- [/] Auto-save functionality
 - [?] make bulk download feature much more accessible and intuitive than OpenProcesing`s
 
 ## User Interface
 - [/] Minimalistic and clean design
-- [?] Dark and light mode themes
+- [/] Dark and light mode themes
 - [/] Resizable panels
 - [*] Toolbar with essential actions (Run, Save, etc.)
 - [/] Keyboard shortcuts for common actions
@@ -37,10 +63,14 @@
 - [?] Auto-completion for p5.js functions
 - [/] Error highlighting for p5.js-specific issues
 - [?] Example sketches for learning
-- [?] load multimedia
-  - [?] images
-  - [?] audio
-  - [?] video
+- [*] load multimedia
+  - [/] js
+  - [/] txt
+  - [/] json
+  - [ ] images
+  - [ ] audio
+  - [ ] video
+  - [ ] 3D models
 
 ## Collaboration Features
 - [?] Shareable links for projects

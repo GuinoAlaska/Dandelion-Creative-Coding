@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--base href="/Dandelion-Creative-Coding/"-->
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="sprites/Logo.jpg">
+    <meta name="description" content="Help Jonadab Moiseyev Olvera Marichal to get an internship.">
+    <title>Help me get an internship</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="Internship/styles.css">
+    <script src="configuration/config.js"></script>
+</head>
+<body>
+    <div id="menu-panel">
+        <!-- Menu panel content -->
+        <nav id="menu-bar">
+            <div id="desktop-menu-bar">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <img src="sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle; margin-right:0px;">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="editor/index.html" id="create" class="btn">Create</a>
+                    </li>
+                    <li>
+                        <a href="index.html" id="explore" class="btn">Explore</a>
+                    </li>
+                    <li>
+                        <a href="about/index.html" id="about" class="btn">About</a>
+                    </li>
+                    <li style="flex: 1 1 auto;"></li>
+                </ul>
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="Explore projects!!!" value="">
+                    <button id="SearchBtn" style="background-image: var(--SearchIcon); background-repeat: no-repeat; background-position: center; width: 70px;"></button>
+                </div>
+                <ul>
+                    <li class="dropdown" style="padding-right:10px">
+                        <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px; margin-right:0px;">
+                        
+                        <a class="dropbtn">Guest</a>
+                        <div class="dropdown-content">
+                            <a href="maintenance/index.html" id="login">Log in</a>
+                            <a href="maintenance/index.html" id="signin">Sign in</a>
+                            <a href="configuration/index.html" id="config">Configuration</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="mobile-menu-bar" class="hidden">
+                <ul style="display: flex; flex-direction: row; align-items: center; width: 100%; padding: 0; margin: 0;">
+                    <li>
+                        <a href="index.html">
+                            <img src="sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle;">
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <button id="mobile-help-btn" aria-label="Help" style="background:none; border:none; margin-left:10px; margin-right:10px;">
+                            <img src="sprites/help-icon.png" alt="Help" style="height:24px;">
+                        </button>
+                    </li>
+                    <li class="not-selectable" style="flex:1 1 auto; text-align:center;">
+                    </li>
+                    <li style="position:relative;">
+                        <button id="mobile-burger-btn" aria-label="Menu" style="background:none; border:none; padding:8px;">
+                            <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                            <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                            <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                        </button>
+                        <div id="mobile-dropdown-menu" style="display:none; position:absolute; right:0; top:40px; background:#222; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:100px; z-index:100;">
+                            <ul style="list-style:none; margin:0; padding:0;">
+                                <a class="dropbtn" id="create-mobile">Create</a>
+                                <a class="dropbtn" id="explore-mobile">Explore</a>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="dropdown" style="padding-right:10px">
+                        <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px;">
+                        <div class="dropdown-content">
+                            <a href="maintenance/index.html" id="login">Log in</a>
+                            <a href="maintenance/index.html" id="signin">Sign in</a>
+                            <a href="configuration/index.html" id="configuration">Configuration</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div id="content">
+        <main>
+            <div id="Introduction">
+                <h1>Help Me Get An Internship</h1>
+                <div class="def">
+                    <p>Hi! I’m Jonadab Moiseyev Olvera Marichal, a student currently completing my program in Computer Systems Engineering. To graduate, I need to complete an internship, ideally with a team where I can learn, contribute, and grow. If you’re looking for a motivated intern who’s excited to put skills into real-world work, I’d love to hear from you!</p>
+                    <p>Below is everything you need to know about me as a potential intern.</p>
+                </div>
+            </div>
+            <div id="AboutMe">
+                <h2>About Me</h2>
+                <div class="def">
+                    <p>Name: <span class="placeholder">Jonadab Moiseyev Olvera Marichal</span></p>
+                    <p>Location: <span class="placeholder">Orizaba Veracruz, México</span></p>
+                    <p>School: <span class="placeholder">Universidad Virtual del Estado de Guanajuato (UVEG)</span></p>
+                    <p>Program / Major: <span class="placeholder">Computer Systems Engineering</span></p>
+                    <p>Expected Graduation: <span class="placeholder" id="graduationDate"></span> (If I start today)</p>
+                    <script>
+                        const graduationDate = new Date();
+                        graduationDate.setMonth(graduationDate.getMonth() + 6);
+                        document.getElementById('graduationDate').textContent = graduationDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                    </script>
+                    <p>Internship Requirement: <span class="placeholder">6 months</span></p>
+                </div>
+                <div class="def">
+                    <h3>Let me introduce myself:</h3>
+                    <p>I’m a self-taught student with a strong interest in coding, physics, music, and art. I’ve been doing game development as a hobby since a very young age, and the platform you’re currently using, this page included, was fully designed and built by me for fun.</p>
+                    <p>I’m looking for an opportunity to apply my knowledge and experience in a professional environment. I want to contribute to real projects within an established company, help improve UI/UX wherever I can, and continue developing my skills through hands-on industry experience.</p>
+                </div>
+            </div>
+            <div id="Skills">
+                <h2>Skills</h2>
+                <div id="SkillsContent">
+                    <div id="TechnicalSkills" class="def">
+                        <h3>Technical Skills</h3>
+                        <li>HTML5</li>
+                        <li>CSS3</li>
+                        <li>C#</li>
+                        <li>JavaScript</li>
+                        <li>p5.js</li>
+                        <li>GIT</li>
+                        <li>Turing</li>
+                        <li>Google Docs</li>
+                        <li>Machine Learning</li>
+                        <li>Word</li>
+                        <li>Excel</li>
+                        <li>Publisher</li>
+                        <li>Power Point</li>
+                        <li>Photoshop</li>
+                        <li>Premiere</li>
+                        <li>Unity</li>
+                        <li>MySQL</li>
+                    </div>
+                    <div id="SoftSkills" class="def">
+                        <h3>Soft Skills</h3>
+                        <li>Teamwork</li>
+                        <li>Punctuality</li>
+                        <li>Commitment</li>
+                        <li>Creativity</li>
+                        <li>Solidarity</li>
+                        <li>Customer service</li>
+                    </div>
+                </div>
+            </div>
+            <div id="Projects">
+                <h2>Projects</h2>
+                <div class="def">
+                    <div class="project" onclick="window.open('index.html', '_blank');">
+                        <h3>Dandelion Creative Coding</h3>
+                        <p><strong>Type:</strong> Web Tool</p>
+                        <p><strong>Status:</strong> Public, Alpha phase</p>
+                        <p><strong>Short description:</strong> Originally a simple tool, it evolved into a full p5.js creative coding platform.</p>
+                    </div>
+                    <div class="project" onclick="window.open('https:\/\/guinoalaska.github.io\/Text\/', '_blank');">
+                        <h3>Text</h3>
+                        <p><strong>Type:</strong> Web Tool</p>
+                        <p><strong>Status:</strong> Deprecated</p>
+                        <p><strong>Short description:</strong> A simple web-based translation and text-processing tool.</p>
+                    </div>
+                    <div class="project" onclick="window.open('https:\/\/guinopowerpro.itch.io\/system-units-defense', '_blank');">
+                        <h3>System Units Defense</h3>
+                        <p><strong>Type:</strong> Web Game</p>
+                        <p><strong>Status:</strong> Closed</p>
+                        <p><strong>Short description:</strong> A tower-defense style game about protecting a computer from malware and intrusions.</p>
+                    </div>
+                    <div class="project" onclick="window.open('#', '_blank');">
+                        <h3>Quantum Relativity Theory</h3>
+                        <p><strong>Type:</strong> Physics Theory</p>
+                        <p><strong>Status:</strong> In progress</p>
+                        <p><strong>Short description:</strong> Explaining how Relativity and Quantum Mechanics aren't actually separate at all.</p>
+                    </div>
+                    <div class="project" onclick="window.open('#', '_blank');">
+                        <h3>[Unregistred]</h3>
+                        <p><strong>Type:</strong> Mobile App</p>
+                        <p><strong>Status:</strong> On mind</p>
+                        <p><strong>Short description:</strong> A financial app.</p>
+                    </div>
+                    <div class="project" onclick="window.open('#', '_blank');">
+                        <h3>[Unregistred]</h3>
+                        <p><strong>Type:</strong> Web Tool</p>
+                        <p><strong>Status:</strong> On mind</p>
+                        <p><strong>Short description:</strong> Its about Privacy Policy.</p>
+                    </div>
+                    <div class="project" onclick="window.open('#', '_blank');">
+                        <h3>[Unregistred]</h3>
+                        <p><strong>Type:</strong> Manga</p>
+                        <p><strong>Status:</strong> On progress</p>
+                        <p><strong>Short description:</strong> Superheros and Supervillains</p>
+                    </div>
+                    <div class="project" onclick="window.open('#', '_blank');">
+                        <h3>[Unregistred]</h3>
+                        <p><strong>Type:</strong> Visual Novel</p>
+                        <p><strong>Status:</strong> On mind</p>
+                        <p><strong>Short description:</strong> Sci-fi</p>
+                    </div>
+                    <div class="project" onclick="window.open('#', '_blank');">
+                        <h3>[Unregistred]</h3>
+                        <p><strong>Type:</strong> RTS Game</p>
+                        <p><strong>Status:</strong> On progress</p>
+                        <p><strong>Short description:</strong> Spaaaaaaaaaace</p>
+                    </div>
+                    <div class="project" onclick="window.open('#', '_blank');">
+                        <h3>[Unregistred]</h3>
+                        <p><strong>Type:</strong> TTRPG Game</p>
+                        <p><strong>Status:</strong> On progress</p>
+                        <p><strong>Short description:</strong> I didn´t knew you can put all of this in a Table Top Game!</p>
+                    </div>
+                </div>
+            </div>
+            <div id="Experience">
+                <h2>Experience</h2>
+                <div class="def">
+                    <div class="exp">
+                        <h3>Intercell</h3>
+                        <p><strong>Position:</strong> Data Manager & Personal Assistant</p>
+                        <p><strong>Role:</strong> Digitalization of administrative data, document organization, workflow support, and basic user technical assistance.</p>
+                        <p><strong>Time:</strong> 2020 - 2021</p>
+                    </div>
+                    <div class="exp">
+                        <h3>Little Caesars</h3>
+                        <p><strong>Position:</strong> General Collaborator</p>
+                        <p><strong>Role:</strong> Food preparation, station organization, dough handling, oven operation, and team support during high-demand hours.</p>
+                        <p><strong>Time:</strong> 11/09/2024 - 08/12/2024</p>
+                    </div>
+                </div>
+            </div>
+            <div id="WhatImLookingFor">
+                <h2>What I’m Looking For</h2>
+                <p class="def">It may sound like I’m looking for a job, but what I’m really seeking is an internship in HTML, CSS, and JavaScript development. I’m especially interested in frontend work, UI/UX, and improving my skills in modern web practices. I believe an internship would be mutually beneficial, and I am currently open to remote opportunities.</p>
+            </div>
+            <div id="ContactMe">
+                <h2>Contact Me</h2>
+                    <div class="def">
+                    <p>Phone Number (Please Whatsapp)</p>
+                    <p>Email</p>
+                    <p>Linkedin</p>
+                    <p>Github</p>
+                </div>
+
+                <div class="def">
+                    <h3>Download CV</h3>
+                    <div class="download">
+                        <a href="Internship/CV English 2025.pdf" download>Download CV (English)</a>
+                    </div>
+                    <div class="download">
+                        <a href="Internship/CV 2025.pdf" download>Download CV (Spanish)</a>
+                    </div>
+                </div>
+            </div>
+            <div id="WhyYouShouldHireMe">
+                <h2>Why You Should Hire Me</h2>
+                <div class="def">
+                <p>Because I don’t just code, <strong>I create</strong>.</p>
+                <p>I love building things from scratch, experimenting, learning new tech, and improving both functionality and user experience. I’m self-taught, motivated, and I’ve already built multiple web tools, games, and even theory projects on my own.</p>
+                <p><br>If you give me a task, I won’t just follow it; I’ll understand it, optimize it, and make it better than expected. I bring creativity, fast learning, and passion — all things you can’t teach.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="theme.js"></script>
+    <script src="MobileMenu.js"></script>
+</body>
+</html>

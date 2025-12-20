@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!--base href="/Dandelion-Creative-Coding/"-->
+        <base href="/">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/svg+xml" href="sprites/Logo.jpg">
+        <meta name="description" content="Dandelion Creative Coding - Configuration">
+        <title>Dandelion CC</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="configuration/styles.css">
+    </head>
+    <body>
+        <div id="menu-panel">
+            <!-- Menu panel content -->
+            <nav id="menu-bar">
+                <div id="desktop-menu-bar">
+                    <ul>
+                        <li>
+                            <a href="index.html">
+                                <img src="sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle; margin-right:0px;">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="editor/index.html" id="create" class="btn">Create</a>
+                        </li>
+                        <li>
+                            <a href="index.html" id="explore" class="btn">Explore</a>
+                        </li>
+                        <li>
+                            <a href="about/index.html" id="about" class="btn">About</a>
+                        </li>
+                        <li style="flex: 1 1 auto;"></li>
+                    </ul>
+                    <div class="search-wrapper">
+                        <input type="text" id="searchInput" placeholder="Explore projects!!!" value="">
+                        <button id="SearchBtn" style="background-image: var(--SearchIcon); background-repeat: no-repeat; background-position: center; width: 70px;"></button>
+                    </div>
+                    <ul>
+                        <li class="dropdown" style="padding-right:10px">
+                            <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px; margin-right:0px;">
+                            <a class="dropbtn">Guest</a>
+                            <div class="dropdown-content">
+                                <a href="maintenance/index.html" id="login">Log in</a>
+                                <a href="maintenance/index.html" id="signin">Sign in</a>
+                                <a href="configuration/index.html" id="config">Configuration</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div id="mobile-menu-bar" class="hidden">
+                    <ul style="display: flex; flex-direction: row; align-items: center; width: 100%; padding: 0; margin: 0;">
+                        <li>
+                            <a href="index.html">
+                                <img src="sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle;">
+                            </a>
+                        </li>
+                        <li class="dropdown">
+                            <button id="mobile-help-btn" aria-label="Help" style="background:none; border:none; margin-left:10px; margin-right:10px;">
+                                <img src="sprites/help-icon.png" alt="Help" style="height:24px;">
+                            </button>
+                        </li>
+                        <li class="not-selectable" style="flex:1 1 auto; text-align:center;">
+                        </li>
+                        <li style="position:relative;">
+                            <button id="mobile-burger-btn" aria-label="Menu" style="background:none; border:none; padding:8px;">
+                                <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                                <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                                <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                            </button>
+                            <div id="mobile-dropdown-menu" style="display:none; position:absolute; right:0; top:40px; background:#222; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:100px; z-index:100;">
+                                <ul style="list-style:none; margin:0; padding:0;">
+                                    <a class="dropbtn" id="create-mobile">Create</a>
+                                    <a class="dropbtn" id="explore-mobile">Explore</a>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="dropdown" style="padding-right:10px">
+                            <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px;">
+                            <div class="dropdown-content">
+                                <a href="maintenance/index.html" id="login">Log in</a>
+                                <a href="maintenance/index.html" id="signin">Sign in</a>
+                                <a href="configuration/index.html" id="configuration">Configuration</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <main>
+            <!-- Theme and Layout -->
+            <section id="Appearance">
+                <h2>Appearance</h2>
+                <label>
+                    Theme:
+                    <!--select id="theme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="system">System</option>
+                    </select-->
+                    <div class="theme-grid" id="themeGrid">
+                        <div class="theme-option" id="lightThemeOption">
+                            <div class="theme-preview">
+                                <div class="theme-preview-bar"></div>
+                                <div class="theme-preview-content">
+                                    <div class="theme-preview-panel">
+                                    <div class="theme-preview-text">
+                                        <div class="theme-preview-line1"></div>
+                                        <div class="theme-preview-line2"></div>
+                                        <div class="theme-preview-line3"></div>
+                                        <div class="theme-preview-line4"></div>
+                                    </div>
+                                    </div>
+                                    <div class="theme-preview-simple">
+                                        <div class="theme-preview-panel2"></div>
+                                        <div class="theme-preview-panel3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pallete-preview">
+                                <div class="color" value="1"></div>
+                                <div class="color" value="2"></div>
+                                <div class="color" value="3"></div>
+                                <div class="color" value="4"></div>
+                                <div class="color" value="5"></div>
+                                <div class="color" value="6"></div>
+                                <div class="color" value="7"></div>
+                                <div class="color" value="8"></div>
+                                <div class="color" value="9"></div>
+                                <div class="color" value="10"></div>
+                                <div class="color" value="11"></div>
+                                <div class="color" value="12"></div>
+                            </div>
+                            <div class="theme-label">Light</div>
+                        </div>
+                        <div class="theme-option" id="darkThemeOption">
+                            <div class="theme-preview">
+                                <div class="theme-preview-bar"></div>
+                                <div class="theme-preview-content">
+                                    <div class="theme-preview-panel">
+                                    <div class="theme-preview-text">
+                                        <div class="theme-preview-line1"></div>
+                                        <div class="theme-preview-line2"></div>
+                                        <div class="theme-preview-line3"></div>
+                                        <div class="theme-preview-line4"></div>
+                                    </div>
+                                    </div>
+                                    <div class="theme-preview-simple">
+                                        <div class="theme-preview-panel2"></div>
+                                        <div class="theme-preview-panel3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pallete-preview">
+                                <div class="color" value="1"></div>
+                                <div class="color" value="2"></div>
+                                <div class="color" value="3"></div>
+                                <div class="color" value="4"></div>
+                                <div class="color" value="5"></div>
+                                <div class="color" value="6"></div>
+                                <div class="color" value="7"></div>
+                                <div class="color" value="8"></div>
+                                <div class="color" value="9"></div>
+                                <div class="color" value="10"></div>
+                                <div class="color" value="11"></div>
+                                <div class="color" value="12"></div>
+                            </div>
+                            <div class="theme-label">Dark</div>
+                        </div>
+                    </div>
+
+                </label>
+
+                <label>
+                    Font Size:
+                    <input id="fontSize" type="number" min="12" max="24" value="14"> px
+                </label>
+            </section>
+
+            <!-- Editor Settings -->
+            <section id="Editor">
+            <h2>Editor</h2>
+                <label>
+                    Auto-save:
+                    <input id="autoSave" type="checkbox" checked>
+                </label>
+            </section>
+
+            <!-- Global UI -->
+            <section id="Interface">
+                <h2>Interface</h2>
+                <label>
+                    Language: &lt;Incoming&gt;
+                    <!--select id="language">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                    </select-->
+                </label>
+            </section>
+            
+            <!-- Changes -->
+            <section id="Changes">
+                <button id="ResetChanges">Reset changes</button>
+                <button id="ResetDefaultChanges">Reset to default</button>
+                <button id="SaveChanges">Save changes</button>
+            </section>
+        </main>
+        <script src="searchBar.js"></script>
+        <script src="configuration/config.js"></script>
+        <script src="configuration/sketch.js"></script>
+        <script src="theme.js"></script>
+        <script src="MobileMenu.js"></script>
+    </body>
+</html>

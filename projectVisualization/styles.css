@@ -14,6 +14,16 @@
     --text1-color: #222222; /* primary text */
     --text2-color: #111111; /* secondary text */
 
+    --Icons: url('sprites/icons-ligth.png');
+    --TabIcons: url('sprites/tab-icons-ligth.png');
+    --SourceIcon: url('sprites/source-icon-ligth.png');
+    --FullScreenIcon: url('sprites/fullScreen-icon-ligth.png');
+    --ViewsIcon: url('sprites/views-icon-ligth.png');
+    --LikeIcon: url('sprites/like-icon-ligth.png');
+    --DislikeIcon: url('sprites/dislike-icon-ligth.png');
+    --ShareIcon: url('sprites/share-icon-ligth.png');
+    --ReportIcon: url('sprites/report-icon-ligth.png');
+    --DotsBurgerHorizontalIcon: url('sprites/dotsBurgerHorizontal-icon-ligth.png');
     --SearchIcon: url('sprites/search-icon-ligth.png');
 }
 
@@ -31,7 +41,17 @@
     --text1-color: #f5f5f5;
     --text2-color: #fff;
     
-    --SearchIcon: url('sprites/search-icon-ligth.png');
+    --Icons: url('sprites/icons.png');
+    --TabIcons: url('sprites/tab-icons.png');
+    --SourceIcon: url('sprites/source-icon.png');
+    --FullScreenIcon: url('sprites/fullScreen-icon.png');
+    --ViewsIcon: url('sprites/views-icon.png');
+    --LikeIcon: url('sprites/like-icon.png');
+    --DislikeIcon: url('sprites/dislike-icon.png');
+    --ShareIcon: url('sprites/share-icon.png');
+    --ReportIcon: url('sprites/report-icon.png');
+    --DotsBurgerHorizontalIcon: url('sprites/dotsBurgerHorizontal-icon.png');
+    --SearchIcon: url('sprites/search-icon.png');
 }
 
 /* General hover styling */
@@ -80,12 +100,11 @@ html, body {
     color: var(--text1-color);
 }
 
-/* Font size inheritance */
-button,
-input,
-select,
-textarea {
-    font-size: inherit;
+#container {
+    display: flex;
+    flex-direction: column; /* important! stack panels vertically */
+    height: 100vh;
+    width: 100vw;
 }
 
 /* Menu Panel */
@@ -214,21 +233,6 @@ textarea {
     cursor: default !important;
 }
 
-main {
-    position: relative;
-    top: 40px;
-}
-
-#search-panel{
-    position: relative;
-    margin: 0;
-    padding: 20px;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg4-color);
-}
-
 /* Wrapper to combine input + button */
 .search-wrapper {
     display: inline-flex;           /* place input and button side by side */
@@ -278,10 +282,303 @@ main {
     border-left: 1px solid var(--bg2-color);   /* subtle line separating input/button */
 }
 
-#comunity-panel{
+#project-container {
+    position:relative;
+    display:flex;
+    flex-direction: row;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: 40px;
+    margin-left: 100px;
+    margin-right: 100px;
+    gap:20px;
+}
+#interaction {
+    flex:1;
+    border:2px solid var(--bg7-color);
+    border-radius: 10px;
+    transition: all 0.4s ease;
+}
+
+#project-title {
+    padding: 10px;
+    justify-self: center;
+}
+
+/* Runner Panel */
+#runner-panel {
+    height: 50px;
+    width: 100%;
+    background-color: var(--bg3-color);
+    color: var(--text2-color);
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center all children horizontally */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    z-index: 500;
+    position: sticky;
+    top: 0;
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--bg1-color);
+    gap: 10px;
+    flex-wrap: wrap;
+    border-radius: 10px 10px 0px 0px;
+}
+
+#runner-panel input[type="text"] {
+    flex: 1;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border: 1px solid var(--bg2-color);
+    border-radius: 4px;
+    background-color: var(--bg5-color);
+    color: var(--text1-color);
+    outline: none;
+}
+
+#runner-panel .patch {
+    flex: 1;
+    padding: 5px 10px;
+    outline: none;
+}
+
+#runner-panel input[type="text"]::placeholder {
+    color: var(--bg8-color);
+}
+
+#runner-panel select {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border: 1px solid var(--bg2-color);
+    border-radius: 4px;
+    background-color: var(--bg5-color);
+    color: var(--text1-color);
+    outline: none;
+}
+
+#runner-panel .group {
+    display: flex;
+    gap: 2px;
+    background-color: var(--bg2-color);
+    padding: 0px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#runner-panel button {
+    padding: 0px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--bg2-color);
+    color: var(--text2-color);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+}
+
+#runner-panel button:hover {
+    background-color: var(--bg7-color);
+}
+
+#runner-panel button:active {
+    background-color: var(--bg8-color);
+}
+
+#runner-paner button img {
+    align-self: center;
+    justify-self: center;
+}
+
+#iframe-container {
+    transition: all 0.4s ease;
+}
+
+#metrics {
+    position:relative;
+    display:flex;
+    flex-direction: row;
+    gap:50px;
+    padding:10px;
+    font-size: 14px; /* or whatever fits your design */
+    justify-items: center;
+    align-items: center;
+}
+
+.metric-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#metrics .group{
+    display: flex;
+    flex-direction: row;
+    gap:5px;
+    justify-items: center;
+    align-items: center;
+    background-color: var(--bg2-color);
+    padding: 0px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#metrics button{
+    padding: 0px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--bg2-color);
+    color: var(--text2-color);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+}
+
+#metrics button:hover{
+    background-color: var(--bg7-color);
+}
+
+#metrics button:active{
+    background-color: var(--bg8-color);
+}
+
+#metrics .dropdown{
+    position:relative;
+    padding: 0px;
+    color: var(--text2-color);
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    z-index: 10;
+    will-change: transform, background-color;
+    border-radius: 0 20px 20px 0;
+}
+
+#metrics .dropdown:hover {
+    background-color: var(--bg6-color);
+    transition: all 0.3s ease;
+}
+
+
+#metrics .dropbtn{
+    position:absolute;
+    text-decoration: none;
+    color: var(--text2-color);
+    font-size: 1rem;
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    text-align: center; /* Center text */
+    padding: 0;
+    width: 35px;
+    height: 35px;
+}
+
+#metrics .dropdown-content {
+    display: none;
     position: relative;
-    padding:20px;
+    bottom:35px;
     background-color: var(--bg1-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    z-index: 1000;
+    left: 0px;
+}
+
+#metrics .dropdown-content a {
+    padding: 0px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--bg2-color);
+    color: var(--text2-color);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+}
+
+#metrics .dropdown-content a:hover {
+    background-color: var(--bg7-color);
+}
+
+#metrics .dropdown:hover .dropdown-content {
+    display:block;
+}
+
+
+#spacer {
+    flex:1;
+}
+
+#project-info {
+    position:relative;
+    display:flex;
+    flex-direction: column;
+    border: 2px solid var(--bg7-color);
+    border-radius: 10px 10px;
+    background:var(--bg1-color);
+    width:300px;
+}
+#project-info .profile {
+    display:flex;
+    height:70px;
+    padding:10px;
+    /*border:2px solid #555;/**/
+    background: var(--bg3-color);
+    border-radius: 10px 10px 0px 0px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color:var(--text2-color);
+    gap:5px;
+}
+#project-info .profile img {
+    border-radius: 50%;
+}
+#project-info .description {
+    flex:1;
+    padding:10px;
+    /*border:2px solid #555;/**/
+}
+#project-info .instructions {
+    flex:1;
+    padding:10px;
+    /*border:2px solid #555;/**/
+    border-radius: 0px 0px 10px 10px;
+}
+
+#bottom {
+    position:relative;
+    display:flex;
+    flex-direction: row;
+    margin-left: 100px;
+    margin-right: 100px;/**/
+}
+
+#comments-section {
+    flex:1;
+}
+
+#other-proyects {
+    /*margin:10px;/**/
+    width:300px;
+    background: var(--bg4-color);
+    border-radius: 10px;
 }
 
 .project-grid {
@@ -314,11 +611,11 @@ main {
 
 .project-card .thumbnail-container a {
     display: flex;
+    width: 100%;
 }
 
 .project-card img {
     width: 100%;
-    height: auto;
 }
 
 .project-card .project-info{
@@ -362,59 +659,6 @@ main {
     flex-shrink: 0;             /* don’t shrink logo */
 }
 
-#profileData {
-    background-color: var(--bg4-color);
-    position:relative;
-    padding:10px;
-    display:flex;
-    flex-direction: row;
-    gap:10px;
-}
-
-.user-contacts {
-    display:flex;
-    gap:5px;
-}
-
-#projects {
-    padding:10px;
-}
-
-#contacts-panel {
-    position:inherit;
-    padding:20px;
-    justify-items: right;
-}
-
-#internship {
-    display:flex;
-    flex-direction: column;
-    background-color: var(--bg2-color);
-    padding: 20px;
-    border-radius: 8px;
-    margin: 10px 0;
-}
-
-#internship a {
-    flex:1;
-    background-color: var(--bg1-color);
-    color: var(--text2-color);
-    text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    text-align: center;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-#internship a:hover {
-    background-color: var(--bg7-color);
-}
-
-footer {
-    position: relative;
-    bottom: 0px;
-}
-
 .hidden {
     display: none !important;
 }
@@ -426,10 +670,14 @@ footer {
     flex-direction: row;
 }
 
-#leftAds-div {
+main {
+    flex: 1;
+}
+
+/*#leftAds-div {
     margin-top: 40px;
     padding: 10px;
-}
+}*/
 
 #rightAds-div {
     margin-top: 40px;

@@ -6,9 +6,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="sprites/Logo.jpg">
-    <meta name="description" content="Dandelion Creative Coding - Main">
+    <meta name="description" content="Dandelion Creative Coding - 503">
     <title>Dandelion CC</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            /*background-color: #f5f5f5;*/
+            display: flex;
+            align-items: center;   /* vertical centering */
+            justify-content: center; /* horizontal centering */
+        }
+
+        .container {
+            text-align: center;
+            /*background: white;*/
+        }
+
+        h1 {
+            font-size: 80px;
+            margin: 0;
+            color: var(--b503-text-color);
+        }
+
+        p {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+    </style>
     <script src="configuration/config.js"></script>
 </head>
 <body>
@@ -33,7 +60,10 @@
                     </li>
                     <li style="flex: 1 1 auto;"></li>
                 </ul>
-                <div id="divisor"></div>
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="Explore projects!!!" value="">
+                    <button id="SearchBtn" style="background-image: var(--SearchIcon); background-repeat: no-repeat; background-position: center; width: 70px;"></button>
+                </div>
                 <ul>
                     <li class="dropdown" style="padding-right:10px">
                         <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px; margin-right:0px;">
@@ -86,73 +116,12 @@
             </div>
         </nav>
     </div>
-    <div id="content">
-        <!--div id="leftAds-div">
-            <div class="ad-wrapper ad-160x600" data-ad-slot="main-sidebar">
-                <div class="ad-placeholder" role="img" aria-label="Ad placeholder">
-                    <span class="ad-label">AD PLACEHOLDER</span>
-                    <span class="ad-size">160×600</span>
-                </div>
-            </div>
-        </div-->
-        <main>
-            <div id="search-panel">
-                <h2>Search</h2>
-                <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Explore projects!!!" value="">
-                    <button id="SearchBtn" style="background-image: var(--SearchIcon); background-repeat: no-repeat; background-position: center; width: 70px;"></button>
-                </div>
-            </div>
-            <div id="comunity-panel">
-                <!--h2 id="comunity-title">Community</h2-->
-                <div class="project-grid">
-                </div>
-            </div>
-            <div id="internship">
-                <a href="Internship/index.html"><h1>Help me get an internship!</h1></a>
-            </div>
-            <div id="contacts-panel">
-                <h2>Contacts</h2>
-                <div class="contact-icons">
-                    <a href="https://discord.gg/KN7kFxtTcB" target="_blank">
-                        <img src="https://cdn.simpleicons.org/discord/7289DA" alt="Discord" width="40" height="40">
-                    </a>
-                    <a href="https://www.reddit.com/r/DandelionCC/" target="_blank">
-                        <img src="https://cdn.simpleicons.org/reddit/FF4500" alt="Reddit" width="40" height="40">
-                    </a>
-                    <a href="https://buymeacoffee.com/guinoalaska" target="_blank">
-                        <img src="https://cdn.simpleicons.org/buymeacoffee/F7B400" alt="Buy Me a Coffee" width="40" height="40">
-                    </a>
-                </div>
-            </div>
-        </main>
-        <!--div id="rightAds-div">
-            <div class="ad-wrapper ad-160x600" data-ad-slot="main-sidebar">
-                <div class="ad-placeholder" role="img" aria-label="Ad placeholder">
-                    <span class="ad-label">AD PLACEHOLDER</span>
-                    <span class="ad-size">160×600</span>
-                </div>
-            </div>
-        </div-->
+    <div class="container">
+        <h1>503</h1>
+        <p>We don´t have servers yet, srry...</p>
     </div>
-    <footer>
-        &copy; 2024 Jonadab Moiseyev Olvera Marichal
-    </footer>
-    <script data-goatcounter="https://dandelioncc.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
-    <script src="loadProjects.js"></script>
     <script src="searchBar.js"></script>
     <script src="theme.js"></script>
-    <script src="loadMain.js"></script>
     <script src="MobileMenu.js"></script>
 </body>
 </html>
-
-<!--<div id="content"></div>
-
-<script>
-    fetch("content.html")
-        .then(res => res.text())
-        .then(html => document.getElementById("content").innerHTML = html);
-</script>
--->

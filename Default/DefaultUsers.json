@@ -1,0 +1,30 @@
+[
+    {
+        "ID":"0",
+        "name":"Guino",
+        "avatar":"sprites/Owner logo.jpg",
+        "description":"Solo Dev of Dandelion Creative Coding®.",
+        "contacts":[
+            {
+                "type":"reddit",
+                "link":"https://www.reddit.com/user/AbjectAd753/"
+            }
+        ]
+    },
+    {
+        "ID":"1",
+        "name":"garabatospr",
+        "avatar":"sprites/Mecobi Avatar.jpg",
+        "description":"Hello World!",
+        "contacts":[
+            {
+                "type":"reddit",
+                "link":"https://www.reddit.com/user/mecobi/"
+            },
+            {
+                "type":"OpenProcessing",
+                "link":"https://openprocessing.org/user/118807/#sketches"
+            }
+        ]
+    }
+]

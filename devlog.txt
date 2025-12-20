@@ -1,21 +1,332 @@
-const originalCtx = drawingContext;
+How to Hash projects:
 
-p.drawingContext = new Proxy(originalCtx, {
-  set(target, prop, value) {
-    mirrorArray.push({ type: 'set', prop, value });
-    target[prop] = value;
-    return true;
-  },
-  get(target, prop) {
-    const val = target[prop];
-    if (typeof val === 'function') {
-      return function(...args) {
-        mirrorArray.push({ type: 'call', name: prop, args });
-        return val.apply(target, args);
-      }
-    }
-    return val;
-  }
-});
+sha256:
 
-//is not a bad idea for Dandelion-3 bugfix
+UserID:#, ProjectID:#, de-Hashing:#
+
+
+
+
+
+
+
+
+
+
+
+
+
+//this code maded the ligth theme icons.
+let img
+
+function setup(){
+  img = loadImage("http://127.0.0.1:5500/sprites/icons.png");
+}
+
+function draw(){
+  //background(230);
+  //image(img,0,0);
+  
+  translate(15,15);
+  push();
+  stroke(100);
+  strokeWeight(2);
+  fill(255);
+  triangle(0,0,20,10,0,20);
+  pop();
+  
+  translate(50,0);
+  push();
+  stroke(100);
+  strokeWeight(2);
+  fill(255);
+  rect(0,0,20);
+  pop();
+  
+  translate(50,0);
+  push();
+  stroke(100);
+  strokeWeight(2);
+  fill(255);
+  circle(10,10,20);
+  pop();
+  
+  translate(50,0);
+  translate(50,0);
+  push();
+  stroke(100);
+  strokeWeight(2);
+  fill(255);
+  rect(2.5,0,5,20,10);
+  rect(12.5,0,5,20,10);
+  pop();
+  
+  translate(-200,50);
+  push();
+  stroke(100);
+  strokeWeight(2);
+  fill(255);
+  rect(0,2.5,20,5,10);
+  rect(0,12.5,15,5,10);
+  pop();
+  
+  translate(50,0);
+  push();
+  stroke(100);
+  strokeWeight(2);
+  fill(255);
+  strokeJoin(ROUND);
+  rect(2.5,0,5,20,10);
+  triangle(10,0,10,20,20,10);
+  pop();
+  
+  translate(50,0);
+  push();
+  stroke(0,200,100);
+  strokeWeight(2);
+  noFill();
+  arc(10,10,20,15,-2*PI/3,PI/2);
+  noStroke();
+  fill(0,200,100);
+  triangle(5,1,2,6,8,5);
+  pop();
+  
+  translate(70,0);
+  push();
+  scale(-1,1);
+  stroke(0,200,100);
+  strokeWeight(2);
+  noFill();
+  arc(10,10,20,15,-2*PI/3,PI/2);
+  noStroke();
+  fill(0,200,100);
+  triangle(5,1,2,6,8,5);
+  pop();
+  
+  translate(30,0);
+  push();
+  push();
+  beginClip({ invert: true });
+  circle(5,6,7);
+  ellipse(16.1,5,7,10);
+  ellipse(5.5,5,2,3);
+  circle(15.9,7.1,1.5);
+  endClip();
+  fill(255,100,0);
+  noStroke();
+  ellipse(10,10,15,20);
+  triangle(10,-3,15,2,4,3)
+  pop();
+  fill(255,200,0);
+  noStroke();
+  circle(10,15,10);
+  stroke(100);
+  strokeWeight(2);
+  noFill();
+  beginShape();
+  vertex(10,-3);
+  vertex(14,1);
+  bezierVertex(10,6,15,12,17.5,9.5);
+  bezierVertex(17,24,2,23,2.6,8.52);
+  bezierVertex(5,10.5,8,9.6,8.5,6);
+  bezierVertex(8.5,3,5,2,4.5,2.5);
+  endShape(CLOSE);
+  ellipse(5.5,5,2,3);
+  circle(15.9,7.1,1.5);
+  pop();
+  
+  translate(50,0);
+  push();
+  push();
+  beginClip({ invert: true });
+  circle(5,6,7);
+  ellipse(16.1,5,7,10);
+  ellipse(5.5,5,2,3);
+  circle(15.9,7.1,1.5);
+  endClip();
+  fill(180);
+  noStroke();
+  ellipse(10,10,15,20);
+  triangle(10,-3,15,2,4,3)
+  pop();
+  fill(200);
+  noStroke();
+  circle(10,15,10);
+  pop();
+  
+  translate(-250,50);
+  push();
+  noFill();
+  stroke(100);
+  strokeWeight(2);
+  arc(10,10,20,20,-5*PI/8,PI/8);
+  arc(10,10,20,20,3*PI/8,PI+PI/8);
+  noStroke();
+  fill(100);
+  triangle(19,17,20.5,13,17,11);
+  rotate(PI);
+  translate(-20,-20);
+  triangle(19,17,20.5,13,17,11);
+  pop();
+  
+  translate(50,0);
+  push();
+  stroke(180);
+  strokeWeight(2);
+  noFill();
+  arc(10,10,20,15,-2*PI/3,PI/2);
+  noStroke();
+  fill(180);
+  triangle(5,1,2,6,8,5);
+  pop();
+  
+  translate(70,0);
+  push();
+  scale(-1,1);
+  stroke(180);
+  strokeWeight(2);
+  noFill();
+  arc(10,10,20,15,-2*PI/3,PI/2);
+  noStroke();
+  fill(180);
+  triangle(5,1,2,6,8,5);
+  pop();
+  
+  translate(30,0);
+  push();
+  noStroke();
+  fill(200);
+  rect(2.5,0,5,20,10);
+  rect(12.5,0,5,20,10);
+  pop();
+}
+
+
+
+//this code maded the ligth theme tab icons.
+
+let img;
+function preload(){
+	//img = loadImage("sprites/tab-icons.png");
+}
+
+function setup(){
+  //We already maded a full size canvas for you :3
+  noLoop();
+}
+
+function draw(){
+  //background(0);
+  //image(img,0,0);
+  noStroke();
+  fill(50);
+  textAlign(CENTER,CENTER);
+  textSize(20)
+  text("p5",20,20);
+  text("{}",20+40,20);
+  text("txt",20+40+40,20);
+  noFill();
+  stroke(50);
+  
+  translate(120,0);
+  push();
+  rect(10,10,20);
+  beginShape();
+  vertex(10,25);
+  vertex(10,30);
+  vertex(30,30);
+  vertex(15,20);
+  endShape(CLOSE);
+  circle(25,17,7);
+  pop();
+  
+  translate(40,0);
+  push();
+  rect(10,15,5,10,5,0,0,5);
+  beginShape();
+  vertex(18,15);
+  vertex(18,25);
+  vertex(28,35);
+  vertex(28,5);
+  endShape(CLOSE);
+  pop();
+  
+  translate(40,0);
+  push();
+  rect(10,10,20);
+  rect(10,10,20,5);
+  rect(10,25,20,5);
+  rect(10,10,5,5);
+  rect(10,25,5,5);
+  rect(20,10,5,5);
+  rect(20,25,5,5);
+  triangle(
+    17,17,
+    17,23,
+    23,20);
+  pop();
+  
+  translate(40,0);
+  push();
+  beginShape();
+  vertex(20,30);
+  vertex(30,25);
+  vertex(30,15);
+  vertex(20,10);
+  vertex(10,15);
+  vertex(10,25);
+  endShape(CLOSE);
+  line(20,20,20,30);
+  line(20,20,30,15);
+  line(20,20,10,15);
+  pop();
+  
+  translate(40,0);
+  push();
+  noStroke();
+  fill(50);
+  text("</>",20,21)
+  pop();
+  
+  translate(40,0);
+  push();
+  noStroke();
+  fill(50);
+  text("#",20,21)
+  pop();
+  
+  translate(40,0);
+  push();
+  rect(10,10,20,5);
+  rect(10,15,20,15);
+  rect(10,20,20,5);
+  line(20,15,20,30);
+  pop();
+  
+  translate(40,0);
+  push();
+  rect(10,10,20);
+  //noStroke();
+  //fill(255);
+  textFont("courier new");
+  textSize(6)
+  text("1 0\n0 1",20,20);
+  pop();
+  
+  translate(40,0);
+  push();
+  noStroke();
+  fill(50);
+  text("Aa",20,20);
+  pop();
+  
+  translate(40,0);
+  push();
+  rect(10,15,15);
+  beginClip({invert:true});
+  rect(10,15,15);
+  endClip();
+  translate(2,-2);
+  triangle(15,25,30,25,22.5,10);
+  pop();
+}

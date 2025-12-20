@@ -1,0 +1,420 @@
+[
+    {
+        "ID":"c4996ce9c8c59efb9682eff05c2f5565234f389887f4fb00f24176abbd85d097",
+        "name":"arlequines",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors   =  [\"#fac901\",\"#ffffff\",\"#225095\",\"#ffffff\",\"#dd0100\"]; \n\nlet walkers = [];\n\nlet nwalkers = 200;\n\nfunction setup() {\n  createCanvas(1000,1000);\n  colorMode(HSB, 360, 100, 100, 100);\n  strokeCap(SQUARE);\n  rectMode(CENTER);\n  ellipseMode(CENTER);\n  //pixelDensity(1);\n  \n  let mySize = 100;\n\n  fill(0);\n  square(width/2,height/2,width);\n  \n  for(let xx = mySize*2; xx < width - mySize;xx+=mySize*3)\n  {\n    for(let yy = mySize*2; yy < height - mySize;yy+=mySize*3)\n    {\n      //noFill();\n      fill(100);\n      square(xx,yy,mySize*2.5,20,20);\n       setWalkers(xx,yy,mySize*0.9);\n    }\n  }\n\n  //addBlur();\n  \n  noLoop();\n}\n\nfunction draw() {\n\n  for(let i=0;i < walkers.length;i++)\n  { \n    walkers[i].move();\n    walkers[i].draw();\n  }\n  \n  \n}\n\nfunction setWalkers(x,y,mySize)\n{\n    for(let i=0; i < nwalkers;i++)\n    {\n      walkers.push(new Walker(x,y,mySize));\n    }}\n\n\nclass Walker { \n  \n  constructor(x,y,step)\n  {\n    this.x = x; \n    this.y = y;\n    this.color = generateColor();\n    this.linecolor = generateColor();\n    this.ox = x;\n    this.oy = y;\n    this.step = step;\n    this.freq = 1.5;\n    this.amp = this.step/4;\n    this.line = random([\"plus\",\"minus\"]);\n    this.rad = int(this.step/random(1.5,5));\n    this.fillProb = random(0,1);\n  }\n  \n  move()\n  {\n    let direction = random([[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1],[0,1],[0,-1]]);\n    this.x += this.step*direction[0];\n    this.y += this.step*direction[1];\n  }\n  \n  draw()\n  {\n    strokeWeight(random(1,2));\n    stroke(0);\n    \n    // initial location \n\n    // noFill();\n    // strokeWeight(0.2);\n    // stroke(0);\n    // square(this.ox,this.oy,this.rad*4);\n\n    fill(100);\n    ellipse(this.ox,this.oy,20,20);\n    fill(0);\n    ellipse(this.ox,this.oy,5,5);\n\n    if (this.line == \"plus\")\n    {\n      fill(this.color);\n      drawSine(createVector(this.ox,this.oy),createVector(this.x,this.y),this.freq,this.amp);\n    }else\n    {\n      fill(this.color);\n      drawSine(createVector(this.ox,this.oy),createVector(this.x,this.y),this.freq,-this.amp);\n    }\n\n    if (this.fillProb > 0)\n    {\n      fill(this.color);\n    }else\n    {\n      noFill();\n    }\n    ellipse(this.x,this.y,this.rad,this.rad);\n    fill(0);\n    ellipse(this.x,this.y,this.rad/2,this.rad/2);\n    fill(this.color);\n    ellipse(this.x,this.y,this.step/12,this.step/12);\n    this.ox = this.x;\n    this.oy = this.y;\n    this.peak = random([true,false]);\n\n    // noFill();\n    // strokeWeight(1);\n    // square(this.ox,this.oy,this.rad);\n    \n  }\n}\n\nfunction generateColor() {\n  let myColor = random(colors);\n  return myColor;\n}\n\nfunction drawSine(p1, p2,freq,amp)\n{\n  let d = p1.dist(p2);\n  let a = atan2(p2.y-p1.y,p2.x-p1.x);\n  push();\n  translate(p1.x,p1.y);\n  stroke(0);\n  rotate(a);\n  beginShape();\n  for (let i = 0; i <= d; i += d/100) {\n    let xx = i;\n    let yy = sin(xx*TWO_PI*freq/d)*amp;\n      \n    vertex(xx,yy);\n  }\n  endShape(CLOSE);\n  pop();\n}\n\nfunction addBlur() {\n  drawingContext.shadowOffsetX = -2;\n  drawingContext.shadowOffsetY = -2;\n  drawingContext.shadowBlur = 10;\n  drawingContext.shadowColor = \"black\";\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/arlequines.png",
+        "publicationDate":"28/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"4c548cd1d08092e03c4f10abdfaca6e4f85e649c485959de62226b4e3082aff8",
+        "name":"Elian",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"// eliam script dictionary https://www.ccelian.com/ElianScriptFull.html\n\nlet charmap = {\n    a: \"ﬧ\",\n    b: \"コ\",\n    c: \"┘\",\n    d: \"п\",\n    e: \"ߛ\",\n    f: \"ப\",\n    g: \"厂\",\n    h: \"ⵎ\",\n    i: \"ட\",\n    j: \"ᒣ\",\n    k: \"ᓗ\",\n    l: \"ᒧ\",\n    m: \"ᒉ\",\n    n: \"ᑭ\",\n    o: \"ᘂ\",\n    p: \"ᒥ\",\n    q: \"ᓕ\",\n    r: \"ᒪ\",\n    s: \"ᒭ\",\n    t: \"ᓘ\",\n    u: \"ᒨ\",\n    v: \"ᒕ\",\n    w: \"ᑮ\",\n    x: \"ᒎ\",\n    y: \"ᓟ\",\n    z: \"ᓛ\",\n}\n\nconst alphabet = \"abcdefghijklmnopqrstuvwxyz\"\n\nborder = 200;\n\nlet seed1,seed2; \n\nfunction setup() {\n  createCanvas(1000,1000);\n  colorMode(HSB, 360, 100, 100, 100);\n  rectMode(CENTER);\n  background(0);\n  seed1 = random(0,1000000);\n  seed2 = random(0,1000000);\n    palette = [\"#FF0000\",\"#00000\",\"#FFFFFF\",\"#FFFFFF\"];\n  \n}\n\nfunction draw() {\n\n  randomSeed(seed1);\n  for(let i=0;i < 10;i++)\n  {\n    let col = shuffle(palette)[0];\n    let xx = width/2 + 200*randomGaussian();\n    let yy = height/2 + 200*randomGaussian();\n    noStroke();\n        fill(col);\n    drawShape(xx,yy,col);\n  }\n  \n  randomSeed(seed2);\n  if (frameCount > 500)\n  {\n    noLoop();\n    text2Elian(\"rojo\",width*0.05,height*0.1);\n    text2Elian(\"negro\",width*0.05,height*0.2);\n    text2Elian(\"blanco\",width*0.05,height*0.3);\n    text2Elian(\"blanco\",width*0.05,height*0.4);\n    \n    noFill();\n    stroke(100);\n    strokeWeight(3);\n    rect(width/2,height/2,width,height);\n  }\n  \n}\n\nfunction drawShape(x,y,col)\n{\n  push();\n  translate(x,y);\n  scale(random(0.1,0.5));\n  rotate(frameCount/200);\n  strokeWeight(0.5);\n  stroke(col);\n  drawHipo(width/2 + 20*sin(frameCount/400),height/2 + 10*sin(frameCount/400),20,20*sin(frameCount/100));\n  pop();\n}\n\n// https://en.wikipedia.org/wiki/Hippopede\n\nfunction drawHipo(x,y,b,scale) {\n  a = b/1.5;\n  noFill();\n  strokeWeight(0.25);\n  beginShape();\n  for(let ang = 0; ang <= 2*PI;ang+=(2*PI)/200)\n  {\n       let xx = x + scale*r(ang,a,b)*cos(ang);\n       let yy = y + scale*r(ang,a,b)*sin(ang);\n       vertex(xx,yy);\n  }\n  endShape();\n}\n  \nfunction r(theta,a,b) \n{\n  return (4*b*(a - b*sin(theta)**2))**0.5;\n}\n\n\nfunction generateColor(scale) {\n  let temp = color(colors[floor(random(0, colors.length))]);\n  myColor = color(hue(temp) + randomGaussian() * scale,\n    saturation(temp) + randomGaussian() * scale,\n    brightness(temp) + randomGaussian() * scale,\n    random(100,100));\n  return myColor;\n}\n\nfunction text2Elian(texto,x,y)\n{\n\n  let tsize = 70;\n  textSize(tsize);\n  textFont('Helvetica');\n\n  let col = palette[floor(random(0,palette.length-1))];\n  textAlign(LEFT,CENTER);\n  fill(100);\n  \n  for(let i=0;i < texto.length;i++)\n  {\n    let temp = charmap[texto[i]];\n    push();\n    translate(x + i*tsize*0.8,y);\n    text(temp,0,0);\n    pop();\n  }\n  \n}\n\nfunction randomString(len)\n{\n  let word = [];\n  for(let i=0;i < len;i++)\n  {\n    word.push(alphabet[floor(random(alphabet.length))]);\n  }\n\n  return word;\n}\n\n"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/Elian.png",
+        "publicationDate":"22/5/2022",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"c745e589cb5e1066ea22f03404150203d7fa0338996eed5f55d227249c31a406",
+        "name":"6292023.2",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/\n// @garabatospr\n\n\nlet colors = [\"#f2eb8a\", \"#fed000\", \"#fc8405\", \"#ed361a\", \"#e2f0f3\", \"#b3dce0\", \"#4464a1\", \"#203051\", \"#ffc5c7\", \"#f398c3\", \"#cf3895\", \"#6d358a\", \"#06b4b0\", \"#4b8a5f\"];\n\nlet mySeed; \n\nfunction setup() {\n  createCanvas(1000,1000);\n  rectMode(CENTER);\n  ellipseMode(CENTER);\n  colorMode(HSB, 360, 100, 100,100);\n  strokeCap(SQUARE);\n  mySeed = floor(random(1,100000));\n  //smooth(4);\n  //noLoop();\n}\n\nfunction draw() {\n\n  randomSeed(mySeed);\n  \n  setBackground(width);\n  \n  let mySize = 100;\n  \n  for(let offset=0;offset > -80;offset-=10)\n  {\n    random(123);\n    for(let xx=mySize*1.55;xx <= width-mySize;xx+=mySize*1.15)\n    {\n      for(let yy=mySize*1.55;yy <= height-mySize;yy+=mySize*1.15)\n      {\n        push();\n        translate(xx,yy);\n        noFill();\n        square(0,0,mySize);\n        rotate(random([0,PI/2,PI,3*PI/2]));\n        //rotate(frameCount*0.01);\n        drawPattern(0,0,mySize,offset);\n        pop();\n      }\n    }\n  }  \n}\n\nfunction drawPattern(x,y,mySize,offset)\n{\n  strokeWeight(mySize/50);\n  let myColor = color(generateColor());\n  //myColor.setAlpha(50);\n  fill(myColor);\n  arc(x-mySize/2,y-mySize/2,mySize + offset,mySize + offset,0,PI/2);\n  arc(x+mySize/2,y+mySize/2,mySize + offset,mySize + offset,-PI,-PI/2);\n}\n\n\n\nfunction generateColor(){\n  return random(colors);\n}\n\n\nfunction setBackground(mySize)\n{\n  fill(colors[4]);\n  rect(width/2,height/2,width-100,height-100);\n}\n\n"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/6292023,2.png",
+        "publicationDate":"26/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"a4424c2b48f57a2f64800bce73b94080e7a914e5314748b21abc112ab293ddfc",
+        "name":"gradient grid",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors = [\"#ff0000\", \"#feb30f\", \"#0aa4f7\", \"#ffffff\", \"#000000\"];\n\nlet gridSize = 100;\n\nlet mySeed;\n\nfunction setup() {\n  createCanvas(1000, 1000);\n  rectMode(CENTER);\n  colorMode(HSB, 360, 100, 100, 100);\n  mySeed = floor(random(1, 1000000));\n  fill(90);\n  rect(width / 2, height / 2, width-75, height-75,20,20);\n  noLoop();\n}\n\nfunction curva(x, y) {\n  \n  addBlur();\n\n  noStroke();\n  let freq = random(0.1, 2.0);\n  let size = random(0.1, 20);\n  let amp = random(50, 200);\n  let range = gridSize - 5;\n  let ww = random(0, 0.25);\n  let step = 0.01;\n  let pos = createVector(x, y);\n  let p1 = createVector(pos.x - range / 2, pos.y - range / 2);\n  let p2 = createVector(pos.x + range / 2, pos.y + range / 2);\n\n  let gradient;\n\n  gradient = drawingContext.createRadialGradient(p1.x, p1.y, 0, p2.x, p2.y, range * 2);\n\n  for (let i = 0; i < 1.0; i += step) {\n    gradient.addColorStop(i, generateColor(10));\n  }\n  drawingContext.fillStyle = gradient;\n\n\n  rect(pos.x - range / 4, pos.y, range / 2.35, range, 60, 60);\n\n  gradient = drawingContext.createRadialGradient(p1.x, p1.y, 0, p2.x, p2.y, range * 2);\n\n\n  for (let i = 0; i < 1.0; i += step) {\n    gradient.addColorStop(i, generateColor(10));\n  }\n\n  drawingContext.fillStyle = gradient;\n\n  rect(pos.x + range / 4, pos.y, range / 2.35, range, 50,50);\n\n}\n\nfunction draw() {\n\n  randomSeed(mySeed);\n  let mySize = gridSize;\n  for (let xx = mySize; xx <= width - mySize; xx += mySize) {\n    for (let yy = mySize; yy <= height - mySize; yy += mySize) {\n      push();\n      translate(xx, yy);\n      rotate(random([0, PI / 2, PI, 3 * PI / 2]));\n      curva(0, 0);\n      pop();\n    }\n  }\n}\n\nfunction generateColor(scale) {\n  let myColor = color(random(colors));\n  return myColor;\n}\n\nfunction addBlur() {\n  drawingContext.shadowOffsetX = -1;\n  drawingContext.shadowOffsetY = 0;\n  drawingContext.shadowBlur = 5;\n  drawingContext.shadowColor = \"black\";\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/gradient grid.png",
+        "publicationDate":"26/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"7f882f5ecd664e69b107a03fdb1f73c2332887ce6f2ba3529e445662dc68fa69",
+        "name":"10252025",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors = [\"#000000\", \"#f7f3f2\", \"#0077e1\", \"#f5d216\", \"#fc3503\"];\n\nlet mySeed;\n\nfunction setup() {\n  createCanvas(1000, 1000);\n  rectMode(CENTER);\n  ellipseMode(CENTER);\n  mySeed = floor(random(0, 10000));\n  strokeCap(SQUARE);\n  frameRate(200);\n  colorMode(HSB, 360, 100, 100);\n  noLoop();\n\n}\n\nfunction draw() {\n\n  let mySize = 250;\n\n  for (let xx = 0; xx < width; xx += mySize) {\n    for (let yy = 0; yy < height; yy += mySize) {\n      push();\n      translate(xx, yy);\n      scale(0.275);\n      drawPattern(mySize);\n      pop();\n    }\n  }\n\n}\n\n\nfunction drawPattern(mySize) {\n\n  noFill();\n  strokeWeight(20);\n  fill(100);\n  square(width / 2, height / 2, width - 210, 130, 130);\n\n  for (let xx = mySize * 1.5; xx <= width - mySize * 1.5; xx += mySize / 2) {\n    for (let yy = mySize * 1.5; yy <= height - mySize * 1.5; yy += mySize / 2) {\n      push();\n      translate(xx, yy);\n      rotate(random([0, PI / 2, PI, 3 * PI / 2]));\n      fill(random(colors));\n      noStroke();\n      square(0, 0, mySize);\n      pop();\n    }\n  }\n\n\n\n  for (let xx = mySize; xx <= width - mySize; xx += mySize) {\n    for (let yy = mySize; yy <= height - mySize; yy += mySize) {\n      push();\n      translate(xx, yy);\n      rotate(random([0, PI / 2, PI, 3 * PI / 2]) + 0.0 * frameCount);\n      drawArc(0, 0, mySize);\n      pop();\n    }\n  }\n\n\n  for (let xx = mySize; xx <= width - mySize; xx += mySize) {\n    for (let yy = mySize; yy <= height - mySize; yy += mySize) {\n      push();\n      translate(xx, yy);\n      rotate(random([0, PI / 2, PI, 3 * PI / 2]) - 0.0 * frameCount);\n      drawArc(0, 0, mySize / 1.75);\n    pop();\n    }\n  }\n\n\n\n\n}\n\nfunction drawArc(x, y, mySize) {\n  noStroke();\n  setGradientFill(createVector(x - mySize / 2, y), createVector(x + mySize / 2, y))\n  arc(x, y, mySize, mySize, PI, 2 * PI, OPEN);\n  setGradientFill(createVector(x, y - mySize / 2), createVector(x, y + mySize / 2))\n  arc(x, y, mySize, mySize, 0, PI, OPEN);\n\n}\n\n\nfunction setBackground(mySize) {\n  fill(100);\n  rect(width / 2, height / 2, width, height);\n}\n\n\nfunction setGradientFill(pos1, pos2) {\n  gradient = drawingContext.createLinearGradient(pos1.x, pos1.y, pos2.x, pos2.y);\n  let temp = 1.0\n  for (let r = 0.0; r < 1; r += temp) {\n    gradient.addColorStop(r, random(colors));\n  }\n  drawingContext.fillStyle = gradient;\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/10252025.png",
+        "publicationDate":"25/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"ad48647557072cc2b6f30452c2cc6a62d7fe6fed2f39908b9c3bbd3e7dd6982c",
+        "name":"Los Stickies de Escher",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"\n\nlet colors = [\"#FFF275\",\"#FF8C42\",\"#FF3C38\", \"#6E44FF\", \"#42E2B8\"];\n\n//let colors =[\"white\"];\n\nlet mySeed; \n\n\nfunction setup() {\n  createCanvas(1000,1000);\n  rectMode(CENTER);\n  ellipseMode(CENTER);\n  colorMode(HSB, 360, 100, 100);\n  mySeed = floor(random(1,100000));\n  //pixelDensity(1);\n  addBlur();\n  noLoop();\n}\n\nfunction draw() {\n\n  randomSeed(mySeed);\n\n  fill(100);\n  stroke(0);\n  square(width/2,height/2,width);\n  \n  let mySize = 2000;\n\n  recursiveSquare(width*0.5,height*0.5,mySize*1.5,3);\n}\n\nfunction recursiveSquare(x,y,mySize,level)\n{\n  level -= 1;\n  \n  noStroke();\n  fill(generateColor());\n  push();\n  translate(x,y);\n  for(let yt = 0;yt < 20;yt+=2)\n  {\n    rect(-yt/2,-yt,mySize/2,mySize/2);\n  }\n  pop();\n  if (level >= 0)\n  {\n    push();\n    translate(x,y);\n    rotate(random(0,2*PI));\n    recursiveSquare(-mySize/8,0,mySize/2,level);\n    recursiveSquare(mySize/8,0,mySize/2,level);\n    recursiveSquare(0,-mySize/6,mySize/3,level);\n    recursiveSquare(0,mySize/6,mySize/3,level);\n    recursiveSquare(mySize/8,-mySize/6,mySize/6,level);\n    recursiveSquare(mySize/8,mySize/6,mySize/6,level);\n    recursiveSquare(-mySize/8,-mySize/6,mySize/6,level);\n    recursiveSquare(-mySize/8,mySize/6,mySize/6,level);\n    pop();\n  }\n  \n}\n\n\nfunction generateColor(){\n  return random(colors)\n}\n\nfunction addBlur()\n{\n  drawingContext.shadowOffsetX = -2;\n  drawingContext.shadowOffsetY = -2;\n  drawingContext.shadowBlur = 10;\n  drawingContext.shadowColor = 'black';\n}\n\nfunction setBackground(mySize)\n{\n  fill(100);\n  rect(width/2,height/2,width,height);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/los Stickies de Escher.png",
+        "publicationDate":"20/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"678ae343c8baf49494d61c8dcc0a5d9e86c084e7f60a24f0c930e395b3bf1c24",
+        "name":"4262023.1",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/\n// @garabatospr\n\n// color palette\n\nlet colors = [\"#226699\", \"#dd2e44\", \"#ffcc4d\", \"#FFFFFF\", \"#000000\"];\n\n// scale of the vector field \n// smaller values => bigger structures  \n// bigger values  ==> smaller structures \n\nvar myScale = 5;\n\nlet agent = [];\n\nlet border = -100;\n\nfunction setup() {\n\tcreateCanvas(windowWidth, windowWidth);\n\tcolorMode(HSB, 360, 100, 100);\n\trectMode(CENTER);\n\tstrokeCap(SQUARE);\n\n\tbackground(100);\n\t\n\tlet mySize = width / 10;\n\n\tfor (let x = 0; x <= width; x += mySize) {\n\t\tfor (let y = 0; y <= height; y += mySize) {\n\t\t\tfor (let i = 0; i < 2; i++) {\n\t\t\t\tagent.push(new Agent(x, y, mySize));\n\t\t\t}\n\t\t}\n\t}\n\n\t//noLoop();\n\t\n\tsmooth(8);\n}\n\nfunction draw() {\n\tfor (let i = 0; i < agent.length; i++) {\n\t\tagent[i].update();\n\t}\n}\n\n// painting agent \n\nclass Agent {\n\tconstructor(x, y, mySize) {\n\t\tthis.p = createVector(x, y);\n\t\t//this.pOld = createVector(this.p.x, this.p.y);\n\t\tthis.speed = 0.1;\n\t\tthis.rad = mySize * 1.5;\n\t\tthis.color = generateColor();\n\t\tthis.fixColor = generateColor();\n\t\tthis.direction = 1;\n\t\tthis.myrand = random(0, 1);\n\t\tthis.strokeWidth = 0.5;\n\t}\n\t\n\tgetRad() {\n\t\treturn this.rad;\n\t}\n\n\tupdate() {\n\t\tif ((frameCount % 100) == 0) {\n\t\t\t//this.direction = random([-1,1]);\n\t\t\tthis.color = generateColor();\n\t\t\tthis.rad /= 1.1;\n\t\t}\n\t\t\n\t\tthis.p.x += this.direction * vector_field(this.p.x, this.p.y).x * this.speed;\n\t\tthis.p.y += this.direction * vector_field(this.p.x, this.p.y).y * this.speed;\n\t\t\n\t\t//noStroke();\n\t\tstroke(this.color);\n\t\t\n\t\tif (this.rad > 10) {\n\t\t\tfill(this.color);\n\t\t} else {\n\t\t\tthis.speed = 0;\n\t\t}\n\t\tellipse(this.p.x, this.p.y, this.rad, this.rad);\n\t}\n}\n\n// vector field function \n// the painting agents follow the flow defined \n// by this function \n\nfunction vector_field(x, y) {\n\t//myScale = map(-10,10,x,0,width);\n\tx = map(x, 0, width, 0, myScale);\n\ty = map(y, 0, height, 0, myScale);\n\n\tlet k1 = 5;\n\t//let k1 = map(x,-myScale,myScale,-20,20);\n\tlet k2 = 3;\n  //let k2 = map(y,-myScale,myScale,-20,20);\n\t\n\tlet u = sin(k1 * y) + cos(k2 * y);\n\tlet v = sin(k2 * x) - cos(k1 * x);\n\n\treturn createVector(u, v);\n}\n\nfunction generateColor() {\n\treturn random(colors);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/4262023,1.png",
+        "publicationDate":"18/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"d76cfc41020e2168dcd4f9c45299e38a2798b9eed564ba8e4a5f4f38281e2a45",
+        "name":"10112023.2",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"//let colors = [\"#ff0000\", \"#feb30f\", \"#0aa4f7\", \"#ffffff\"];\n\nlet colors = [\n  \"#FF2052\",\n  \"#FFD300\", \n  \"#00B7EB\", \n  \"#FF6F00\", \n  \"#7FFF00\", \n  \"#FF1493\", \n  \"#FFFFFF\"  \n];\n\n\nlet mySeed;\n\nlet clips = [];\n\nfunction setup() {\n  createCanvas(1000, 1000);\n  rectMode(CENTER);\n  ellipseMode(CENTER);\n  colorMode(HSB, 360, 100, 100);\n  mySeed = floor(random(1, 100000));\n  \n  let mySize = 250;\n  \n  setBackground(width);\n  \n  addBlur();\n\n  for(let xx = mySize/2;xx < width;xx+=mySize/1.01)\n  {\n    for(let yy = mySize/2;yy < height;yy+=mySize/1.01)\n    {\n      \n      fill(generateColor());\n      rect(xx,yy,mySize/1.1,mySize/1.1,30,30);\n      \n      clips.push(new Clip(xx,yy,6,createVector(1,1)));\n      clips.push(new Clip(xx,yy,6,createVector(1,-1)));\n      clips.push(new Clip(xx,yy,6,createVector(0,1)));\n      clips.push(new Clip(xx,yy,6,createVector(-1,1)));\n      clips.push(new Clip(xx,yy,6,createVector(-1,-1)));\n    }\n  }\n  \n  noLoop();\n\n}\n\nfunction draw() {\n\n  for(let i=0;i < 50;i++)\n  {\n      for(let i=0;i < clips.length;i++)\n      {\n        clips[i].display();\n        clips[i].move();\n      }\n  }\n\n}\n\nclass Clip\n{\n  constructor(x,y,mySize,mySpeed)\n  {\n    this.x = x;\n    this.y = y;\n    this.size = mySize;\n    //this.width = mySize/1.25;\n    this.width = mySize/5;\n    this.color = generateColor();\n    this.angle = random([0,PI/2,PI,3*PI/2]);\n    this.dir = random([-1,1]);\n    this.freq = 0.;\n    this.speed = createVector(mySpeed.x,mySpeed.y);\n    this.route = [[this.x,this.y]];\n  }\n  \n  display()\n  {\n    noFill();\n    stroke(100);\n    strokeWeight(this.width);\n    push();\n    translate(this.x,this.y);\n    rotate(this.angle);\n    clipShape(0,0,this.size);\n    stroke(100);\n    strokeWeight(this.width/1.01);\n    clipShape(0,0,this.size);\n    pop();\n  }\n  \n\n  move()\n  {\n\n    this.angle += PI/100;\n    this.x += this.speed.x\n    this.y += this.speed.y;\n    \n  }\n  \n}\n\n\n\n\nfunction clipShape(xc, yc, mySize) {\n  let x;\n  let y;\n\n  beginShape();\n\n  let r1 = mySize;\n\n  vertex(xc + r1, yc - r1 * 5);\n\n  // arc1 \n\n\n  for (let ang = 0; ang < PI; ang += (2 * PI) / 100) {\n    x = xc + r1 * cos(ang);\n    y = yc + r1 * sin(ang);\n    vertex(x, y);\n  }\n\n  vertex(xc - r1, yc);\n\n  vertex(xc - r1, yc - r1 * 6.25);\n\n\n  let r2 = 1.5 * r1;\n\n  for (let ang = PI; ang < 2 * PI; ang += (2 * PI) / 100) {\n    x = xc + r1 / 2 + r2 * cos(ang);\n    y = yc + r2 * sin(ang) - r1 * 6.25;\n    vertex(x, y);\n  }\n\n  vertex(xc + r2 + r1 / 2, yc - r1 * 6.25)\n  vertex(xc + r2 + r1 / 2, yc + r1 * 1.875);\n\n\n\n  r3 = 2 * r1;\n\n  for (let ang = 0; ang < PI; ang += (2 * PI) / 100) {\n    x = xc + r3 * cos(ang);color(0);\n    y = yc + r1 * 1.875 + r3 * sin(ang);\n    vertex(x, y);\n  }\n\n  vertex(xc - r3, yc + r1 * 1.875);\n  vertex(xc - r3, yc - r1 * 5);\n\n\n  endShape();\n\n}\n\n\nfunction generateColor() {\n  return colors[floor(random(0, colors.length))];\n}\n\nfunction addBlur() {\n  drawingContext.shadowOffsetX = -1;\n  drawingContext.shadowOffsetY = -1;\n  drawingContext.shadowBlur = 5;\n  drawingContext.shadowColor = 'black';\n}\n\nfunction setBackground(mySize) {\n  fill(0);\n  strokeWeight(5);\n  //stroke(0);\n  rect(width / 2, height / 2, width, height);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/10112023,2.png",
+        "publicationDate":"16/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"06838feef77acad405d8e7ba87e400a9a7e635315bc179484b966b917c038cef",
+        "name":"Square Field",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/\n// @garabatospr\n\nlet colors = [\"#3A6EF6\", \"#04090F\", \"#FAF0EE\", \"#DB2719\", \"#F5CB1D\"];\n\n//let colors = [\"#2c2060\", \"#4bd3e5\", \"#fffbe6\", \"#ffd919\", \"#ff4f19\"];\n\nlet particles = [];\n\nlet border = -300;\n\nfunction setup() {\n  createCanvas(1000,1000);\n  colorMode(HSB, 360, 100, 100,100);\n\trectMode(CENTER);\n  strokeCap(SQUARE);\n\t\n\tfor(let x=border; x < width-border; x+=25)\n\t{\n\t\tfor(let y=border; y < height-border; y+=25)\n\t\t{\n\t\t\tparticles.push(new Particle(x,y,10,10));\n\t\t}\n\t}\n\t\n\tfill(100);\n\tsquare(width/2,height/2,width);\n}\n\nfunction draw() {\n  //drawGrid();\n\tfor(let i=0; i < particles.length; i++)\n\t{\n\t\tparticles[i].update();\n\t}\n\t\n\tdrawGrid();\n\t\n\tnoFill();\n\tstroke(0);\n\tstrokeWeight(20);\n\tsquare(width/2,height/2,width);\n}\n\nclass Particle {\n\tconstructor(x,y,myThick,myScale)\n\t{\n\t\tthis.p = createVector(x,y);\n\t\tthis.pOld = createVector(this.p.x,this.p.y);\n\t\tthis.thick = myThick;\n\t\tthis.speed = 1;\n\t\tthis.color = generateColor();\n\t\tthis.direction = -1;\n\t\tthis.scale = myScale;\n\t}\n\t\n\tupdate() {\n\t\tthis.p.x += this.speed * this.direction * vector_field(this.p.x,this.p.y,this.scale).x;\n\t\tthis.p.y += this.speed * this.direction * vector_field(this.p.x,this.p.y,this.scale).y;\n\t\tstrokeWeight(this.thick);\n\t\tstroke(this.color);\n\t\tline(this.pOld.x,this.pOld.y,this.p.x,this.p.y);\n\t\tstroke(this.color);\n\t\tthis.pOld.set(this.p);\n\t}\n}\n\nfunction vector_field(x, y, myScale) {\n\tx = map(x, border, width-border, 0, myScale);\n\ty = map(y, border, height-border, 0, myScale);\n\tu = -2.0 * (floor(y) % 2.0) + 1.0;\n\tv = -2.0 * (floor(x) % 2.0) + 1.0;\n\treturn createVector(u,v);\n}\n\nfunction generateColor() {\n\treturn random(colors);\n}\n\nfunction drawGrid(){\n\tstroke(0);\n\tstrokeWeight(20);\n\tfor(let x = 20; x < height; x+=160)\n\t{\n\t\tline(0,x,width,x);\n\t\tline(x,0,x,height);\n\t}\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/Square Field.png",
+        "publicationDate":"16/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"9b9c34d43bbdba98d478760ed78dbc1efda1cd456d7bce4a58a2f798d5e183c0",
+        "name":"Fabric",
+        "tags":["Original","Creative","3D","Art"],
+        "UserID":"0",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let rStock=[];\n\nfunction setup() {\n  createCanvas(windowWidth, windowHeight, WEBGL);\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n  rStock.push(random(-100,100));\n}\n\nfunction draw() {\n  background(0);\n  orbitControl();\n  stroke(255);\n  noFill();\n  for(let i=0;i<1;i+=0.01){\n    let x1 = bezierPoint(-100,0,0,100,i);\n    let y1 = bezierPoint(0,rStock[0],rStock[1],0,i);\n    let z1 = bezierPoint(-100,-100,-100,-100,i);\n    let x2 = bezierPoint(-100,0,0,100,i);\n    let y2 = bezierPoint(0,rStock[2],rStock[3],0,i);\n    let z2 = bezierPoint(100,100,100,100,i);\n    let x3 = bezierPoint(-100,0,0,100,i);\n    let y3 = bezierPoint(rStock[4],rStock[5],rStock[6],rStock[7],i);\n    let z3 = bezierPoint(0,0,0,0,i);\n    let x4 = bezierPoint(-100,0,0,100,i);\n    let y4 = bezierPoint(rStock[8],rStock[9],rStock[10],rStock[11],i);\n    let z4 = bezierPoint(0,0,0,0,i);\n    bezier(x1,y1,z1,x3,y3,z3,x4,y4,z4,x2,y2,z2);\n  }\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/Fabric.jpg",
+        "publicationDate":"15/10/2025",
+        "description":"Just a mental experiment bougth to life. This is just a bezier lattice",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"71a1cf4c389aa0619c91ec34551cf80d0068b2a02f7aa23e39128db9beaf0cc6",
+        "name":"OCD",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors =  [\"#0aa4f7\", \"#feb30f\", \"white\"];\n\nlet mySeed;\n\nlet signo;\n\nfunction setup() {\n\tcreateCanvas(1000,1000);\n\trectMode(CENTER);\n\tellipseMode(CENTER);\n\tcolorMode(HSB, 360, 100, 100);\n\tmySeed = floor(random(1,100000));\n}\n\nfunction draw() {\n\t\n\trandomSeed(mySeed);\n\tfill(0);\n\tsquare(width/2,height/2,width);\n\tlet mySize = 75;\n\tsigno = 1;\n\tfor(let xx=mySize*2; xx <= width - mySize*2; xx+=mySize*2)\n\t{\n\t\tfor(let yy=mySize*2; yy <= width - mySize*2; yy+=mySize*2)\n\t \t{\n     \tpolarSquare(xx + 50,yy + 50,signo,mySize/1.15);\n\t\t\tnoFill();\n\t\t\tif ((xx % 2) == 0)\n\t\t\t{\n\t\t\t\tsigno *= -1;\n\t\t\t}\n\t\t}\n\t}\n}\n\nfunction polarSquare(x,y,signo,mySize)\n{\n\tlet freq = signo*0.01;\n\tnoFill();\n\tfill(colors[0]);\n\tsquare(x,y,mySize*2);\n\tstroke(100);\n\tnoFill();\n\tsquare(x,y,mySize*2.1);\n\tstroke(0);\n\tfill(colors[1]);\n\tcircle(x,y,mySize/2);\n\tfor(let ang=0; ang <= 2*PI; ang += (2*PI)/5)\n\t{\n\t\tlet r = min(1/abs(cos(ang + frameCount*freq)),1./abs(sin(ang + frameCount*freq)));\n\t\tlet xx = x + mySize*r*cos(ang + frameCount*freq);\n\t\tlet yy = y + mySize*r*sin(ang + frameCount*freq);\n\t\tfill(generateColor());\n\t\tfill(colors[2]);\n\t\tline(x,y,xx,yy);\n\t\tpush();\n\t\ttranslate(xx,yy);\n\t\trotate(frameCount*0.005);\n\t\tcircle(0,0,mySize/3.5);\n      pop();\t\t\n\t}\n}\n\nfunction generateColor(){\n\treturn random(colors);\n}\n\nfunction addBlur()\n{\n\tdrawingContext.shadowOffsetX = -1;\n  drawingContext.shadowOffsetY = -1;\n  drawingContext.shadowBlur = 5;\n  drawingContext.shadowColor = 'black';\n}\n\nfunction setBackground(mySize)\n{\n\tfill(100);\n\trect(width/2,height/2,width,height);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/OCD.png",
+        "publicationDate":"14/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"ee929898bfcfab1fd6050b3d66f680e48e7d8f2df93092ea44ef78964b9a85b5",
+        "name":"752023.2",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors = [\"#f2eb8a\", \"#fed000\", \"#fc8405\", \"#ed361a\", \"#e2f0f3\", \"#b3dce0\", \"#4464a1\", \"#203051\", \"#ffc5c7\", \"#f398c3\", \"#cf3895\", \"#6d358a\", \"#06b4b0\", \"#4b8a5f\"];\n\nlet mySeed;\n\nfunction setup() {\n\tcreateCanvas(800,800);\n\trectMode(CENTER);\n\tellipseMode(CENTER);\n\tcolorMode(HSB, 360, 100, 100);\n\tmySeed = floor(random(1,100000));\n\tnoLoop();\n}\n\nfunction draw() {\n\tsetBackground();\n\n\tlet mySize = 100;\n\t\n\tfor(let xx=mySize/2; xx <= width-mySize/2; xx+=mySize)\n\t{\n\t\tfor(let yy=mySize/2; yy <= width-mySize/2; yy+=mySize)\n\t\t{\n\t\t\tdrawSquare(xx,yy,mySize/1.1);\n\t\t\t// drawSquare(xx,yy,mySize/4);\n\t\t}\n\t}\n\t\n\tmySize /= 2;\n\t\n\tfor(let xx=mySize/2; xx <= width - mySize/2; xx+=mySize)\n\t{\n\t\tfor(let yy=mySize/2; yy <= width - mySize/2; yy+=mySize)\n\t\t{\n\t\t\tif (random(0,1) > 0.5)\n\t\t\t{\n\t\t\t\tdrawSquare(xx,yy,mySize/1.25);\n\t\t\t}\n\t\t}\n\t}\n}\n\nfunction drawSquare(x,y,mySize)\n{\n\tstroke(0);\n\tstrokeWeight(0.5);\n\tnoStroke();\n\tlet p1 = createVector(x + mySize/2,y - mySize/2);\n\tlet p2 = createVector(x + mySize/2,y + mySize/2);\n\tlet p3 = createVector(x - mySize/2,y + mySize/2);\n\tlet p4 = createVector(x - mySize/2,y - mySize/2);\n\t\n\t// cuadrado grande \n\tfill(generateColor());\n  beginShape();\n\tvertex(p1.x,p1.y);\n\tvertex(p2.x,p2.y);\n\tvertex(p3.x,p3.y);\n\tvertex(p4.x,p4.y);\n\tvertex(p1.x,p1.y);\n\tendShape();\n\n\tlet distortX = 0.3 * mySize * random([-1,0,1]);\n\tlet distortY = 0.3 * mySize * random([-1,0,1]);\n\t\n\tlet pi1 = createVector(x + mySize/5 + distortX, y - mySize/5 + distortY);\n\tlet pi2 = createVector(x + mySize/5 + distortX, y + mySize/5 + distortY);\n\tlet pi3 = createVector(x - mySize/5 + distortX, y + mySize/5 + distortY);\n\tlet pi4 = createVector(x - mySize/5 + distortX, y - mySize/5 + distortY);\n\t\n\t// cuadrado pequeño \n\tfill(generateColor());\n\tbeginShape();\n\tvertex(pi1.x,pi1.y);\n\tvertex(pi2.x,pi2.y);\n\tvertex(pi3.x,pi3.y);\n\tvertex(pi4.x,pi4.y);\n\tvertex(pi1.x,pi1.y);\n\tendShape();\n\t\n\t//\n\tfill(generateColor());\n\tbeginShape();\n\tvertex(p1.x,p1.y);\n\tvertex(p2.x,p2.y);\n\tvertex(pi2.x,pi2.y);\n\tvertex(pi1.x,pi1.y);\n\tvertex(p1.x,p1.y);\n\tendShape();\n\n\tfill(generateColor());\n\tbeginShape();\n\tvertex(pi2.x,pi2.y);\n\tvertex(p2.x,p2.y);\n\tvertex(p3.x,p3.y);\n\tvertex(pi3.x,pi3.y);\n\tvertex(pi2.x,pi2.y);\n\tendShape();\n\t\n\tfill(generateColor());\n\tbeginShape();\n\tvertex(pi3.x,pi3.y);\n\tvertex(p3.x,p3.y);\n\tvertex(p4.x,p4.y);\n\tvertex(pi4.x,pi4.y);\n\tvertex(pi3.x,pi3.y);\n\tendShape();\n\t\n\tfill(generateColor());\n\tbeginShape();\n\tvertex(p1.x,p1.y);\n\tvertex(pi1.x,pi1.y);\n\tvertex(pi4.x,pi4.y);\n\tvertex(p4.x,p4.y);\n\tvertex(p1.x,p1.y);\n\tendShape();\n}\n\nfunction generateColor(scale=1) {\n  return color(colors[floor(random(0, colors.length))]);\n}\n\nfunction setBackground()\n{\n\tfill(100);\n\trect(width/2,height/2,width,height);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/752023,2.png",
+        "publicationDate":"14/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"21a371821613f67cbfcc6889d6808f0a177a1c830fdf15ef0aacbc2d46b40f5b",
+        "name":"1292023 - Maximalism",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors = [\"#ff0000\", \"#feb30f\", \"#0aa4f7\", \"#ffffff\"];\n\nlet walkers = [];\n\nlet nWalkers = 100;\n\nlet palette;\n\nlet img; \n\nfunction setup() {\n\n  createCanvas(1000, 1000);\n  colorMode(HSB, 360, 100, 100, 100);\n  ellipseMode(CENTER);\n  rectMode(CENTER);\n  \n  \n  for (let i = 0; i < nWalkers; i++) {\n    walkers.push(new Walker(width / 2, height / 2, 150));\n  }\n  \n  for (let i = 0; i < nWalkers; i++) {\n    walkers.push(new Walker(width / 2, height / 2, 75));\n  }\n  \n  for(let i=0;i < 20;i++)\n  {\n    for (let i = 0; i < walkers.length; i++) \n    {\n      walkers[i].draw();\n    }\n  }\n  \n  noFill();\n  stroke(0);\n  rect(width/2,height/2,width,height);\n  \n}\n\nfunction draw() {\n\n  //\n\n  \n}\n\n////////////////\n// random walker \n////////////////\n\nclass Walker {\n  constructor(x, y, step) {\n    this.x = x;\n    this.y = y;\n    this.step = step;\n    this.size = this.step / random(1,3);\n    this.color = generateColor(1);\n    this.color2 = generateColor(1);\n    this.temp = random(2,3);\n  }\n\n  move() {\n\n    let ranAng1 = random([0,PI/2,PI,3*PI/2]);\n    let ranAng2 = random([0,PI/2,PI,3*PI/2]);\n    \n    this.x += this.step*cos(ranAng1);\n    this.y += this.step*sin(ranAng2);\n  \n  }\n\n  draw() {\n\n    let oldX = this.x;\n    let oldY = this.y;\n\n    let temp = this.step;\n    \n    stroke(0);\n\n    this.move();\n    push();\n    stroke(0);\n\n    fill(this.color2);\n\n    drawOval(createVector(oldX,oldY),createVector(this.x,this.y),this.size/this.temp);\n    fill(100);\n    let i = 1;\n    for(let i=2;i < 5;i+=0.5)\n    {\n      drawOval(createVector(oldX,oldY),createVector(this.x,this.y),this.size/this.temp/i);\n    }\n\n    fill(this.color);\n\n    ellipse(this.x, this.y, this.size/2, this.size/2);\n    ellipse(this.x, this.y, this.size/4, this.size/4);\n\n    pop();\n    strokeWeight(2);\n\n  }\n}\n\nfunction generateColor(scale) {\n  let temp = color(colors[floor(random(0, colors.length))]);\n  myColor = color(hue(temp) + randomGaussian() * scale,\n    saturation(temp) + randomGaussian() * scale,\n    brightness(temp) + randomGaussian() * scale,\n    random(100,100));\n  return myColor;\n}\n\nfunction drawOval(p1, p2,mySize)\n{\n  let d = p1.dist(p2) + mySize*2;\n  let a = atan2(p2.y-p1.y,p2.x-p1.x);\n  let center = createVector((p1.x + p2.x)/2,(p1.y + p2.y)/2);\n  push();\n    translate(center.x,center.y);\n    rotate(a);\n    if (d > 0.1)\n    {\n      rect(0,0,d,mySize*2,80,80);\n    }\n  pop();\n}\n\n"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/1292023-Maximalism.png",
+        "publicationDate":"12/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"bb4dc0e6bbcf681aef27531d76d6d63dd75b881cbf129fb4d03843233340f14e",
+        "name":"Clips",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors   =  [\"#ff0000\",\"#feb30f\",\"#0aa4f7\",\"#ffffff\"];\n\nlet mySeed;\n\nclips = [];\n\nfunction setup() {\n  createCanvas(1000,1000);\n  rectMode(CENTER);\n  ellipseMode(CENTER);\n  colorMode(HSB, 360, 100, 100);\n  mySeed = floor(random(1,100000));\n  \n\n  \n  for(let i=0;i < 5;i++)\n  {\n    clips.push(new Clip(width*0.35,height*0.35,20));\n    clips.push(new Clip(width*0.35,height*0.65,20));\n    clips.push(new Clip(width*0.65,height*0.35,20));\n    clips.push(new Clip(width*0.65,height*0.65,20));\n  }\n    for(let i=0;i < 5;i++)\n  {\n    clips.push(new Clip(width/2,height/2,50));\n  }\n  \n  //noLoop();\n  \n}\n\nfunction draw() {\n  \n  setBackground(width);\n  \n  stroke(0);\n  strokeWeight(20);\n  noFill();\n\n  setBackground(width);\n  addBlur();\n  \n  clips.forEach((element) => \n  {\n    element.display();\n  });\n  \n\n  \n}\n\nclass Clip\n{\n  constructor(x,y,mySize)\n  {\n    this.x = x;\n    this.y = y;\n    this.size = mySize;\n    this.width = mySize/1.5;\n    this.color = color(\"#FFBF00\");\n    this.angle = random([0,PI/2,PI,3*PI/2]);\n    this.dir = random([-1,1]);\n    this.freq = 0.0;\n  }\n  \n  display()\n  {\n    noFill();\n    stroke(this.color);\n    strokeWeight(this.width);\n    push();\n    translate(this.x,this.y);\n    rotate(this.angle + this.dir*frameCount*this.freq);\n    clipShape(0,0,this.size);\n    stroke(\"black\");\n    strokeWeight(this.width/3);\n    clipShape(0,0,this.size);\n    pop();\n  }\n  \n\n  update()\n  {\n\n    //this.color = generateColor();\n    this.angle += random([PI/2,PI,3*PI/2]);\n  }\n  \n}\n\n\nfunction getTrajectory(xc,yc,mySize)\n{\n  let coords = [];\n  \n  let r1 = mySize;\n \n  // line1\n  \n  for(temp=5;temp >= 0;temp-=0.5)\n  {\n    coords.push([xc + r1,yc - r1*temp]);\n  }\n  \n  // arc1\n  \n  for(let ang=0;ang <= PI;ang+=(2*PI)/15)\n  {\n    x = xc + r1*cos(ang);\n    y = yc + r1*sin(ang);\n    coords.push([x,y]);\n  }\n  \n  // line2 \n  \n  for(let temp=0;temp < 6.5;temp+=0.5)\n  {\n    coords.push([xc - r1,yc - r1*temp]);\n  }\n  \n  // arc2 \n\n  let r2 = 1.5*r1;\n\n  for(let ang=PI;ang <= 2*PI;ang+=(2*PI)/20)\n  {\n    x = xc + r1/2 + r2*cos(ang);\n    y = yc + r2*sin(ang) - r1*6.25;\n    coords.push([x,y]);\n  }\n  \n  // line3\n  \n  for(let temp=-6;temp <= 1.875;temp+=0.5)\n  {\n    coords.push([xc + r2 + r1/2,yc + r1*temp]);\n  }\n  \n  r3 = 2*r1;\n  \n  // arc3\n  \n  for(let ang=0;ang <= PI;ang+=(2*PI)/20)\n  {\n    x = xc + r3*cos(ang);\n    y = yc + r1*1.875 + r3*sin(ang);\n    coords.push([x,y]);\n  }\n  \n  // line4\n  \n  for(let temp = 1.877;temp > -5.5;temp-=0.5)\n  {\n    coords.push([xc - r3,yc + r1*temp]);\n  }\n  \n  return coords;\n\n}\n\nfunction clipShape(xc,yc,mySize)\n{\n  let x;\n  let y;\n  \n  beginShape();\n  \n  let r1 = mySize;\n  \n  vertex(xc + r1,yc - r1*5);\n  //vertex(xc + r1,yc - r1*5);\n  \n  // arc1 \n\n  \n  for(let ang=0;ang < PI;ang+=(2*PI)/100)\n  {\n    x = xc + r1*cos(ang);\n    y = yc + r1*sin(ang);\n    vertex(x,y);\n  }\n  \n  vertex(xc - r1,yc);\n  \n  vertex(xc - r1,yc - r1*6.25);\n  \n\n  let r2 = 1.5*r1;\n\n  for(let ang=PI;ang < 2*PI;ang+=(2*PI)/100)\n  {\n    x = xc + r1/2 + r2*cos(ang);\n    y = yc + r2*sin(ang) - r1*6.25;\n    vertex(x,y);\n  }\n  \n  vertex(xc + r2 + r1/2 ,yc - r1*6.25)\n  vertex(xc + r2 + r1/2,yc + r1*1.875);\n\n  \n  \n  r3 = 2*r1;\n  \n  for(let ang=0;ang < PI;ang+=(2*PI)/100)\n  {\n    x = xc + r3*cos(ang);\n    y = yc + r1*1.875 + r3*sin(ang);\n    vertex(x,y);\n  }\n  \n  vertex(xc - r3,yc + r1*1.875);\n  vertex(xc - r3,yc - r1*5);\n  \n  \n  endShape();\n  \n}\n\n\nfunction generateColor(){\n  return colors[floor(random(0,colors.length))];\n}\n\nfunction addBlur()\n{\n  drawingContext.shadowOffsetX = -1;\n  drawingContext.shadowOffsetY = -1;\n  drawingContext.shadowBlur = 5;\n  drawingContext.shadowColor = 'black';\n}\n\nfunction setBackground(mySize)\n{\n  fill(0);\n  strokeWeight(5);\n  stroke(0);\n  rect(width/2,height/2,width,height);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/Clips.png",
+        "publicationDate":"12/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"77da219e61e5b91943f5d1665288fa2612a664ba049438e0ab3266aa7f5bf5fc",
+        "name":"6242023.1",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors = [\"#f2eb8a\", \"#fed000\", \"#fc8405\", \"#ed361a\", \"#e2f0f3\", \"#b3dce0\", \"#4464a1\", \"#203051\", \"#ffc5c7\", \"#f398c3\", \"#cf3895\", \"#6d358a\", \"#06b4b0\", \"#4b8a5f\"];\n\nlet mySeed;\n\nlet patterns = [];\n\nfunction setup() {\n\tcreateCanvas(1000, 1000);\n\tellipseMode(CENTER);\n\trectMode(CENTER);\n\tmySeed = floor(random(1, 10000));\n\tlet mSize = 100;\n\n\tpatterns.push(new Pattern(width / 2, height / 2, width - mSize));\n\n\tfor (let xx = mSize; xx <= width - mSize; xx += mSize) {\n\t\tfor (let yy = mSize; yy <= height - mSize; yy += mSize) {\n\t\t\tif (random(0, 1) > 0.5) \n\t\t\t{\n\t\t\t\tpatterns.push(new Pattern(xx, yy, mSize));\n\t\t\t}\n\t\t}\n\t}\n\n\tmSize /= 2;\n\t\n\tfor(let xx = mSize; xx <= width - mSize; xx += mSize)\n\t{\n\t\tfor(let yy = mSize; yy <= height - mSize; yy += mSize)\n\t\t{\n\t\t\tif (random(0,1) > 0.75)\n\t\t\t{\n\t\t\t\tpatterns.push(new Pattern(xx,yy,mSize));\n\t\t\t}\n\t\t}\n\t}\n\n\tnoLoop();\n}\n\nfunction draw() {\n\n\trandomSeed(mySeed);\n\tfill(generateColor());\n\tsquare(width / 2, height / 2, width);\n\n\tfor (let i = 0; i < patterns.length; i++) {\n\t\tpatterns[i].draw();\n\t}\n\n}\n\nclass Pattern {\n\tconstructor(x, y, mySize) {\n\t\tthis.x = x;\n\t\tthis.y = y;\n\t\tthis.size = mySize;\n\t\tthis.color1 = generateColor();\n\t\tthis.color2 = generateColor();\n\t\tthis.angle = random([0, PI / 2, PI, 3 * PI / 2]);\n\t}\n\n\tdraw() {\n\t\tpush();\n\t\t//strokeWeight(0.25);\n\t\ttranslate(this.x, this.y);\n\t\trotate(this.angle);\n\t\tnoFill();\n\t\tsquare(0, 0, this.size);\n\t\tfill(this.color1);\n\t\tarc(-this.size / 2, 0, this.size / 2, this.size / 2, 3 * PI / 2, PI / 2);\n\t\tarc(this.size / 2, 0, this.size / 2, this.size / 2, PI / 2, 3 * PI / 2);\n\t\tcircle(0, 0, this.size / 3);\n\n\t\tfill(this.color2);\n\t\tarc(-this.size / 2, 0, this.size / 4, this.size / 4, 3 * PI / 2, PI / 2);\n\t\tarc(this.size / 2, 0, this.size / 4, this.size / 4, PI / 2, 3 * PI / 2);\n\t\tarc(0, -this.size / 2, this.size / 4, this.size / 4, 2 * PI, PI);\n\t\tarc(0, this.size / 2, this.size / 4, this.size / 4, PI, 2 * PI);\n\n\t\tpop();\n\t}\n}\n\nfunction generateColor() {\n\treturn random(colors);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/6242023,1.png",
+        "publicationDate":"10/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"b52fe047502f843b39c66a85a5288f0c94db9fa7af8d98440344447ed6f2b034",
+        "name":"Islas",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"// https://ronikaufman.github.io/color_pals/ \"Avantgarde\" \n\nlet colors = [\"#f398c3\", \"#cf3895\", \"#a0d28d\", \"#06b4b0\", \"#fef45f\", \"#fed000\", \"#0c163f\"];\n\n//let colors = ['#f0101c', '#f05697', '#0b469b', '#32b6c3', '#f78000', '#fddf0e', '#9fe063', '#315423', '#16141b','#ffffff'];\n\nlet walkers = [];\n\nlet nwalkers = 20;\n\nfunction setup() {\n\tcreateCanvas(1000,1000);\n\tcolorMode(HSB, 360, 100, 100, 100);\n\tstrokeCap(SQUARE);\n\trectMode(CENTER);\n\tellipseMode(CENTER);\n\tsetBackground();\n\tnoLoop();\n\taddBlur();\n}\n\nfunction draw() {\n\n\tlet mySize = 125;\n\t\n\tnoStroke();\n\t\n\tdrawIsland(width*0.25,height*0.25,mySize*0.90);\t\t\n\tdrawIsland(width*0.25,height*0.25,mySize*0.50);\n\t\n\tdrawIsland(width*0.25,height*0.75,mySize*0.90);\t\n\tdrawIsland(width*0.25,height*0.75,mySize*0.50);\t\n\t\n\tdrawIsland(width*0.75,height*0.25,mySize*0.90);\t\n\tdrawIsland(width*0.75,height*0.25,mySize*0.50);\t\n\t\n\tdrawIsland(width*0.75,height*0.75,mySize*0.90);\t\n\tdrawIsland(width*0.75,height*0.75,mySize*0.50);\t\n\t\n}\n\nfunction drawIsland(x,y,mySize)\n{\n\twalkers = [];\n\tfill(generateColor(5));\n\tellipse(x,y + mySize/1.5,mySize*3.5,mySize*1.5);\n\taddBlur();\n\tfor(let i=0; i < nwalkers;i++)\n\t{\n\t  walkers.push(new Walker(x,y,mySize));\n\t}\n\t\n\tfor(let i=0;i < walkers.length;i++)\n\t{\n\t\twalkers[i].move();\n\t\twalkers[i].draw();\n\t}\n}\n\nclass Walker { \n\t\n\tconstructor(x,y,step)\n\t{\n\t\tthis.x = x; \n\t\tthis.y = y;\n\t\tthis.color1 = generateColor(10);\n\t\tthis.color2 = generateColor(10);\n\t\tthis.linecolor = generateColor(0);\n\t\tthis.ox = x;\n\t\tthis.oy = y;\n\t\tthis.step = step;\n\t\tthis.freq =1.5;\n\t\tthis.amp = this.step/4;\n\t\tthis.line = random([\"plus\",\"minus\"]);\n\t\tthis.rad = this.step/random(3,5);\n\t\tthis.fillProb = random(0,1);\n\t}\n\t\n\tmove()\n\t{\n\t\tlet direction = random([[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1],[0,1],[0,-1]]);\n\t\tthis.x += this.step*direction[0];\n\t\tthis.y += this.step*direction[1];\n\t}\n\n\tdraw()\n\t{\n\t\tif(frameCount >  10) {noLoop()};\n\n\t\tstrokeWeight(0.1);\n\n\t\tif (this.line == \"plus\")\n\t\t{\n\t\t\tfor(let temp = 0.5;temp <= 5;temp+=0.25)\n\t\t\t{\n\t\t\tfill(this.color1);\n\t\t\tdrawSine(createVector(this.ox,this.oy),createVector(this.x,this.y),this.freq,this.amp/temp);\n\t\t\tfill(this.color2);\n\t\t\t}\n\t\t}else\n\t\t{\n\t\t\tfor(let temp = 1;temp <= 5;temp+=0.25)\n\t\t\t{\n\t\t\tfill(this.color1);\n\t\t\tdrawSine(createVector(this.ox,this.oy),createVector(this.x,this.y),this.freq,-this.amp/temp);\n\t\t\tfill(this.color2);\n\t\t\t}\n\t\t}\n\n\t\tthis.amp -= 1;\n\t\tdrawShape(this.x,this.y,this.rad);\n\t}\n}\n\nfunction generateColor(scale) {\n\tlet temp = color(colors[floor(random(0,5))]);\n\tmyColor = color(hue(temp) + randomGaussian() * scale,\n\t\tsaturation(temp) + randomGaussian() * scale,\n\t\tbrightness(temp) + randomGaussian() * scale,\n\t\trandom(100,100));\n\treturn myColor;\n}\n\nfunction addBlur() {\n\tdrawingContext.shadowOffsetX = -1;\n\tdrawingContext.shadowOffsetY = -1;\n\tdrawingContext.shadowBlur = 5;\n\tdrawingContext.shadowColor = 'black';\n}\n\n\nfunction drawSine(p1, p2,freq,amp)\n{\n  let d = p1.dist(p2);\n  let a = atan2(p2.y-p1.y,p2.x-p1.x);\n  push();\n  translate(p1.x,p1.y);\n  rotate(a);\n\tlet xx,yy;\n\tcurveTightness(1);\n\tbeginShape();\n\tfor (let i = 0; i <= d; i += 1) {\n\t\t\txx = i;\n\t\t  arg = xx*TWO_PI*freq/d; \n\t\t\tyy = sin(arg)*amp - sin(arg/2)*amp/4;\n\t\t\tvertex(xx,yy);\n\t\t}\n\tendShape();\n\tfill(0);\n\tpop();\n}\n\nfunction drawShape(xc,yc,mySize)\n{\n\tnoStroke();\n\tcurveTightness(1);\n\tfill(generateColor(1));\n\tbeginShape();\n\tlet n = floor(random(3,15));\n\tfor (let ang = 0; ang <= 2*PI; ang += (2*PI)/500) \n\t{\n\t\tlet rad = mySize + (mySize)*cos(n*ang);\n\t\tlet x = xc + rad*cos(ang);\n\t\tlet y = yc + rad*sin(ang);\n\t\tvertex(x,y);\n  }\n\tendShape();\n}\n\nfunction setBackground()\n{\n\tfill(\"#87CEEB\" );\n\trect(width/2,height/2,width,height);\n}\n"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/Islas.png",
+        "publicationDate":"10/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"a4d7bf8ff16a2aea9d60c479f28e786a1b9dd35df9409fcb7700ac151d1890e2",
+        "name":"1092025",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors = [\"#FFE3AA\", \"#0074D9\", \"#FFB700\", \"#FF4136\", \"#FFFFFF\"];\n\nlet shapes = [];\n\nlet border = -50;\n\n// noprotect\n\nfunction setup() {\n\tcreateCanvas(1920,1080);\n\tbackground(255);\n\trectMode(CENTER);\n\tcolorMode(HSB, 360, 100, 100, 100);\n\t\n\tlet mySize = 50;\n\t\n\tfor(let xx=border; xx <= width-border; xx+=mySize)\n\t{\n\t\tfor(let yy=border; yy <= height-border; yy+=mySize)\n\t\t{\n\t\t\tshapes.push(new shape(xx,yy,random(5,100),mySize));\n\t\t}\n\t}\n\taddBlur();\n\t\n\tnoLoop();\n\t\n\tfill(generateColor(10));\n\tsquare(width/2,height/2,width);\n}\n\nfunction draw() {\n\tfor(let i=0;i < shapes.length;i++)\n\t{\n\t\tshapes[i].display();\n\t}\n}\n\nclass shape\n{\n\tconstructor(x,y,mySize,myLen)\n\t{\n\t\tthis.x = x;\n\t\tthis.y = y;\n\t\tthis.len = myLen;\n\t\tthis.size = mySize;\n\t\tthis.dirX = random([-1,1]);\n\t\tthis.dirY = random([-1,1]);\n\t\tthis.shape = random(0,1);\t\n\t\tthis.color = generateColor(1);\n\t\tthis.displace = 100;\n\t\tthis.step = 5;\n\t}\n\t\n\tdisplay() \n\t{\n\t\tfill(this.color);\t\n\t\tstroke(0);\n\t\tif (this.shape < 0.25)\n\t\t{\n\t\t\tfor(let x=0; x < this.displace; x+=this.step)\n\t\t\t{\n\t\t\t\trect(this.x + this.dirX*x,this.y + this.dirY*x,this.size,this.size,20,20);\n\t\t\t}\n\t\t}else\n\t\t{\n\t\t\tfor(let x=0; x < this.displace; x+=this.step)\n\t\t\t{\n\t\t\t\tellipse(this.x + this.dirX*x,this.y + this.dirY*x,this.size,this.size);\n\t\t\t}\n\t\t}\n\t}\n}\n\nfunction generateColor(scale) {\n\tlet temp = random(colors);\n\tlet myColor = color(hue(temp) + randomGaussian() * scale,\n\t\tsaturation(temp) + randomGaussian() * scale,\n\t\tbrightness(temp) + randomGaussian() * scale,\n\t\trandom(90,100));\n\treturn myColor;\n}\n\nfunction addBlur()\n{\n\tdrawingContext.shadowOffsetX = -2;\n\tdrawingContext.shadowOffsetY = -2;\n\tdrawingContext.shadowBlur = 2;\n\tdrawingContext.shadowColor = 'black';\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/1092025(1).png",
+        "publicationDate":"9/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"ec5c274bca414ec8d692b100077baf161a19d7a0816cf74f418f153749287d4d",
+        "name":"1092025",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors = [\"#ff0000\", \"#feb30f\", \"#0aa4f7\", \"#000000\", \"#ffffff\"];\n\n// set weights for each color \nlet weights = [1, 1, 1, 1, 5, 1];\n\nlet agent = [];\nlet nAgents = 2000;\nlet border = 0;\n\nfunction setup() {\n\tcreateCanvas(1000,1000);\n\tcolorMode(HSB, 360, 100, 100, 100);\n\tbackground(0);\n\tellipseMode(CENTER);\n\trectMode(CENTER);\n\tframeRate(10);\n\t//blendMode(DIFFERENCE);\n\t//smooth(8);\n\tfor (let i = 0; i < nAgents; i++) {\n\t\tagent.push(new Agent());\n\t}\n\tnoLoop();\n}\n\nfunction draw() {\n\tbackground(0);\n\tfor (let i = 0; i < agent.length; i++) {\n\t\tagent[i].update();\n\t}\n}\n\nfunction generateColor(scale) {\n\tlet temp = myRandom(colors, weights);\n\tlet myColor = color(hue(temp) + randomGaussian() * scale,\n\t\tsaturation(temp) + randomGaussian() * scale,\n\t\tbrightness(temp) + randomGaussian() * scale,\n\t\trandom(95,100));\n\treturn myColor;\n}\n\nfunction myRandom(colors, weights) {\n\tlet sum = 0;\n\tfor (let i = 0; i < colors.length; i++) {\n\t\tsum += weights[i];\n\t}\n\tlet rr = random(0, sum);\n\tfor (let j = 0; j < weights.length; j++) {\n\t\tif (weights[j] >= rr) {\n\t\t\treturn colors[j];\n\t\t}\n\t\trr -= weights[j];\n\t}\n}\n\nclass Agent {\n\tconstructor() {\n\t\tthis.p = createVector(random(border, width - border), random(border, height - border));\n\t\tthis.color = generateColor(10);\n\t\tthis.sizeX = random(1,300);\n\t\tthis.sizeY = this.sizeX;\n\t\tthis.fill = random(1.0);\n\t\tthis.blend = random(1.0);\n\t\tthis.speed = 0.0;\n\t\tthis.scale = 5;\n\t\tthis.angle = 0.0;\n\t\tif (random(0,1) < 0.001) {\n\t\t\tthis.dot = true;\n\t\t} else {\n\t\t\tthis.dot = false;\n\t\t}\n\t\tif (random(0,1) > 0.5) {\n\t\t\tthis.speed = 0.1;\n\t\t\tthis.scale = 0;\n\t\t\tthis.period = 0.0;\n\t\t\tthis.direction = 1;\n\t\t\tthis.shape = \"ellipse\";\n\t\t} else {\n\t\t\tthis.shape = \"rectangle\";\n\t\t\tthis.direction = -1;\n\t\t}\n\t\tthis.scalar = random(1.0,50);\n\t\tthis.step = random(1,2);\n\t\tthis.stroke = generateColor(50);\n\t\tthis.strokeWidth = random(0,2);\n\t\tthis.period = random(0.01,0.05);\n\t}\n\n\tgetPartner() {\n\t\treturn this.partner;\n\t}\n\n\tgetP() {\n\t\treturn this.p;\n\t}\n\n\tgetColor() {\n\t\treturn this.color;\n\t}\n\n\tupdate() {\n\t\tthis.p.x += vector_field(this.p.x, this.p.y, this.scale).x * this.speed;\n\t\tthis.p.y += vector_field(this.p.x, this.p.y, this.scale).y * this.speed;\n\t\tif (this.dot) {\n\t\t\tblendMode(BLEND);\n\t\t\tfill(0,0,0);\n\t\t} else {\n\t\t\tblendMode(DIFFERENCE);\n\t\t\tlet gradient = drawingContext.createRadialGradient(this.p.x, this.p.y, 0, this.p.x, this.p.y, this.sizeX);\n\t\t\tfor (let i = 0; i <= 1; i += 0.5) {\n\t\t\t\tgradient.addColorStop(i, generateColor(1));\n\t\t\t}\n\t\t\tdrawingContext.fillStyle = gradient;\n\t\t}\n\t\tstrokeWeight(this.strokeWidth);\n\t\tstroke(255);\n\t\tif (this.shape == \"rectangle\") {\n\t\t\trect(this.p.x, this.p.y, this.sizeX + this.scale * sin(frameCount * this.period), this.sizeY + this.scale * sin(frameCount * this.period), 20, 20);\n\t\t} else {\n\t\t\tellipse(this.p.x, this.p.y, this.sizeX + this.scale * sin(frameCount * this.period), this.sizeY + this.scale * sin(frameCount * this.period));\n\t\t}\n\t}\n}\n\nfunction vector_field(x, y, myScale) {\n\tx = map(x, 0, width, 0, myScale);\n\ty = map(y, 0, height, 0, myScale);\n\tlet k1 = 5;\n\tlet k2 = 3;\n\tlet u = cos(k1 * y) + cos(k2 * y);\n\tlet v = sin(k2 * x) - cos(k1 * x);\n\treturn createVector(u, v);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/1092025.png",
+        "publicationDate":"7/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"1044412ae5c3226274c3f764cf3c726af854e5514401c2bae5201f99c45bb682",
+        "name":"asimetría 2",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"// \"Optical\"palette from https://ronikaufman.github.io/color_pals/\n\nlet colors = [\"#f2eb8a\", \"#fed000\", \"#fc8405\", \"#ed361a\", \"#e2f0f3\", \"#b3dce0\", \"#4464a1\", \"#203051\", \"#ffc5c7\", \"#f398c3\", \"#cf3895\", \"#6d358a\", \"#06b4b0\", \"#4b8a5f\"]\n\nlet iMax = 6;\n\nfunction setup() {\n  \n  let d = displayDensity();\n  \n  //let isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);\n\n  //if (isMobile) {\n    createCanvas(windowWidth,windowWidth);\n  //} else {\n  //  createCanvas(1000,1000);\n  //}\n  \n  strokeCap(SQUARE);\n  colorMode(HSB, 360, 100, 100, 100);\n  rectMode(CENTER);\n  noLoop();\n  fill(\"#d3d1bb\");\n  //fill(\"white\");\n  square(width/2,height/2,width);\n}\n\nfunction draw() {    \n  \n  let mySize = width/2;\n  \n  for(let xx=0;xx <= width;xx+=mySize/2)\n  {\n    for(let yy=0;yy <= height;yy+=mySize/2)\n    {\n      push();\n      translate(xx,yy);\n      rotate(random([0,PI/2,PI,3*PI/2]));\n      recursiveArc(0,0,mySize,iMax);\n      pop();\n    }\n  }\n  \n  noFill();\n  strokeWeight(2);\n  rect(width/2,height/2,width);\n\n}\n\nfunction recursiveArc(x,y,mySize,level)\n{\n  level -= 1;\n  strokeWeight(0.5);\n  //strokeWeight(map(level,0,iMax,0.1,1));\n  drawArc(x,y,mySize/2);\n  \n  if (level > 0)\n  {\n    recursiveArc(x - mySize/4,y - mySize/8,mySize/2,level);\n    recursiveArc(x + mySize/4,y - mySize/8,mySize/2,level);\n  }\n  \n}\n\nfunction drawArc(x,y,mySize)\n{\n  stroke(0);\n  for(i=mySize;i>0;i-=10)\n  {\n    noFill();\n    square(x,y,mySize);\n    fill(generateColor(0));\n    arc(x,y,i,i,0,PI,CHORD);\n  } \n}\n\nfunction generateColor(scale) {\n  let temp = color(colors[floor(random(0, colors.length))]);\n  let myColor = color(hue(temp) + randomGaussian() * scale, //added: \"let\"\n    saturation(temp) + randomGaussian() * scale,\n    brightness(temp) + randomGaussian() * scale,\n    random(100,100));\n  return myColor;\n}\n\n\n"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/asimetría2.png",
+        "publicationDate":"6/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"1116c9b3c4476df1a796918424e995512e8750e1e3518ba5ddf7355ea9f340e0",
+        "name":"4262023C",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/\n// @garabatospr\n\n\nlet colors = [\"#226699\", \"#dd2e44\", \"#ffcc4d\",\"#FFFFFF\",\"#000000\"];\n\nlet shapes = [];\n\nlet border = 0;\n\nfunction setup() {\n  createCanvas(1000,1000);\n  rectMode(CENTER);\n  ellipseMode(CENTER);\n  colorMode(HSB, 360, 100, 100);\n  \n  fill(\"#f2eecb\");\n  square(width/2,height/2,width);\n  \n  let mySize = 200;\n  \n  for(let x = mySize;x <= width-mySize;x+=mySize*1.5)\n  {\n    for(let y = mySize;y <= height-mySize;y+=mySize*1.5)\n    {\n      \n      noFill();\n      square(x,y,mySize*1.35);\n      for(let i=0;i < 10;i++)\n      {\n        shapes.push(new shape(x,y,mySize/2));\n      }\n    }\n  }\n  \n\n  \n}\n\nfunction draw() {\n  \n  for(let i=0;i < shapes.length-1;i++)\n  {\n    shapes[i].display();\n    shapes[i].move();\n  }\n  \n  if (frameCount > 500)\n  {\n    noLoop();\n  }\n}\n\nfunction shape(centerX,centerY,range)\n{\n  this.x = centerX;\n  this.y = centerY; \n  this.range = range;\n  this.sizeX = 50;\n  this.sizeY = this.sizeX;\n  this.dirX = random([-1,1]);\n  this.dirY = random([-1,1]);\n  this.speed = 0.5;\n  this.color = generateColor();\n\n  \n\n  this.move = function()\n  {\n\n    this.x += this.dirX*this.speed;\n    this.y += this.dirY*this.speed; \n    \n    if ((frameCount % 100) == 0)\n    {\n      this.color = generateColor();\n      if (this.sizeX > 1)\n      {\n        this.sizeX /= 1.5;\n        this.sizeY /= 1.5;\n      }\n      this.dirX = random([-1,0,1]);\n    this.dirY = random([-1,0,1]);\n    }\n  }\n    \n  this.display = function()\n  {\n    this.x = constrain(this.x,centerX - this.range,centerX + this.range);\n    this.y = constrain(this.y,centerY - this.range,centerY + this.range);\n    fill(this.color);\n    if((frameCount % 10)==0)\n    {\n      stroke(0);\n    }else\n    {\n      noStroke();\n    }\n    rect(this.x,this.y,this.sizeX,this.sizeY);\n  }\n\n  \n}\n\nfunction generateColor(){\n  return colors[floor(random(0,colors.length))];\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/4262023C.png",
+        "publicationDate":"5/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"2e61d810d3d875edde0c0f125f2989f933f9e77bdf8a306d0eb589d29820b4e9",
+        "name":"Lentes",
+        "tags":["2D","Art"],
+        "UserID":"1",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let colors = [\"#F6E2BE\", \"#356BB3\", \"#FBBC2E\",\"#EC3245\",\"#FFFFFF\"];\n\nlet mySeed;\n\nlet anillos = [];\n\nlet lentes = [];\n\nlet myRad;\n\nfunction setup() {\n    createCanvas(1000, 1000);\n    rectMode(CENTER);\n    //ellipseMode(CENTER);\n    colorMode(HSB, 360, 100, 100,100);\n    mySeed = floor(random(1, 100000));\n    addBlur();\n    \n    myRad = 50;\n    \n    //blendMode(DIFFERENCE);\n    \n    for(let xx = myRad*2;xx < width;xx+=myRad*4)\n    {\n        for(let yy = myRad*2.5;yy < height;yy+=myRad*4)\n        {\n            let myColor1 = generateColor(20);\n            let myColor2 = generateColor(100);\n            let myScale = 0.7;\n            anillos.push(new Anillo(xx,yy+myScale*myRad/2,myRad*myScale,myColor1,myColor2));\n            anillos.push(new Anillo(xx,yy-myScale*myRad/2,myRad*myScale,myColor1,myColor2));\n            //anillos.push(new Anillo(xx,yy,myRad*myScale,myColor1,myColor2));\n            lentes.push(new Lente(xx,yy-myRad/2,myRad*0.9,color(90)));\n            //anillos.push(new Anillo(xx,yy,myRad,myColor))\n        }\n    }\n    \n}\n\nfunction draw() {\n    \n    fill(colors[0]);\n    square(width/2,height/2,width);\n    \n    //randomSeed(mySeed);\n    \n    push();\n    \n    translate(width*0.05,height*0.05);\n    \n    scale(0.9);\n    \n    for (let i=0; i<lentes.length; i++) {\n        lentes[i].display();\n    }\n    \n    for (let i=0; i<anillos.length; i++) {\n        anillos[i].display();\n    }\n    \n    pop();\n    \n}\n\nclass Lente\n{\n    constructor(x,y,myRad,myColor)\n    {\n        this.x = x;\n        this.y = y;\n        this.rad = myRad;\n        this.color = myColor;\n    }\n    \n    display()\n    {\n        stroke(0);\n        strokeWeight(5);\n        fill(this.color);\n        circle(this.x,this.y,3.2*this.rad);\n    }\n    \n}\n\n\nclass Anillo \n{\n    constructor(x,y,rad,myColor1,myColor2)\n    {\n        this.x = x;\n        this.y = y;\n        this.rad = rad;\n        this.color1 = myColor1;\n        this.color2 = myColor2;\n        this.speed = random(0.05,0.01);\n        this.dir  = random([-1,1]);\n    }\n    \n    displayFrame()\n    {\n        fill(generateColor(50));\n        stroke(0);\n        square(this.x,this.y,this.rad*2);\n    }\n    \n    display()\n    {\n        push();\n        translate(this.x,this.y - this.rad/2.15 - this.rad/10);\n        rotate(this.dir*this.speed*frameCount);\n        eightRing(0,0,this.rad,this.color1,this.color2);\n        pop();\n    }\n    \n}\n\n\nfunction eightRing(x, y, d, col1,col2) {\n    const thick = d/10;\n    const r = d/2;\n    const rOut = r + thick/2;\n    const rIn  = max(1, r - thick/2);\n    const cxL = x - d/2;\n    const cxR = x + d/2;\n    const da = 0.03;\n\n    fill(col1);\n    circle(x - d/2,y,d);\n    fill(col1);\n    circle(x + d/2,y,d);\n    \n    noStroke();\n    fill(col2);\n    \n    beginShape();\n    for (let a = -PI; a <= 0; a += da) {\n        vertex(cxL + rOut * cos(a), y + rOut * sin(a));\n    }\n    for (let a = -PI; a <= 0; a += da) {\n        vertex(cxR + rOut * cos(a), y + rOut * sin(a));\n    }\n    for (let a = 0; a <= PI; a += da) {\n        vertex(cxR + rOut * cos(a), y + rOut * sin(a));\n    }\n    for (let a = 0; a <= PI; a += da) {\n        vertex(cxL + rOut * cos(a), y + rOut * sin(a));\n    }\n\n    beginContour();\n    for (let a = TWO_PI; a >= 0; a -= da) {\n        vertex(cxR + rIn * cos(a), y + rIn * sin(a));\n    }\n    endContour();\n\n    beginContour();\n    for (let a = TWO_PI; a >= 0; a -= da) {\n        vertex(cxL + rIn * cos(a), y + rIn * sin(a));\n    }\n    endContour();\n\n    endShape(CLOSE);\n}\n\nfunction generateColor(transp) {\n    let myColor = color(random(colors));\n    myColor.setAlpha(transp);\n    return myColor;\n}\n\nfunction addBlur() {\n    drawingContext.shadowOffsetX = -2;\n    drawingContext.shadowOffsetY = -2;\n    drawingContext.shadowBlur = 5;\n    drawingContext.shadowColor = 'black';\n}\n\nfunction setBackground(mySize) {\n    fill(100);\n    rect(width / 2, height / 2, width, height);\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/.thumbnails/Lentes.png",
+        "publicationDate":"02/10/2025",
+        "description":"...",
+        "instructions":"no instructions needed."
+    },
+    {
+        "ID":"a5e4beade7270bef4b645de3d53ab8bb5827fdec22f8e757bd9e550153c46880",
+        "name":"Dandelion",
+        "tags":["Original","Creative","2D","Art"],
+        "UserID":"0",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"let widthRect = 45;\nlet seedScale = 10;\nlet amount = 200;\nlet escapingAmount = 200;\n\nlet dseeds = [];\nclass Dseed {\n    constructor(x, y, r, s) {\n        this.x = x;\n        this.y = y;\n        this.vx = random(1,2);\n        this.r = r;\n        this.s = s;\n        this.sw = random(0.5, 2);\n        this.on = true;\n        dseeds.push(this);\n    }\n    draw() {\n        if (this.on) {\n            stroke(255);\n            strokeWeight(this.sw);\n            line(0, 0, this.x+10*abs(sin(frameCount/100*this.r)), this.y+10*sin(this.x/100));\n            if(random(0,1000)<1){\n                let ns=new Dseed(this.x+10*sin(frameCount/100*this.r),this.y,this.r,this.s);\n                ns.on=false;\n            }\n        }else{\n            this.x+=this.vx;\n        }\n        push();\n        noStroke();\n        fill(255);\n        translate(this.x+10*abs(sin(frameCount/100*this.r)), this.y+10*sin(this.x/100));\n        if(this.x+10*abs(sin(frameCount/100*this.r))>2*width){\n            dseeds.splice(dseeds.indexOf(this),1)\n        }\n        rotate(this.r);\n        scale(this.s);\n        rect(\n            -((widthRect / 100) * seedScale) / 2,\n            0,\n            (widthRect / 100) * seedScale,\n            seedScale\n        );\n        rotate((2 * PI) / 5);\n        rect(\n            -((widthRect / 100) * seedScale) / 2,\n            0,\n            (widthRect / 100) * seedScale,\n            seedScale\n        );\n        rotate((2 * PI) / 5);\n        rect(\n            -((widthRect / 100) * seedScale) / 2,\n            0,\n            (widthRect / 100) * seedScale,\n            seedScale\n        );\n        rotate((2 * PI) / 5);\n        rect(\n            -((widthRect / 100) * seedScale) / 2,\n            0,\n            (widthRect / 100) * seedScale,\n            seedScale\n        );\n        rotate((2 * PI) / 5);\n        rect(\n            -((widthRect / 100) * seedScale) / 2,\n            0,\n            (widthRect / 100) * seedScale,\n            seedScale\n        );\n        pop();\n    }\n}\n\nfunction setup() {\n    randomSeed(29);\n\n    for (let i = 0; i < amount; i++) {\n        let r = random(0, 2 * PI);\n        let ra = random(0, 100);\n        let x = sin(r) * ra;\n        let y = cos(r) * ra;\n        new Dseed(x, y, random(0, 2 * PI), random(0.2, 1.1));\n    }\n\n    for (let i = 0; i < escapingAmount; i++) {\n        let x = pow(10, random(3));\n        if (x > 100) {\n            let ns = new Dseed(x, 0, random(0, 2 * PI), random(0.2, 1.1));\n            ns.y = random(-100, 100) + sin(ns.x / 100) * 20;\n            ns.on = false;\n        }\n    }\n}\n\nfunction draw() {\n    background(0);\n    translate(100, height / 2);\n\n    let x = 0;\n    let y = 0;\n\n    scale(0.7);\n    //translate(-200, -60);\n    stroke(255);\n    strokeWeight(5);\n    noFill();\n    curve(-100, 0, 0, 0, -50, 200, -300, 200);\n    for (let ds of dseeds) {\n        ds.draw();\n    }\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"sprites/Logo.jpg",
+        "publicationDate":"26/05/2025",
+        "description":"Shine, grow, and spread your knowledge, Dandelion Official animation (yup, the same one that you see as background on the about page...)",
+        "instructions":"no instructions needed."
+    }
+]

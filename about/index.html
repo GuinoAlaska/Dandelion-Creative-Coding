@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--base href="/Dandelion-Creative-Coding/"-->
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="sprites/Logo.jpg">
+    <meta name="description" content="Dandelion Creative Coding - About">
+    <title>About Dandelion CC</title>
+    <link rel="stylesheet" href="about/aboutStyles.css">
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+    <script src="configuration/config.js"></script>
+</head>
+<body>
+    <div id="menu-panel">
+        <!-- Menu panel content -->
+        <nav id="menu-bar">
+            <div id="desktop-menu-bar">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <img src="sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle; margin-right:0px;">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="editor/index.html" id="create" class="btn">Create</a>
+                    </li>
+                    <li>
+                        <a href="index.html" id="explore" class="btn">Explore</a>
+                    </li>
+                    <li>
+                        <a href="about/index.html" id="about" class="btn">About</a>
+                    </li>
+                    <li style="flex: 1 1 auto;"></li>
+                </ul>
+                <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="Explore projects!!!" value="">
+                <button id="SearchBtn"><img class="Search-logo" src="sprites/search-icon.png" alt="Search"></button>
+                </div>
+                <ul>
+                    <li class="dropdown" style="padding-right:10px">
+                        <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px; margin-right:0px;">
+                        
+                        <a class="dropbtn">Guest</a>
+                        <div class="dropdown-content">
+                            <a href="maintenance/index.html" id="login">Log in</a>
+                            <a href="maintenance/index.html" id="signin">Sign in</a>
+                            <a href="configuration/index.html" id="config">Configuration</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="mobile-menu-bar" class="hidden">
+                <ul style="display: flex; flex-direction: row; align-items: center; width: 100%; padding: 0; margin: 0;">
+                    <li>
+                        <a href="index.html">
+                            <img src="sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle;">
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <button id="mobile-help-btn" aria-label="Help" style="background:none; border:none; margin-left:10px; margin-right:10px;">
+                            <img src="sprites/help-icon.png" alt="Help" style="height:24px;">
+                        </button>
+                    </li>
+                    <li class="not-selectable" style="flex:1 1 auto; text-align:center;">
+                    </li>
+                    <li style="position:relative;">
+                        <button id="mobile-burger-btn" aria-label="Menu" style="background:none; border:none; padding:8px;">
+                            <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                            <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                            <span style="display:block; width:24px; height:3px; background:#fff; margin:4px 0; border-radius:2px;"></span>
+                        </button>
+                        <div id="mobile-dropdown-menu" style="display:none; position:absolute; right:0; top:40px; background:#222; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); min-width:100px; z-index:100;">
+                            <ul style="list-style:none; margin:0; padding:0;">
+                                <a class="dropbtn" id="create-mobile">Create</a>
+                                <a class="dropbtn" id="explore-mobile">Explore</a>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="dropdown" style="padding-right:10px">
+                        <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px;">
+                        <div class="dropdown-content">
+                            <a href="maintenance/index.html" id="login">Log in</a>
+                            <a href="maintenance/index.html" id="signin">Sign in</a>
+                            <a href="configuration/index.html" id="configuration">Configuration</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <h1>About Dandelion Creative Coding</h1>
+        <br>
+        <p><strong>Dandelion Creative Coding</strong> is now a full-fledged creative coding platform built around <code>p5.js</code>. Beyond a simple editor, it provides an environment to explore, create, and interact with projects directly in your browser.</p>
+        <br>
+        <p>Though still in active development, Dandelion already includes powerful tools that go beyond basic code editors. Its step-through execution lets you pause and advance your sketches one frame at a time — ideal for debugging animations and interactions. The unique <strong>Editor View</strong> visualizes rendered elements even outside the canvas, giving you a broader perspective on your sketch. Future updates aim to further improve accessibility and creative freedom for all developers and artists.</p>
+        <br>
+        <p>The platform lets you import <code>.js</code>, <code>.txt</code>, and <code>.json</code> files, and create new <code>.txt</code> and <code>.json</code> files. You start at the main platform page with featured projects — many thanks to <strong>garabatospr</strong> for allowing us to showcase his p5 projects!</p>
+        <br>
+        <br>
+        <h2>Key Features</h2>
+        <ul>
+            <li><span style="color: #FFD600; font-weight: bold;">New:</span> Browser-based creative coding platform, not just an editor</li>
+            <li><span style="color: #FFD600; font-weight: bold;">New:</span> Import and create <code>.js</code>, <code>.txt</code>, and <code>.json</code> files</li>
+            <li>Run, pause, and step through your p5.js sketches frame-by-frame</li>
+            <li>Preview to inspect all rendering elements, including off-canvas ones</li>
+            <li>Syntax-highlighted code editor (powered by CodeMirror)</li>
+            <li>Export your projects as standalone web packages (via JSZip) (Doesn’t work on mobile)</li>
+            <li>Mobile-compatible interface</li>
+            
+            <li><span style="color: #FFD600; font-weight: bold;">New:</span> Auto-save functionality that saves your project instantly after every change</li>
+            <li><span style="color: #FFD600; font-weight: bold;">New:</span> Console with input support to evaluate code in your sketches</li>
+            <li><span style="color: #FFD600; font-weight: bold;">New:</span> Gizmos functions: <code>beginGizmos()</code> and <code>endGizmos()</code> for rendering control</li>
+            <li><span style="color: #FFD600; font-weight: bold;">New:</span> Projects now run inside a sandboxed iframe for safer execution</li>
+            <li><span style="color: #FFD600; font-weight: bold;">New:</span> 404 and 503 error landing pages</li>
+            <li><span style="color: #00D6FF; font-weight: bold;">Log:</span> Several bugs fixed for smoother operation</li>
+        </ul>
+        <br>
+        <h2>Technologies Used</h2>
+        <ul>
+            <li><strong>p5.js</strong> – to run user-created sketches</li>
+            <li><strong>CodeMirror</strong> – for live code editing with syntax highlighting</li>
+            <li><strong>JSZip</strong> – to package and export projects</li>
+            <li><strong>Prettier (via UNPKG)</strong> – for clean code formatting</li>
+            <li><strong>Acorn</strong> – for the previous code scanner</li>
+        </ul>
+        <br>
+        <h2>About the Developer</h2>
+        <p><strong>Dandelion</strong> is a solo project by <strong>Jonadab Moiseyev Olvera Marichal</strong>. While there’s no personal site yet, you can join the <a href="https://discord.gg/KN7kFxtTcB" target="_blank" rel="noopener">Dandelion Discord server</a> or visit our <a href="https://www.reddit.com/r/DandelionCC/" target="_blank" rel="noopener">Reddit page</a> to connect, share feedback, and get involved in the community.</p>
+        <br>
+        <h2>Privacy & Security</h2>
+        <p>Dandelion runs entirely in your browser with no backend services; all code stays client-side.</p>
+        <br>
+        <p><strong>⚠️ Warning:</strong> The safety scanner is currently inactive. While sketches run in a sandboxed iframe, evaluating untrusted code can still be dangerous. Avoid running production-level or untrusted code.</p>
+        <br>
+        <h2>Support the Project</h2>
+        <p>You can support Dandelion by sharing it, contributing ideas or code, or financially via <a href="https://buymeacoffee.com/guinoalaska" target="_blank" rel="noopener">Buy Me a Coffee</a>. Every bit helps keep development going!</p>
+    </div>
+    <footer>
+        <br><br><br><br>
+        <p>Dandelion – v.2026-A13</p>
+    </footer>
+    <script src="about/sketch.js"></script>
+    <script src="searchBar.js"></script>
+    <script src="theme.js"></script>
+    <script src="MobileMenu.js"></script>
+</body>
+</html>

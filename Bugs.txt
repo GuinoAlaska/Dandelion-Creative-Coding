@@ -30,7 +30,7 @@ Dandelion-4 (06/06/2025): keyReleased not working
     Status: Solved (06/06/2025)
     Notes: Dandelion handles Setup and Draw functions properly, we just had to extend the same logic for the rest of the functions. Now its working.
 
-Dandelion-4 (10/06/2025): Collapsible blocks glitch
+Dandelion-5 (10/06/2025): Collapsible blocks glitch
     Version: 2025-A9_Release
     Description:
         Some blocks return to an opened state when i change back into tabs.
@@ -38,7 +38,7 @@ Dandelion-4 (10/06/2025): Collapsible blocks glitch
     Status: Solved (11/06/2025)
     Notes: It wasn't hard at all.
 
-Dandelion-5 (11/06/2025): Undo glitches
+Dandelion-6 (11/06/2025): Undo glitches
     Version: 2025-A9_release
     Description:
         On multiple tabs, when undo, it overshoots the file and rewrites the file im in with the content of another file i opened previously.
@@ -46,7 +46,7 @@ Dandelion-5 (11/06/2025): Undo glitches
     Status: Solved (21/06/2025)
     Notes: 2025-A11 will do.
 
-Dandelion-6 (24/06/2025): <Security level>
+Dandelion-7 (24/06/2025): <Security level>
     Version: 2025-A9_release
     Description:
         this["document"].body["innerHTML"] = "pwned!"
@@ -54,7 +54,7 @@ Dandelion-6 (24/06/2025): <Security level>
     Status: Solved (03/09/2025)
     Notes: with a lot of effort, this problem is solved via a full Safety Scanner implementation, it still migth have errors, but for now, its the best we can have.
 
-Dandelion-7 (15/09/2025): Mobile burger menu buttons not working
+Dandelion-8 (15/09/2025): Mobile burger menu buttons not working
     Version: 2025-A11_release
     Description:
         On mobile, the buttons inside the burger menu were unresponsive and did not trigger any actions.
@@ -62,7 +62,7 @@ Dandelion-7 (15/09/2025): Mobile burger menu buttons not working
     Status: Solved (15/09/2025)
     Notes: Fixed event listeners for mobile menu buttons; now all actions work as expected.
 
-Dandelion-8 (19/09/2025): p5 standard functions not working except draw
+Dandelion-9 (19/09/2025): p5 standard functions not working except draw
     Version: 2025-A11_release
     Description:
         All standard p5 functions (like setup, mousePressed, keyPressed, etc.) stopped working, only draw was being called.
@@ -70,23 +70,23 @@ Dandelion-8 (19/09/2025): p5 standard functions not working except draw
     Status: Solved (19/09/2025)
     Notes: Issue was caused by a recent refactor that broke the function registration. Restored correct registration for all standard p5 functions.
 
-Dandelion-9 (20/09/2025): Scanner glitches on property access after call
+Dandelion-10 (20/09/2025): Scanner glitches on property access after call
     Version: 2025-A11_release
     Description:
         The scanner fails when parsing lines like "foo().prop", where a property is accessed immediately after a function call.
     Priority: medium
-    Status: solved (20/09/2025)
-    Notes: gg ez, I just updated the logic for MemberExpression to handle it.
+    Status: -solved (20/09/2025)- obsolete (05/11/2025)
+    Notes: -gg ez, I just updated the logic for MemberExpression to handle it.- Scanner removed in A13, issue no longer applicable
 
-Dandelion-10 (20/09/2025): safety scanner Scope context is off
+Dandelion-11 (20/09/2025): safety scanner Scope context is off
     Version: 2025-A11_release
     Description:
         Variables and functions are sometimes resolved in the wrong scope, leading to unexpected behavior when using nested blocks or closures.
     Priority: hight
-    Status: solved (03/10/2025)
-    Notes: It wasn't easy, but then i rested, and i founded the problem. It was about how js really returns on functions.
+    Status: -solved (03/10/2025)- obsolete (05/11/2025)
+    Notes: -It wasn't easy, but then i rested, and i founded the problem. It was about how js really returns on functions.- Replaced by sandboxed iframe runtime.
 
-Dandelion-11 (20/09/2025): Camera frustum mismatch with orbitControl()
+Dandelion-12 (20/09/2025): Camera frustum mismatch with orbitControl()
     Version: 2025-A11_release
     Description:
         When using orbitControl(), the frustum in the editor view appears different from what is seen when zooming in, causing a camera glitch.
@@ -94,15 +94,15 @@ Dandelion-11 (20/09/2025): Camera frustum mismatch with orbitControl()
     Status: solved (24/09/2025)
     Notes: That was easy, i also improved ux on the topic.
 
-Dandelion-12 (20/09/2025): Constants can mutate during safety simulation
+Dandelion-13 (20/09/2025): Constants can mutate during safety simulation
     Version: 2025-A11_release
     Description:
         Constants declared with 'const' are not enforced as immutable in the safety simulation; their values can be changed at runtime.
     Priority: hight
-    Status: solved (24/09/2025)
-    Notes: ez.
+    Status: -solved (24/09/2025)- obsolete (05/11/2025)
+    Notes: -ez.- Scanner removed, simulation logic deprecated.
 
-Dandelion-13 (22/09/2025): Edge browser downloads page instead of saving project
+Dandelion-14 (22/09/2025): Edge browser downloads page instead of saving project
     Version: 2025-A11_release
     Description:
         When attempting to save a project in Edge browser, the page was downloaded instead of saving the project due to a missing line in the event listener.
@@ -110,39 +110,39 @@ Dandelion-13 (22/09/2025): Edge browser downloads page instead of saving project
     Status: Solved (22/09/2025)
     Notes: Added the missing line to the listener to ensure correct save behavior in Edge.
 
-Dandelion-14 (27/09/2025): Dynamic variables not set as dynamic
+Dandelion-15 (27/09/2025): Dynamic variables not set as dynamic
     Version: 2025-A11_release
     Description:
         Some variables intended to be dynamic were not properly flagged as dynamic, causing unexpected static behavior in certain cases.
     Priority: hight
-    Status: Solved (29/09/2025)
-    Notes: It was a thing about looping external pool.
+    Status: -Solved (29/09/2025)- obsolete (05/11/2025)
+    Notes: -It was a thing about looping external pool.- the scanner was the problem, got removed on A13.
     
-Dandelion-15 (27/09/2025): for-of loop not handled properly
+Dandelion-16 (27/09/2025): for-of loop not handled properly
     Version: 2025-A11_release
     Description:
         The for-of loop is not parsed or executed correctly, leading to unexpected behavior. All loop constructs should be reviewed for proper handling.
     Priority: hight
-    Status: solved (30/09/2025)
-    Notes: Solved. It was just a missing line for the for-of loop, not that bad.
+    Status: -solved (30/09/2025)- obsolete (05/11/2025)
+    Notes: -Solved. It was just a missing line for the for-of loop, not that bad.- Scanner replaced; handled at runtime now.
 
-Dandelion-16 (29/09/2025): p5 variables/functions declaration at externals may have bugs
+Dandelion-17 (29/09/2025): p5 variables/functions declaration at externals may have bugs
     Version: 2025-A11_release
     Description:
         There is suspicion that the declaration of p5 variables and functions at the externals may contain bugs. Needs review to ensure correct behavior and compatibility.
     Priority: medium
-    Status: solved (07/10/2025)
-    Notes: All done 3 swarms of bugs where this.
+    Status: -solved (07/10/2025)- obsolete (05/11/2025)
+    Notes: -All done 3 swarms of bugs where this.- Scanner replaced; handled at runtime now.
 
-Dandelion-17 (30/09/2025): 'Maximum call stack size exceeded' when using background() inside p5 static function
+Dandelion-18 (30/09/2025): 'Maximum call stack size exceeded' when using background() inside p5 static function
     Version: 2025-A11_release
     Description:
         Calling background() inside a static p5 function causes a 'Maximum call stack size exceeded' error.
     Priority: hight
-    Status: solved (01/10/2025)
-    Notes: Solved, however, I'm sure there is a whole family of bugs related to this.
+    Status: -solved (01/10/2025)- obsolete (05/11/2025)
+    Notes: -Solved, however, I'm sure there is a whole family of bugs related to this.- Dynamic execution handled by iframe, not scanner.
 
-Dandelion-18 (01/10/2025): Ghost resizer misplaced at mobile when running
+Dandelion-19 (01/10/2025): Ghost resizer misplaced at mobile when running
     Version: 2025-A11_release
     Description:
         There is a ghost resizer element that appears misplaced on mobile devices when running the project. It seems to be possibly tied to the console height.
@@ -150,7 +150,7 @@ Dandelion-18 (01/10/2025): Ghost resizer misplaced at mobile when running
     Status: solved (01/10/2025)
     Notes: it was just a missing line.
 
-Dandelion-19 (06/10/2025): Cannot set properties of undefined (setting '#<Object>')
+Dandelion-20 (06/10/2025): Cannot set properties of undefined (setting '#<Object>')
     Version: 2025-A11_release
     Description:
         function setup() {
@@ -167,26 +167,26 @@ Dandelion-19 (06/10/2025): Cannot set properties of undefined (setting '#<Object
             }
         }
     Priority: medium
-    Status: solved (07/10/2025)
-    Notes: It was an unhandled for dynamic at assigning MemberExpression.
+    Status: -solved (07/10/2025)- obsolete (05/11/2025)
+    Notes: -It was an unhandled for dynamic at assigning MemberExpression.- Scanner logic deprecated.
 
-Dandelion-20 (07/10/2025): Scanner stuck on bracketless loops
+Dandelion-21 (07/10/2025): Scanner stuck on bracketless loops
     Version: 2025-A11_release
     Description:
         When parsing loops (for, while, etc.) without curly brackets, the scanner gets stuck and does not proceed, causing the editor to freeze or hang.
     Priority: hight
-    Status: solved (07/10/2025)
-    Notes: Now it handles bracketless loops properly.
+    Status: -solved (07/10/2025)- obsolete (05/11/2025)
+    Notes: -Now it handles bracketless loops properly.- Scanner logic deprecated.
 
-Dandelion-21 (07/10/2025): update property on for loop not handled properly
+Dandelion-22 (07/10/2025): update property on for loop not handled properly
     Version: 2025-A11_release
     Description:
         When parsing for loops with a different-than "++" update expression, the scanner loops indefinitedly, exceeding the loop Stack limit.
     Priority: hight
-    Status: solved (07/10/2025)
-    Notes: It was a missing line.
+    Status: -solved (07/10/2025)- obsolete (05/11/2025)
+    Notes: -It was a missing line.- Scanner logic deprecated.
 
-Dandelion-22 (07/10/2025):
+Dandelion-23 (07/10/2025):
     Version: 2025-A11_release
     Description:
         let a = [10,15];
@@ -194,10 +194,10 @@ Dandelion-22 (07/10/2025):
         
         logs: TypeError: Object.defineProperty called on non-object
     Priority: medium
-    Status: solved (07/10/2025)
-    Notes: could be wooshed from other bugfix
+    Status: -solved (07/10/2025)- obsolete (05/11/2025)
+    Notes: -could be wooshed from other bugfix- Scanner logic deprecated.
 
-Dandelion-23 (08/10/2025):
+Dandelion-24 (08/10/2025):
     Version: 2025-A11_release
     Description:
         class A {
@@ -209,29 +209,105 @@ Dandelion-23 (08/10/2025):
 
         logs: TypeError: Cannot read properties of undefined (reading 'type')
     Priority: hight
-    Status: solved (08/10/2025)
-    Notes: it was a variable naming thing.
+    Status: -solved (08/10/2025)- obsolete (05/11/2025)
+    Notes: -it was a variable naming thing.- Scanner logic deprecated.
 
-Dandelion-24 (08/10/2025): loop flow continues after return inside dynamic condition
+Dandelion-25 (08/10/2025): loop flow continues after return inside dynamic condition
     Version: 2025-A11_release
     Description:
         so... basicly that.
     Priority: hight
-    Status: solved (08/10/2025)
-    Notes: Wasn´t easy to spot, but now its solved.
+    Status: -solved (08/10/2025)- obsolete (05/11/2025)
+    Notes: -Wasn´t easy to spot, but now its solved.- Scanner logic deprecated.
 
-Dandelion-25 (08/10/2025): Lag on scanning
+Dandelion-26 (08/10/2025): Lag on scanning
     Version: 2025-A11_release
     Description:
         when trying to scan heavy code, it just lags in a way that now users can´t code without a huge delay.
     Priority: medium
-    Status: pending (08/10/2025)
-    Notes: I need to multithreading... would be solved for A13.
+    Status: closed (won’t fix) (05/11/2025)
+    Notes: Scanner removed entirely for A13; multithreading plan cancelled.
 
-Dandelion-26 (08/10/2025): Setup is not being mirrored on the editor view
+Dandelion-27 (08/10/2025): Setup is not being mirrored on the editor view
     Version: 2025-A1_release
     Description:
         Any drawing function is not mirrored on the editor view, creating async behaviour.
     Priority: medium
     Status: nothingToDo (08/10/2025)
     Notes: This is an aknowledge issue when implementing the editor view. There is no way we can cleanly solve it, without creating artifacts and async behaviour. However, part of the effect is now disolved.
+
+Dandelion-28 (09/10/2025): Accessing array length gives error
+    Version: 2025-A11_release
+    Description:
+        class A{
+            constructor(){
+                this.x=[10,15];
+            }
+        }
+
+        let a = new A();
+        console.log(a.x.length);
+        
+        gives error since the length doesn´t exist...
+    Priority: medium
+    Status: -solved (11/10/2025)- obsolete (05/11/2025)
+    Notes: -It was part of the internal behaviour for assigning MemberExpressions, solved.- scanner deprecated.
+
+Dandelion-29 (17/10/2025): construction with input same name...
+    Version: 2025-A13_beta
+    Description:
+        function setup() {
+            let a = 100;
+            new A(a);
+        }
+        class A {
+            constructor(a) {
+                this.a = a;
+            }
+        }
+
+        gives error: "Access to undefined variable or unhandled external 'A'.
+ at undefined on line ?, column ?
+ TypeError: Cannot read properties of undefined (reading 'a')
+ at undefined on line ?, column ?"
+    Priority: medium
+    Status: suspended (05/11/2025)
+    Notes: Will re-evaluate once scanner returns for B1.
+
+Dandelion-30 (17/10/2025): construction on cicles...
+    Version: 2025-A13_beta
+    Description:
+        function setup() {
+            for(let i=0;i < 5;i++)
+            {
+            new A(0);
+            }
+        }
+
+        class A
+        {
+            constructor(x)
+            {
+                this.x = x;
+            }
+        }
+
+        gives error: "Access to undefined variable or unhandled external 'A'.
+ at undefined on line ?, column ?
+ TypeError: Cannot read properties of undefined (reading 'x')
+ at undefined on line ?, column ?"
+    Priority: medium
+    Status: suspended (05/11/2025)
+    Notes: Will re-evaluate once scanner returns for B1.
+
+Dandelion-31 (05/11/2025): Scanning inconsistency
+    Version: 2025-A13_beta
+    Description:
+        for(let i=0;i<10;i++){
+            //console.log("arroz");
+        }
+
+        sometimes it gives error with access on the variable i, other times it doesn´t.
+    Priority: hight
+    Status: suspended (05/11/2025)
+    Notes: Final bug before scanner removal.

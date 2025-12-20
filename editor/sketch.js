@@ -1,0 +1,61 @@
+/*
+            < < < < Author: Jonadab Moiseyev Olvera Marichal > > > >
+    > Date Created: 15/04/2025
+    > Last Updated: 20/12/2025
+    > Project Description: Dandelion Creative Coding is an independently developed browser-based creative coding platform, built entirely solo. It allows users to create, import, and preview p5.js, .txt, and .json files within a custom environment tailored for experimentation, learning, and interactive projects.
+
+    ┌──────────────── - - <<<<<<<< Copyright Notice: >>>>>>>> - - ────────────────┐
+    │       The following elements are protected:
+    > - The names and slogan: `Dandelion Creative Coding`, `Dandelion CC`, `"If you can dream it, you can create it."`, on all translations.
+    > - The exact content of the following files: `editor/index.html`, `editor/styles.css`, `editor/sketch.js`, `editor/codeReader.js`, `editor/UX.js`, `MobileMenu.js`, `theme.js`, `searchBar.js`, `configuration/config.js`, `sprites/icons.png`, `sprites/tab-icons.png`, and any other files located in the same project directory as this file.
+    > - Any reproduction or derivative work that includes more than 10% of this project's original code or visual assets.
+    > - The implementation and system logic behind the secondary sketch panel used for p5.js development (e.g., `bottomSketch`, `bottomP5Instance`) and the new platform-wide project system. Variable names are not protected; however, the underlying interaction logic and rendering flow are.
+    │
+    └─── - - < < < All rights reserved. > > > - - ────>\\\\\
+
+    ┌──────────────── - - <<<<<<<< Notes: >>>>>>>> - - ────────────────┐
+    > - This platform is developed specifically for running and previewing p5.js code.
+    │   p5.js is an open-source JavaScript library maintained by the Processing Foundation: https://p5js.org
+    > - The hot reload mechanism is custom-built and not derived from any external template.
+    > - Features like auto-save, console input, Gizmos functions (`beginGizmos()` / `endGizmos()`), and project management are custom-built.
+    > - Portions of the codebase were written with the assistance of GitHub Copilot and/or ChatGPT.
+    > - Content related to Garabatospr (found in Default/DefaultProjects.json, Default/DefaultUsers.json, and Default/.thumbnails) is not part of the platform's copyrighted material. Its inclusion is explicitly authorized for use via e-mail permission.
+    └────────────────────────────────────────────────────────────────────────────>\\\\\
+
+    ┌──────────────── - - <<<<<<<< Security Disclaimer:  >>>>>>>> - - ────────────────┐
+    > - The platform previously included a safety scanner, which is currently inactive. Sketches now run inside a sandboxed iframe. While this improves safety, evaluating untrusted code may still pose security risks. Users are responsible for their own code.
+    > - The environment is intentionally open to allow users to experiment freely. Use at your own risk.
+    └────────────────────────────────────────────────────────────────────────────>\\\\\
+
+    ┌──────────────── - - <<<<<<<< Contributors:  >>>>>>>> - - ────────────────┐
+    > Sir Andrew Aguecheek (Discord):
+    │ - Helped on finding security issues with: `this["document"].body["innerHTML"] = "pwned!";`
+    > Garabatospr (Reddit):
+    │ - Signed for including his projects on the main page
+    └────────────────────────────────────────────────────────────────────────────>\\\\\
+*/
+
+let editorCamera={
+    x:0,
+    y:0,
+    z:1,
+    tx:0,
+    ty:0,
+    tz:1,
+}
+
+if (topP5Instance) {
+    topP5Instance.remove();
+}
+if (bottomP5Instance) {
+    bottomP5Instance.remove();
+}
+
+let editorFocused = true;
+
+window.addEventListener('load', () => {
+    IDEStopSketch();
+    enableDragForTabs()
+
+    ifr.contentWindow.postMessage({ cmd: 'theme', data: config.theme }, "*");
+});
