@@ -16,8 +16,8 @@
     --projectSaved-color: #111;
     --projectNotSaved-color: rgb(255, 18, 136);
 
-    --Icons: url('/sprites/icons-ligth.png');
-    --TabIcons: url('/sprites/tab-icons-ligth.png')
+    --Icons: url('/Dandelion-Creative-Coding/sprites/icons-ligth.png');
+    --TabIcons: url('/Dandelion-Creative-Coding/sprites/tab-icons-ligth.png')
 }
 
 [data-theme="dark"] {
@@ -36,8 +36,8 @@
     --projectSaved-color: #888;
     --projectNotSaved-color: #F5A;
     
-    --Icons: url('/sprites/icons.png');
-    --TabIcons: url('/sprites/tab-icons.png');
+    --Icons: url('/Dandelion-Creative-Coding/sprites/icons.png');
+    --TabIcons: url('/Dandelion-Creative-Coding/sprites/tab-icons.png');
 }
 
 /* General hover styling */
