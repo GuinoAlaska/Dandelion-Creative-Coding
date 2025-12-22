@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <base href="/Dandelion-Creative-Coding/">
-        <!--base href="/"-->
+        <script>
+            (function () {
+                const base = document.createElement('base');
+
+                if (location.hostname.includes('github.io')) {
+                    base.href = '/Dandelion-Creative-Coding/';
+                } else {
+                    base.href = '/';
+                }
+
+                document.head.appendChild(base);
+            })();
+        </script>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/svg+xml" href="sprites/Logo.jpg">
         <meta name="description" content="Dandelion Creative Coding - Profile">
         <title>Dandelion CC</title>
         <link rel="stylesheet" href="styles.css">
-        <!--base href="/Dandelion-Creative-Coding/"-->
-        <base href="/">
         <script src="configuration/config.js"></script>
     </head>
     <body>
