@@ -1,5 +1,24 @@
 [
     {
+        "ID":"9b9c34d43bbdba98d478760ed78dbc1efda1cd456d7bce4a58a2f798d5e183c0",
+        "name":"This is NOT 3D",
+        "tags":["Original","Creative","2D","Art"],
+        "UserID":"0",
+        "files":[
+            {
+                "name":"sketch.js",
+                "code":"const rotation = {\n  x:0,\n  y:0,\n  z:0\n}\n\nfunction setup() {\n  //We already maded a full size canvas for you :3\n}\n\nfunction draw() {\n  rotation.x=mouseX/100;\n  rotation.y=-mouseY/100;\n  background(0);\n  stroke(255);\n  translate(width/2,height/2);\n  \n  push();\n  let vectorX={\n    x:cos(rotation.x)*50,\n    y:-sin(rotation.y)*sin(rotation.x)*50\n  }\n  let vectorY={\n    x:sin(rotation.x)*50,\n    y:sin(rotation.y)*cos(rotation.x)*50\n  }\n  let vectorZ={\n    x:0,\n    y:cos(rotation.y)*50\n  }\n  \n  line(vectorX.x+vectorY.x+vectorZ.x,vectorX.y+vectorY.y+vectorZ.y,-vectorX.x+vectorY.x+vectorZ.x,-vectorX.y+vectorY.y+vectorZ.y);\n  line(vectorX.x-vectorY.x+vectorZ.x,vectorX.y-vectorY.y+vectorZ.y,-vectorX.x-vectorY.x+vectorZ.x,-vectorX.y-vectorY.y+vectorZ.y);\n  line(vectorX.x+vectorY.x-vectorZ.x,vectorX.y+vectorY.y-vectorZ.y,-vectorX.x+vectorY.x-vectorZ.x,-vectorX.y+vectorY.y-vectorZ.y);\n  line(vectorX.x-vectorY.x-vectorZ.x,vectorX.y-vectorY.y-vectorZ.y,-vectorX.x-vectorY.x-vectorZ.x,-vectorX.y-vectorY.y-vectorZ.y);\n  \n  line(vectorX.x+vectorY.x+vectorZ.x,vectorX.y+vectorY.y+vectorZ.y,vectorX.x-vectorY.x+vectorZ.x,vectorX.y-vectorY.y+vectorZ.y);\n  line(-vectorX.x+vectorY.x+vectorZ.x,-vectorX.y+vectorY.y+vectorZ.y,-vectorX.x-vectorY.x+vectorZ.x,-vectorX.y-vectorY.y+vectorZ.y);\n  line(vectorX.x+vectorY.x-vectorZ.x,vectorX.y+vectorY.y-vectorZ.y,vectorX.x-vectorY.x-vectorZ.x,vectorX.y-vectorY.y-vectorZ.y);\n  line(-vectorX.x+vectorY.x-vectorZ.x,-vectorX.y+vectorY.y-vectorZ.y,-vectorX.x-vectorY.x-vectorZ.x,-vectorX.y-vectorY.y-vectorZ.y);\n  \n  line(vectorX.x+vectorY.x+vectorZ.x,vectorX.y+vectorY.y+vectorZ.y,vectorX.x+vectorY.x-vectorZ.x,vectorX.y+vectorY.y-vectorZ.y);\n  line(-vectorX.x+vectorY.x+vectorZ.x,-vectorX.y+vectorY.y+vectorZ.y,-vectorX.x+vectorY.x-vectorZ.x,-vectorX.y+vectorY.y-vectorZ.y);\n  line(vectorX.x-vectorY.x+vectorZ.x,vectorX.y-vectorY.y+vectorZ.y,vectorX.x-vectorY.x-vectorZ.x,vectorX.y-vectorY.y-vectorZ.y);\n  line(-vectorX.x-vectorY.x+vectorZ.x,-vectorX.y-vectorY.y+vectorZ.y,-vectorX.x-vectorY.x-vectorZ.x,-vectorX.y-vectorY.y-vectorZ.y);\n  pop();\n}"
+            }
+        ],
+        "shared":true,
+        "public":true,
+        "openSource":true,
+        "thumbnail":"Default/thumbnails/ThisIsNot3D.jpg",
+        "publicationDate":"15/10/2025",
+        "description":"I used to draw cubes like this by hand.",
+        "instructions":"use the mouse to rotate the cube."
+    },
+    {
         "ID":"c4996ce9c8c59efb9682eff05c2f5565234f389887f4fb00f24176abbd85d097",
         "name":"arlequines",
         "tags":["2D","Art"],
