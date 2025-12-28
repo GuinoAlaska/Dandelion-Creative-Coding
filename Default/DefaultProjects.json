@@ -13,7 +13,7 @@
         "shared":true,
         "public":true,
         "openSource":true,
-        "thumbnail":"Default/thumbnails/ThisIsNot3D.jpg",
+        "thumbnail":"Default/thumbnails/ThisIsNot3D.png",
         "publicationDate":"15/10/2025",
         "description":"I used to draw cubes like this by hand.",
         "instructions":"use the mouse to rotate the cube."
