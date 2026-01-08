@@ -311,3 +311,11 @@ Dandelion-31 (05/11/2025): Scanning inconsistency
     Priority: hight
     Status: suspended (05/11/2025)
     Notes: Final bug before scanner removal.
+
+Dandelion-32 (07/01/2026): can´t do anything on mobile due to loading problems
+    Version: 2026-A13
+    Description:
+        An error on loading a file does nothing to do on mobile. Migth also be the same issue for pc if you used a previous vertion of Dandelion.
+    Priority: hight
+    Status: pending (07/01/2026)
+    Notes: let me see :v

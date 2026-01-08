@@ -1741,7 +1741,7 @@ function loadProject() {
                     }
                 })
                 .catch(error => {
-                    console.error("Error fetching project data:", error);
+                    console.error("Error fetching project data:", error.toString());
                 });
             return;
         }
@@ -1917,7 +1917,42 @@ function loadProject() {
         });
         currentFile=-1;
     } catch (e) {
-        console.error("Failed to load project:", e);
+        console.error("Failed to load project:", e.toString());
+        try{
+            const textarea = document.getElementById('code-input');
+
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: 'javascript',
+                theme: config.theme? config.theme==="dark"?'dracula':'spotlight':'spotlight',
+                lineNumbers: true,
+                lineWrapping: true,
+                foldGutter: true,
+                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+                tabSize: 2,
+                indentUnit: 2,
+                autofocus: true,
+            });
+
+            editor.on('change', editorChangeFunction);
+            
+            let file = {
+                name: "sketch.js",
+                state: "saved",
+                editor: editor,
+                type: "js"
+            };
+
+            const cm = file.editor;
+
+            cm.operation(() => {
+                cm.setValue("function setup(){\n  //We already maded a full size canvas for you :3\n}\n\nfunction draw(){\n  background(200);\n}");
+                cm.clearHistory();
+            });
+
+            files.push(file);
+        }catch(e){
+            console.log("Error trying to recover:",e.toString());
+        }
     }
     openFile(0);
     
