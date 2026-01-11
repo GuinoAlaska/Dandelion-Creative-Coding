@@ -317,5 +317,13 @@ Dandelion-32 (07/01/2026): can´t do anything on mobile due to loading problems
     Description:
         An error on loading a file does nothing to do on mobile. Migth also be the same issue for pc if you used a previous vertion of Dandelion.
     Priority: hight
-    Status: pending (07/01/2026)
-    Notes: let me see :v
+    Status: evaluating (10/01/2026)
+    Notes: sould be solved...
+
+Dandelion-33 (10/01/2026): Icons and links are bugged on mobile
+    Version: 2026-A13
+    Description:
+        The icons of the editor and the links to other places are bugged on my phone.
+    Priority: hight
+    Status: active (11/01/2026)
+    Notes: Probably its just becouse of <base>, ill refractor...

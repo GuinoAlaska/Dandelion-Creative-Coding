@@ -5,7 +5,7 @@ window.addEventListener('load', () => {
 });
 
 function loadUserProfile(userID) {
-    fetch(`Default/DefaultUsers.json`)
+    fetch(`../Hight/DefaultUsers.json`)
         .then(response => response.json())
         .then(users => {
             const user = users.find(u => u.ID === userID);
@@ -26,7 +26,7 @@ function loadUserProfile(userID) {
                     }
                 }
                 document.querySelector('.user-contacts').innerHTML=contactsHTML;
-                document.querySelector('.user-avatar').src = user.avatar || 'sprites/user-avatar.png';
+                document.querySelector('.user-avatar').src = user.avatar || '../sprites/user-avatar.png';
             } else {
                 console.error('User not found');
             }

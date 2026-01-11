@@ -1,25 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-        (function () {
-            const base = document.createElement('base');
-
-            if (location.hostname.includes('github.io')) {
-                base.href = '/Dandelion-Creative-Coding/';
-            } else {
-                base.href = '/';
-            }
-
-            document.head.appendChild(base);
-        })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="sprites/Logo.jpg">
+    <link rel="icon" type="image/svg+xml" href="../sprites/Logo.jpg">
     <meta name="description" content="Dandelion Creative Coding - FullScreen">
     <title>Dandelion CC</title>
-    <link rel="stylesheet" href="FullScreen/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <!-- Load p5.js -->
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
 
@@ -33,11 +20,11 @@
 
     <!--script src="FullScreen/UX.js"></script-->
     <!--script src="codeReader.js"></script-->
-    <script src="theme.js"></script>
-    <script src="FullScreen/fullScreenUX.js"></script>
-    <script src="FullScreen/fullScreenCodeReader.js"></script>
-    <script src="editor/files.js"></script>
-    <script src="FullScreen/fullScreenSketch.js"></script>
+    <script src="../theme.js"></script>
+    <script src="fullScreenUX.js"></script>
+    <script src="fullScreenCodeReader.js"></script>
+    <script src="../editor/files.js"></script>
+    <script src="fullScreenSketch.js"></script>
     <!--script src="editor/scanner.js"></script-->
 </body>
 </html>

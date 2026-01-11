@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="sprites/Logo.jpg">
+    <link rel="icon" type="image/svg+xml" href="../sprites/Logo.jpg">
     <meta name="description" content="Dandelion - Creative Coding Editor">
     <title>Dandelion CC</title>
     <link rel="stylesheet" href="styles.css">
@@ -39,21 +39,7 @@
     <!-- Acorn JS Parser -->
     <script src="https://cdn.jsdelivr.net/npm/acorn@8.11.3/dist/acorn.min.js"></script>
 
-    <script>
-        (function () {
-            const base = document.createElement('base');
-
-            if (location.hostname.includes('github.io')) {
-                base.href = '/Dandelion-Creative-Coding/';
-            } else {
-                base.href = '/';
-            }
-
-            document.head.appendChild(base);
-        })();
-    </script>
-
-    <script src="configuration/config.js"></script>
+    <script src="../configuration/config.js"></script>
 </head>
 <body>
     <div id="menu-panel">
@@ -62,8 +48,8 @@
             <div id="desktop-menu-bar">
                 <ul>
                     <li>
-                        <a href="index.html">
-                            <img src="sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle; margin-right:0px;">
+                        <a href="../index.html">
+                            <img src="../sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle; margin-right:0px;">
                         </a>
                     </li>
                     <li class="dropdown">
@@ -94,7 +80,7 @@
                         <div class="dropdown-content">
                             <a id="hotReload">Toggle Hot Reload</a>
                             <a id="run">Run <span style="color: grey;">Ctrl + R</span></a> 
-                            <a href="projectVisualization/index.html" id="run" target="_blank" rel="noopener">See in page</a> 
+                            <a href="../projectVisualization/index.html" id="run" target="_blank" rel="noopener">See in page</a> 
                             <a id="stop">Stop <span style="color: grey;">Ctrl + R</span></a>
                             <a id="pause">Pause <span style="color: grey;">Ctrl + P</span></a>
                             <a id="step">Step <span style="color: grey;">Ctrl + Alt + S</span></a>
@@ -114,26 +100,26 @@
                         <div class="dropdown-content">
                             <a id="keybinds">Keybinds</a>
                             <a id="documentation">Documentation</a>
-                            <a href="about/index.html" id="about" target="_blank" rel="noopener">About</a>
+                            <a href="../about/index.html" id="about" target="_blank" rel="noopener">About</a>
                         </div>
                     </li>
                     <li style="flex: 1 1 auto;"></li>
                     <li id="project-status" class="not-selectable" style="font-size: 0.8em; color: gray; margin-left: 24px; margin-right: 24px;">project is saved</li>
                     <li class="dropdown">
-                        <a href="index.html" class="dropbtn">Explore</a>
+                        <a href="../index.html" class="dropbtn">Explore</a>
                     </li>
                     <li style="flex: 1 1 auto;"></li>
                 </ul>
                 <div id="divisor"></div>
                 <ul>
                     <li class="dropdown" style="padding-right:10px">
-                        <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px; margin-right:0px;">
+                        <img src="../sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px; margin-right:0px;">
                         
                         <a class="dropbtn">Guest</a>
                         <div class="dropdown-content">
-                            <a href="maintenance/index.html" id="login">Log in</a>
-                            <a href="maintenance/index.html" id="signin">Sign in</a>
-                            <a href="configuration/index.html" id="config" target="_blank" rel="noopener">Configuration</a>
+                            <a href="../maintenance/index.html" id="login">Log in</a>
+                            <a href="../maintenance/index.html" id="signin">Sign in</a>
+                            <a href="../configuration/index.html" id="config" target="_blank" rel="noopener">Configuration</a>
                         </div>
                     </li>
                 </ul>
@@ -141,13 +127,13 @@
             <div id="mobile-menu-bar" class="hidden">
                 <ul style="display: flex; align-items: center; width: 100%; padding: 0; margin: 0;">
                     <li>
-                        <a href="index.html">
-                            <img src="sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle;">
+                        <a href="../index.html">
+                            <img src="../sprites/Banner.jpg" alt="Dandelion Banner" style="height:40px; vertical-align:middle;">
                         </a>
                     </li>
                     <li class="dropdown">
                         <button id="mobile-help-btn" aria-label="Help" style="background:none; border:none; margin-left:10px; margin-right:10px;">
-                            <img src="sprites/help-icon.png" alt="Help" style="height:24px;">
+                            <img src="../sprites/help-icon.png" alt="Help" style="height:24px;">
                         </button>
                     </li>
                     <li class="not-selectable" style="flex:1 1 auto; text-align:center;">
@@ -165,7 +151,7 @@
                                     <span class="dropbtn">File</span>
                                     <div class="dropdown-content">
                                         <a id="save-file-mobile">Save</a>
-                                        <a href="index.html">Explore</a>
+                                        <a href="../index.html">Explore</a>
                                     </div>
                                 </li>
                                 <li class="dropdown">
@@ -199,11 +185,11 @@
                         </div>
                     </li>
                     <li class="dropdown" style="padding-right:10px">
-                        <img src="sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px;">
+                        <img src="../sprites/user-avatar.png" alt="User Avatar" style="width:32px; height:32px; border-radius:50%; margin-left:10px;">
                         <div class="dropdown-content">
-                            <a href="maintenance/index.html" id="login">Log in</a>
-                            <a href="maintenance/index.html" id="signin">Sign in</a>
-                            <a href="configuration/index.html" id="configuration" target="_blank" rel="noopener">Configuration</a>
+                            <a href="../maintenance/index.html" id="login">Log in</a>
+                            <a href="../maintenance/index.html" id="signin">Sign in</a>
+                            <a href="../configuration/index.html" id="configuration" target="_blank" rel="noopener">Configuration</a>
                         </div>
                     </li>
                 </ul>
@@ -283,7 +269,7 @@
 
         <div id="right-panel">
             <div id="output-top">
-                <iframe id="sketchFrame" sandbox="allow-scripts" src="FullScreen/index.html" allow="accelerometer; gyroscope;" width="100%" height="100%" frameborder="0"></iframe>
+                <iframe id="sketchFrame" sandbox="allow-scripts" src="../FullScreen/index.html" allow="accelerometer; gyroscope;" width="100%" height="100%" frameborder="0"></iframe>
             </div>
             <div id="resizer-vertical-right"></div>
             <div id="output-bottom"></div>
@@ -394,13 +380,13 @@
         </div>
     </div>
 
-    <script src="editor/codeReader.js"></script>
-    <script src="editor/sketch.js"></script>
-    <script src="theme.js"></script>
-    <script src="editor/UX.js"></script>
-    <script src="editor/export.js"></script>
-    <script src="editor/files.js"></script>
-    <script src="editor/scanner.js"></script>
-    <script src="MobileMenu.js"></script>
+    <script src="codeReader.js"></script>
+    <script src="sketch.js"></script>
+    <script src="../theme.js"></script>
+    <script src="UX.js"></script>
+    <script src="export.js"></script>
+    <script src="files.js"></script>
+    <script src="scanner.js"></script>
+    <script src="../MobileMenu.js"></script>
 </body>
 </html>
