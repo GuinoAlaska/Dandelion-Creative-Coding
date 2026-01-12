@@ -325,5 +325,5 @@ Dandelion-33 (10/01/2026): Icons and links are bugged on mobile
     Description:
         The icons of the editor and the links to other places are bugged on my phone.
     Priority: hight
-    Status: active (11/01/2026)
-    Notes: Probably its just becouse of <base>, ill refractor...
+    Status: solved (11/01/2026)
+    Notes: yea, it was <base>.
